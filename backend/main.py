@@ -189,7 +189,13 @@ class MusicGenServer:
         )
 
         audio_s3_key = f"{uuid.uuid4()}.wav"
-        s3_client.upload_file(output_path, bucket_name, audio_s3_key)
+
+        try:
+            s3_client.upload_file(output_path, bucket_name, audio_s3_key)
+        except Exception as e:
+            logger.error(f"S3 upload failed for audio file {audio_s3_key}: {e}")
+            os.remove(output_path)
+            raise
         os.remove(output_path)
 
         # Thumbnail generation
@@ -201,7 +207,13 @@ class MusicGenServer:
         image.save(image_output_path)
 
         image_s3_key = f"{uuid.uuid4()}.png"
-        s3_client.upload_file(image_output_path, bucket_name, image_s3_key)
+
+        try:
+            s3_client.upload_file(image_output_path, bucket_name, image_s3_key)
+        except Exception as e:
+            logger.error(f"S3 upload failed for thumbnail {image_s3_key}: {e}")
+            os.remove(image_output_path)
+            raise
         os.remove(image_output_path)
 
         # Category generation: "hip-hop", "rock"
@@ -255,6 +267,7 @@ class MusicGenServer:
 
     @modal.fastapi_endpoint(method="POST", requires_proxy_auth=True)
     def generate_from_description(self, request: GenerateFromDescriptionRequest) -> GenerateMusicResponseS3:
+        logger.info(f"generate_from_description called | audio duration: {request.audio_duration}")
         # Generating a prompt
         prompt = self.generate_prompt(request.full_described_song)
 
@@ -267,11 +280,15 @@ class MusicGenServer:
 
     @modal.fastapi_endpoint(method="POST", requires_proxy_auth=True)
     def generate_with_lyrics(self, request: GenerateWithCustomLyricsRequest) -> GenerateMusicResponseS3:
+        logger.info(f"generate_with_lyrics called | audio_duration={request.audio_duration}")
+        
         return self.generate_and_upload_to_s3(prompt=request.prompt, lyrics=request.lyrics,
                                               description_for_categorization=request.prompt, **request.model_dump(exclude={"prompt", "lyrics"}))
 
     @modal.fastapi_endpoint(method="POST", requires_proxy_auth=True)
     def generate_with_described_lyrics(self, request: GenerateWithDescribedLyricsRequest) -> GenerateMusicResponseS3:
+        logger.info(f"generate_with_described_lyrics called | audio_duration={request.audio_duration}")
+        
         # Generating lyrics
         lyrics = ""
         if not request.instrumental:
