@@ -9,6 +9,7 @@ from pydantic import BaseModel
 import requests
 
 from prompts import LYRICS_GENERATOR_PROMPT, PROMPT_GENERATOR_PROMPT
+from datetime import datetime, timezone
 
 app = modal.App("melodyc")
 
