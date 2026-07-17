@@ -10,6 +10,7 @@ import requests
 
 from prompts import LYRICS_GENERATOR_PROMPT, PROMPT_GENERATOR_PROMPT
 from datetime import datetime, timezone
+from loguru import logger
 
 app = modal.App("melodyc")
 
@@ -167,8 +168,8 @@ class MusicGenServer:
             description_for_categorization: str
     ) -> GenerateMusicResponseS3:
         final_lyrics = "[instrumental]" if instrumental else lyrics
-        print(f"Generated lyrics: \n{final_lyrics}")
-        print(f"Prompt: \n{prompt}")
+        logger.success(f"Generated lyrics: \n{final_lyrics}")
+        logger.info(f"Prompt: \n{prompt}")
 
         s3_client = boto3.client("s3", region_name=os.environ.get("AWS_REGION", "us-east-1"))
         bucket_name = os.environ["S3_BUCKET_NAME"]
@@ -301,7 +302,7 @@ def main():
     response.raise_for_status()
     result = GenerateMusicResponseS3(**response.json())
 
-    print(
+    logger.success(
         f"Success: {result.s3_key} {result.cover_image_s3_key} {result.categories}")
 
     # audio_bytes = base64.b64decode(result.audio_data)
