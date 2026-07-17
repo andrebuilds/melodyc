@@ -133,6 +133,22 @@ class MusicGenServer:
 
         return response
 
+    def input_validation(self, description: str):
+        max_characters = 500
+
+        if not isinstance(description, str):
+            raise TypeError("Description must be a string.")
+
+        description = description.strip()
+
+        if not description:
+            raise ValueError("Description must be a non empty string.")
+
+        if len(description) > max_characters:
+            raise ValueError(f"Description is too long. Maximum length is {max_characters} characters.")
+
+        return description
+
     def generate_prompt(self, description: str):
         # Insert description into template
         full_prompt = PROMPT_GENERATOR_PROMPT.format(user_prompt=description)
