@@ -61,6 +61,10 @@ class GenerateMusicResponse(BaseModel):
 
 class HealthCheck(BaseModel):
     status: str
+    music_model_loaded: bool
+    llm_model_loaded: bool
+    image_pipe_loaded: bool
+    checked_at: str
 
 
 @app.cls(
@@ -209,13 +213,19 @@ class MusicGenServer:
 
     @modal.fastapi_endpoint(method="GET", requires_proxy_auth=False)
     def health_check(self) -> HealthCheck:
-        models_loaded = all([
-            hasattr(self, "music_model"),
-            hasattr(self, "llm_model"),
-            hasattr(self, "image_pipe")
-        ])
-        status = "healthy" if models_loaded else "unhealthy"
-        return HealthCheck(status=status)
+        music_ok = hasattr(self, "music_model")
+        llm_ok = hasattr(self, "llm_model")
+        image_ok = hasattr(self, "image_pipe")
+
+        status = "healthy" if (music_ok and llm_ok and image_ok) else "unhealthy"
+
+        return HealthCheck(
+            status=status,
+            music_model_loaded=music_ok,
+            llm_model_loaded=llm_ok,
+            image_pipe_loaded=image_ok,
+            checked_at=datetime.now(timezone.utc).isoformat()
+        )
 
     @modal.fastapi_endpoint(method="POST", requires_proxy_auth=True)
     def generate(self) -> GenerateMusicResponse:
