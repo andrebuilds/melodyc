@@ -212,7 +212,7 @@ class MusicGenServer:
             categories=categories
         )
 
-    @modal.fastapi_endpoint(method="GET", requires_proxy_auth=False)
+    @modal.fastapi_endpoint(method="GET", requires_proxy_auth=True)
     def health_check(self) -> HealthCheck:
         music_ok = hasattr(self, "music_model")
         llm_ok = hasattr(self, "llm_model")
