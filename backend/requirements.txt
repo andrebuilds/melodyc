@@ -1,0 +1,7 @@
+transformers==4.50.0
+diffusers==0.33.0
+torch
+pydantic
+boto3
+torchcodec
+ffmpeg
