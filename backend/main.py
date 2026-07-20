@@ -1,15 +1,19 @@
 import base64
+import logging
 from typing import List
 import uuid
 import modal
 import os
 import boto3
+from botocore.exceptions import ConnectionError, ConnectTimeoutError, EndpointConnectionError, ReadTimeoutError
+from tenacity import before_sleep_log, retry, retry_if_exception_type, stop_after_attempt, wait_exponential
 
 from pydantic import BaseModel
 import requests
 
 from prompts import LYRICS_GENERATOR_PROMPT, PROMPT_GENERATOR_PROMPT
 from datetime import datetime, timezone
+from loguru import logger
 
 app = modal.App("melodyc")
 
@@ -59,6 +63,7 @@ class GenerateMusicResponseS3(BaseModel):
 
 class GenerateMusicResponse(BaseModel):
     audio_data: str
+
 
 class HealthCheck(BaseModel):
     status: str
@@ -120,10 +125,15 @@ class MusicGenServer:
         model_inputs = self.tokenizer(
             [text], return_tensors="pt").to(self.llm_model.device)
 
-        generated_ids = self.llm_model.generate(
-            model_inputs.input_ids,
-            max_new_tokens=512
-        )
+        try:
+            generated_ids = self.llm_model.generate(
+                model_inputs.input_ids,
+                max_new_tokens=512
+            )
+        except Exception as e:
+            logger.error(f"LLM inference failed | question_length={len(question)}: {e}")
+            raise
+
         generated_ids = [
             output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)
         ]
@@ -133,7 +143,7 @@ class MusicGenServer:
 
         return response
 
-    def input_validation(self, description: str):
+    def input_validation(self, description: str) -> str:
         max_characters = 500
 
         if not isinstance(description, str):
@@ -170,6 +180,19 @@ class MusicGenServer:
         categories = [cat.strip()
                       for cat in response_text.split(",") if cat.strip()]
         return categories
+    
+    @retry(
+        retry=retry_if_exception_type((
+            ConnectionError,
+            ReadTimeoutError,
+        )),
+        stop=stop_after_attempt(3),
+        wait=wait_exponential(multiplier=1, min=4, max=10),
+        reraise=True,
+        before_sleep=before_sleep_log(logger, "WARNING"),
+    )
+    def _upload_to_s3(self, s3_client, local_path, bucket_name, s3_key):
+        s3_client.upload_file(local_path, bucket_name, s3_key)
 
     def generate_and_upload_to_s3(
             self,
@@ -183,8 +206,8 @@ class MusicGenServer:
             description_for_categorization: str
     ) -> GenerateMusicResponseS3:
         final_lyrics = "[instrumental]" if instrumental else lyrics
-        print(f"Generated lyrics: \n{final_lyrics}")
-        print(f"Prompt: \n{prompt}")
+        logger.success(f"Generated lyrics: \n{final_lyrics}")
+        logger.info(f"Prompt: \n{prompt}")
 
         s3_client = boto3.client("s3", region_name=os.environ.get("AWS_REGION", "us-east-1"))
         bucket_name = os.environ["S3_BUCKET_NAME"]
@@ -193,31 +216,51 @@ class MusicGenServer:
         os.makedirs(output_dir, exist_ok=True)
         output_path = os.path.join(output_dir, f"{uuid.uuid4()}.wav")
 
-        self.music_model(
-            prompt=prompt,
-            lyrics=final_lyrics,
-            audio_duration=audio_duration,
-            infer_step=infer_step,
-            guidance_scale=guidance_scale,
-            save_path=output_path,
-            manual_seeds=str(seed)
-        )
+        try:
+            self.music_model(
+                prompt=prompt,
+                lyrics=final_lyrics,
+                audio_duration=audio_duration,
+                infer_step=infer_step,
+                guidance_scale=guidance_scale,
+                save_path=output_path,
+                manual_seeds=str(seed)
+            )
+        except Exception as e:
+            logger.error(f"Music inference failed | prompt='{prompt}' seed={seed} duration={audio_duration}: {e}")
+            raise
 
         audio_s3_key = f"{uuid.uuid4()}.wav"
-        s3_client.upload_file(output_path, bucket_name, audio_s3_key)
-        os.remove(output_path)
+
+        try:
+            self._upload_to_s3(s3_client, output_path, bucket_name, audio_s3_key)
+        except Exception as e:
+            logger.error(f"S3 upload failed for audio file {audio_s3_key}: {e}")
+            raise
+        finally:
+            os.remove(output_path)
 
         # Thumbnail generation
         thumbnail_prompt = f"{prompt}, album cover art"
-        image = self.image_pipe(
-            prompt=thumbnail_prompt, num_inference_steps=2, guidance_scale=0.0).images[0]
+        try:
+            image = self.image_pipe(
+                prompt=thumbnail_prompt, num_inference_steps=2, guidance_scale=0.0).images[0]
+        except Exception as e:
+            logger.error(f"Image inference failed | thumbnail_prompt='{thumbnail_prompt}': {e}")
+            raise
 
         image_output_path = os.path.join(output_dir, f"{uuid.uuid4()}.png")
         image.save(image_output_path)
 
         image_s3_key = f"{uuid.uuid4()}.png"
-        s3_client.upload_file(image_output_path, bucket_name, image_s3_key)
-        os.remove(image_output_path)
+
+        try:
+            self._upload_to_s3(s3_client, image_output_path, bucket_name, image_s3_key)
+        except Exception as e:
+            logger.error(f"S3 upload failed for thumbnail {image_s3_key}: {e}")
+            raise
+        finally:
+            os.remove(image_output_path)
 
         # Category generation: "hip-hop", "rock"
         categories = self.generate_categories(description_for_categorization)
@@ -228,7 +271,7 @@ class MusicGenServer:
             categories=categories
         )
 
-    @modal.fastapi_endpoint(method="GET", requires_proxy_auth=True)
+    @modal.fastapi_endpoint(method="GET", requires_proxy_auth=False)
     def health_check(self) -> HealthCheck:
         music_ok = hasattr(self, "music_model")
         llm_ok = hasattr(self, "llm_model")
@@ -270,29 +313,43 @@ class MusicGenServer:
 
     @modal.fastapi_endpoint(method="POST", requires_proxy_auth=True)
     def generate_from_description(self, request: GenerateFromDescriptionRequest) -> GenerateMusicResponseS3:
+        logger.info(f"generate_from_description called | audio_duration={request.audio_duration}")
+
+        full_described_song = self.input_validation(request.full_described_song)
+
         # Generating a prompt
-        prompt = self.generate_prompt(request.full_described_song)
+        prompt = self.generate_prompt(full_described_song)
 
         # Generating lyrics
         lyrics = ""
         if not request.instrumental:
-            lyrics = self.generate_lyrics(request.full_described_song)
+            lyrics = self.generate_lyrics(full_described_song)
         return self.generate_and_upload_to_s3(prompt=prompt, lyrics=lyrics,
-                                              description_for_categorization=request.full_described_song, **request.model_dump(exclude={"full_described_song"}))
+                                              description_for_categorization=full_described_song, **request.model_dump(exclude={"full_described_song"}))
 
     @modal.fastapi_endpoint(method="POST", requires_proxy_auth=True)
     def generate_with_lyrics(self, request: GenerateWithCustomLyricsRequest) -> GenerateMusicResponseS3:
-        return self.generate_and_upload_to_s3(prompt=request.prompt, lyrics=request.lyrics,
-                                              description_for_categorization=request.prompt, **request.model_dump(exclude={"prompt", "lyrics"}))
+        logger.info(f"generate_with_lyrics called | audio_duration={request.audio_duration}")
+
+        validated_prompt = self.input_validation(request.prompt)
+        validated_lyrics = self.input_validation(request.lyrics)
+
+        return self.generate_and_upload_to_s3(prompt=validated_prompt, lyrics=validated_lyrics,
+                                              description_for_categorization=validated_prompt, **request.model_dump(exclude={"prompt", "lyrics"}))
 
     @modal.fastapi_endpoint(method="POST", requires_proxy_auth=True)
     def generate_with_described_lyrics(self, request: GenerateWithDescribedLyricsRequest) -> GenerateMusicResponseS3:
+        logger.info(f"generate_with_described_lyrics called | audio_duration={request.audio_duration}")
+
+        validated_prompt = self.input_validation(request.prompt)
+
         # Generating lyrics
         lyrics = ""
         if not request.instrumental:
-            lyrics = self.generate_lyrics(request.described_lyrics)
-        return self.generate_and_upload_to_s3(prompt=request.prompt, lyrics=lyrics,
-                                              description_for_categorization=request.prompt, **request.model_dump(exclude={"described_lyrics", "prompt"}))
+            validated_described_lyrics = self.input_validation(request.described_lyrics)
+            lyrics = self.generate_lyrics(validated_described_lyrics)
+        return self.generate_and_upload_to_s3(prompt=validated_prompt, lyrics=lyrics,
+                                              description_for_categorization=validated_prompt, **request.model_dump(exclude={"described_lyrics", "prompt"}))
 
 
 @app.local_entrypoint()
@@ -317,7 +374,7 @@ def main():
     response.raise_for_status()
     result = GenerateMusicResponseS3(**response.json())
 
-    print(
+    logger.success(
         f"Success: {result.s3_key} {result.cover_image_s3_key} {result.categories}")
 
     # audio_bytes = base64.b64decode(result.audio_data)
