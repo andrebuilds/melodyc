@@ -14,6 +14,7 @@ import requests
 from prompts import LYRICS_GENERATOR_PROMPT, PROMPT_GENERATOR_PROMPT
 from datetime import datetime, timezone
 from loguru import logger
+import hashlib
 
 app = modal.App("melodyc")
 
@@ -30,8 +31,15 @@ model_volume = modal.Volume.from_name(
     "ace-step-models", create_if_missing=True)
 hf_volume = modal.Volume.from_name("qwen-hf-cache", create_if_missing=True)
 
+qwen_prompt_cache = modal.Dict.from_name("qwen-prompt-cache", create_if_missing=True)
+
 melodyc_secrets = modal.Secret.from_name("melodyc-secret")
 
+CACHE_VERSION = "v1"
+
+def _make_cache_key(namespace: str, text: str) -> str:
+    digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
+    return f"{CACHE_VERSION}:{namespace}:{digest}"
 
 class AudioGenerationBase(BaseModel):
     audio_duration: float = 180.0
@@ -72,7 +80,6 @@ class HealthCheck(BaseModel):
     image_pipe_loaded: bool
     checked_at: str
 
-
 @app.cls(
     image=image,
     gpu="L40S",
@@ -80,6 +87,7 @@ class HealthCheck(BaseModel):
     secrets=[melodyc_secrets],
     scaledown_window=15
 )
+
 class MusicGenServer:
     @modal.enter()
     def load_model(self):
@@ -161,24 +169,49 @@ class MusicGenServer:
 
     def generate_prompt(self, description: str):
         # Insert description into template
-        full_prompt = PROMPT_GENERATOR_PROMPT.format(user_prompt=description)
+        cache_key = _make_cache_key("prompt", description)
+        cached = qwen_prompt_cache.get(cache_key)
+        if cached is not None:
+            logger.info(f"Cache hit | fn=generate_prompt key={cache_key}")
+            return cached
 
         # Run LLM inference and return that
-        return self.prompt_qwen(full_prompt)
+        full_prompt = PROMPT_GENERATOR_PROMPT.format(user_prompt=description)
+        result = self.prompt_qwen(full_prompt)
+
+        qwen_prompt_cache.put(cache_key, result)
+        return result
+
+
 
     def generate_lyrics(self, description: str):
         # Insert description into template
-        full_prompt = LYRICS_GENERATOR_PROMPT.format(description=description)
+        cache_key = _make_cache_key("lyrics", description)
+        cached = qwen_prompt_cache.get(cache_key)
+        if cached is not None:
+            logger.info(f"Cache hit | fn=generate_lyrics key={cache_key}")
+            return cached
 
-        # Run LLM inference and return that
-        return self.prompt_qwen(full_prompt)
+            # Run LLM inference and return that
+        full_prompt = LYRICS_GENERATOR_PROMPT.format(description=description)
+        result = self.prompt_qwen(full_prompt)
+
+        qwen_prompt_cache.put(cache_key, result)
+        return result
 
     def generate_categories(self, description: str) -> List[str]:
-        prompt = f"Based on the following music description, list 3-5 relevant genres or categories as a comma-separated list. For example: Pop, Electronic, Sad, 80s. Description: '{description}'"
+        cache_key = _make_cache_key("categories", description)
+        cached = qwen_prompt_cache.get(cache_key)
+        if cached is not None:
+            logger.info(f"Cache hit | fn=generate_categories key={cache_key}")
+            return cached
 
+        prompt = f"Based on the following music description, list 3-5 relevant genres or categories as a comma-separated list. For example: Pop, Electronic, Sad, 80s. Description: '{description}'"
         response_text = self.prompt_qwen(prompt)
         categories = [cat.strip()
-                      for cat in response_text.split(",") if cat.strip()]
+                    for cat in response_text.split(",") if cat.strip()]
+
+        qwen_prompt_cache.put(cache_key, categories)
         return categories
     
     @retry(
