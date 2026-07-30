@@ -15,6 +15,7 @@ from prompts import LYRICS_GENERATOR_PROMPT, PROMPT_GENERATOR_PROMPT
 from datetime import datetime, timezone
 from loguru import logger
 import hashlib
+from langdetect import detect, LangDetectException
 
 app = modal.App("melodyc")
 
@@ -35,11 +36,31 @@ qwen_prompt_cache = modal.Dict.from_name("qwen-prompt-cache", create_if_missing=
 
 melodyc_secrets = modal.Secret.from_name("melodyc-secret")
 
+#Prompt caching
 CACHE_VERSION = "v1"
 
 def _make_cache_key(namespace: str, text: str) -> str:
     digest = hashlib.sha256(text.encode("utf-8")).hexdigest()
     return f"{CACHE_VERSION}:{namespace}:{digest}"
+
+#Language detection
+LANGUAGE_NAMES = {
+    "en": "English",
+    "it": "Italian",
+    "es": "Spanish",
+    "fr": "French",
+    "de": "German",
+    "pt": "Portuguese",
+}
+
+def _detect_language(text: str) -> str:
+    try:
+        code = detect(text)
+    except LangDetectException:
+        logger.warning(f"Language detection failed, defaulting to English | text_length={len(text)}")
+        return "English"
+
+    return LANGUAGE_NAMES.get(code, "English")
 
 class AudioGenerationBase(BaseModel):
     audio_duration: float = 180.0
@@ -151,7 +172,7 @@ class MusicGenServer:
 
         return response
 
-    def input_validation(self, description: str) -> str:
+    def input_validation(self, description: str) -> tuple[str, str]:
         max_characters = 500
 
         if not isinstance(description, str):
@@ -165,18 +186,20 @@ class MusicGenServer:
         if len(description) > max_characters:
             raise ValueError(f"Description is too long. Maximum length is {max_characters} characters.")
 
-        return description
+        language = _detect_language(description)
 
-    def generate_prompt(self, description: str):
+        return description, language
+        
+    def generate_prompt(self, description: str, language: str):
         # Insert description into template
-        cache_key = _make_cache_key("prompt", description)
+        cache_key = _make_cache_key("prompt", f"{language}:{description}")
         cached = qwen_prompt_cache.get(cache_key)
         if cached is not None:
             logger.info(f"Cache hit | fn=generate_prompt key={cache_key}")
             return cached
 
         # Run LLM inference and return that
-        full_prompt = PROMPT_GENERATOR_PROMPT.format(user_prompt=description)
+        full_prompt = PROMPT_GENERATOR_PROMPT.format(user_prompt=description)  + f"\n\nRespond in {language}."
         result = self.prompt_qwen(full_prompt)
 
         qwen_prompt_cache.put(cache_key, result)
@@ -184,23 +207,23 @@ class MusicGenServer:
 
 
 
-    def generate_lyrics(self, description: str):
+    def generate_lyrics(self, description: str, language: str):
         # Insert description into template
-        cache_key = _make_cache_key("lyrics", description)
+        cache_key = _make_cache_key("lyrics", f"{language}:{description}")
         cached = qwen_prompt_cache.get(cache_key)
         if cached is not None:
             logger.info(f"Cache hit | fn=generate_lyrics key={cache_key}")
             return cached
 
-            # Run LLM inference and return that
-        full_prompt = LYRICS_GENERATOR_PROMPT.format(description=description)
+        # Run LLM inference and return that
+        full_prompt = LYRICS_GENERATOR_PROMPT.format(description=description) + f"\n\nWrite the lyrics in {language}."
         result = self.prompt_qwen(full_prompt)
 
         qwen_prompt_cache.put(cache_key, result)
         return result
 
-    def generate_categories(self, description: str) -> List[str]:
-        cache_key = _make_cache_key("categories", description)
+    def generate_categories(self, description: str, language: str) -> List[str]:
+        cache_key = _make_cache_key("categories", f"{language}:{description}")
         cached = qwen_prompt_cache.get(cache_key)
         if cached is not None:
             logger.info(f"Cache hit | fn=generate_categories key={cache_key}")
@@ -236,7 +259,8 @@ class MusicGenServer:
             infer_step: int,
             guidance_scale: float,
             seed: int,
-            description_for_categorization: str
+            description_for_categorization: str,
+            language: str = "English"
     ) -> GenerateMusicResponseS3:
         final_lyrics = "[instrumental]" if instrumental else lyrics
         logger.success(f"Generated lyrics: \n{final_lyrics}")
@@ -296,7 +320,7 @@ class MusicGenServer:
             os.remove(image_output_path)
 
         # Category generation: "hip-hop", "rock"
-        categories = self.generate_categories(description_for_categorization)
+        categories = self.generate_categories(description_for_categorization, language)
 
         return GenerateMusicResponseS3(
             s3_key=audio_s3_key,
@@ -348,42 +372,44 @@ class MusicGenServer:
     def generate_from_description(self, request: GenerateFromDescriptionRequest) -> GenerateMusicResponseS3:
         logger.info(f"generate_from_description called | audio_duration={request.audio_duration}")
 
-        full_described_song = self.input_validation(request.full_described_song)
+        full_described_song, language = self.input_validation(request.full_described_song)
 
-        # Generating a prompt
-        prompt = self.generate_prompt(full_described_song)
+        prompt = self.generate_prompt(full_described_song, language)
 
-        # Generating lyrics
         lyrics = ""
         if not request.instrumental:
-            lyrics = self.generate_lyrics(full_described_song)
+            lyrics = self.generate_lyrics(full_described_song, language)
         return self.generate_and_upload_to_s3(prompt=prompt, lyrics=lyrics,
-                                              description_for_categorization=full_described_song, **request.model_dump(exclude={"full_described_song"}))
+                                                    description_for_categorization=full_described_song,
+                                                    language=language,
+                                                    **request.model_dump(exclude={"full_described_song"}))
 
     @modal.fastapi_endpoint(method="POST", requires_proxy_auth=True)
     def generate_with_lyrics(self, request: GenerateWithCustomLyricsRequest) -> GenerateMusicResponseS3:
         logger.info(f"generate_with_lyrics called | audio_duration={request.audio_duration}")
 
-        validated_prompt = self.input_validation(request.prompt)
-        validated_lyrics = self.input_validation(request.lyrics)
+        validated_prompt, _ = self.input_validation(request.prompt)
+        validated_lyrics, _ = self.input_validation(request.lyrics)
 
         return self.generate_and_upload_to_s3(prompt=validated_prompt, lyrics=validated_lyrics,
-                                              description_for_categorization=validated_prompt, **request.model_dump(exclude={"prompt", "lyrics"}))
+                                              description_for_categorization=validated_prompt,
+                                              **request.model_dump(exclude={"prompt", "lyrics"}))
 
     @modal.fastapi_endpoint(method="POST", requires_proxy_auth=True)
     def generate_with_described_lyrics(self, request: GenerateWithDescribedLyricsRequest) -> GenerateMusicResponseS3:
         logger.info(f"generate_with_described_lyrics called | audio_duration={request.audio_duration}")
 
-        validated_prompt = self.input_validation(request.prompt)
+        validated_prompt, language = self.input_validation(request.prompt)
 
-        # Generating lyrics
+        #Generating lyrics
         lyrics = ""
         if not request.instrumental:
-            validated_described_lyrics = self.input_validation(request.described_lyrics)
-            lyrics = self.generate_lyrics(validated_described_lyrics)
+            validated_described_lyrics, _ = self.input_validation(request.described_lyrics)
+            lyrics = self.generate_lyrics(validated_described_lyrics, language)
         return self.generate_and_upload_to_s3(prompt=validated_prompt, lyrics=lyrics,
-                                              description_for_categorization=validated_prompt, **request.model_dump(exclude={"described_lyrics", "prompt"}))
-
+                                              description_for_categorization=validated_prompt,
+                                              language=language,
+                                              **request.model_dump(exclude={"described_lyrics", "prompt"}))
 
 @app.local_entrypoint()
 def main():
