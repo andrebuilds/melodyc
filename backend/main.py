@@ -199,7 +199,7 @@ class MusicGenServer:
             return cached
 
         # Run LLM inference and return that
-        full_prompt = PROMPT_GENERATOR_PROMPT.format(user_prompt=description)  + f"\n\nRespond in {language}."
+        full_prompt = PROMPT_GENERATOR_PROMPT.format(user_prompt=description)
         result = self.prompt_qwen(full_prompt)
 
         qwen_prompt_cache.put(cache_key, result)
@@ -207,16 +207,16 @@ class MusicGenServer:
 
 
 
-    def generate_lyrics(self, description: str, language: str):
+    def generate_lyrics(self, description: str, language: str, mood: str = "as conveyed by the description"):
         # Insert description into template
-        cache_key = _make_cache_key("lyrics", f"{language}:{description}")
+        cache_key = _make_cache_key("lyrics", f"{language}:{mood}:{description}")
         cached = qwen_prompt_cache.get(cache_key)
         if cached is not None:
             logger.info(f"Cache hit | fn=generate_lyrics key={cache_key}")
             return cached
 
         # Run LLM inference and return that
-        full_prompt = LYRICS_GENERATOR_PROMPT.format(description=description) + f"\n\nWrite the lyrics in {language}."
+        full_prompt = LYRICS_GENERATOR_PROMPT.format(description=description, language=language, mood=mood)
         result = self.prompt_qwen(full_prompt)
 
         qwen_prompt_cache.put(cache_key, result)
