@@ -11,7 +11,7 @@ from tenacity import before_sleep_log, retry, retry_if_exception_type, stop_afte
 from pydantic import BaseModel
 import requests
 
-from prompts import LYRICS_GENERATOR_PROMPT, PROMPT_GENERATOR_PROMPT
+from prompts import LYRICS_GENERATOR_PROMPT, LYRICS_PROMPTS_BY_GENRE, PROMPT_GENERATOR_PROMPT
 from datetime import datetime, timezone
 from loguru import logger
 import hashlib
@@ -215,8 +215,20 @@ class MusicGenServer:
             logger.info(f"Cache hit | fn=generate_lyrics key={cache_key}")
             return cached
 
+        selected_template = LYRICS_GENERATOR_PROMPT
+        lowered_description = description.lower()
+        selected_genre = "default"
+
+        for genre_keyword, genre_template in LYRICS_PROMPTS_BY_GENRE.items():
+            if genre_keyword in lowered_description:
+                selected_template = genre_template
+                selected_genre = genre_keyword
+                break
+
+        logger.info(f"Lyrics template selected | genre={selected_genre}")
+
         # Run LLM inference and return that
-        full_prompt = LYRICS_GENERATOR_PROMPT.format(description=description, language=language, mood=mood)
+        full_prompt = selected_template.format(description=description, language=language, mood=mood)
         result = self.prompt_qwen(full_prompt)
 
         qwen_prompt_cache.put(cache_key, result)
