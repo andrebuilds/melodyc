@@ -53,6 +53,25 @@ LANGUAGE_NAMES = {
     "pt": "Portuguese",
 }
 
+GENRE_INFERENCE_PROFILES = {
+    "classical": {"infer_step": 80, "guidance_scale": 14.0},
+    "orchestral": {"infer_step": 80, "guidance_scale": 14.0},
+    "cinematic": {"infer_step": 78, "guidance_scale": 14.0},
+    "jazz": {"infer_step": 72, "guidance_scale": 13.0},
+    "ambient": {"infer_step": 70, "guidance_scale": 12.5},
+    "acoustic": {"infer_step": 68, "guidance_scale": 13.0},
+    "metal": {"infer_step": 58, "guidance_scale": 16.0},
+    "rock": {"infer_step": 58, "guidance_scale": 15.5},
+    "edm": {"infer_step": 56, "guidance_scale": 16.0},
+    "electronic": {"infer_step": 56, "guidance_scale": 16.0},
+    "trap": {"infer_step": 55, "guidance_scale": 16.5},
+    "rap": {"infer_step": 54, "guidance_scale": 16.0},
+    "hip hop": {"infer_step": 54, "guidance_scale": 16.0},
+    "pop": {"infer_step": 60, "guidance_scale": 15.0},
+}
+
+GENRE_PROFILE_KEYWORDS = tuple(GENRE_INFERENCE_PROFILES.keys())
+
 def _detect_language(text: str) -> str:
     try:
         code = detect(text)
@@ -248,6 +267,40 @@ class MusicGenServer:
 
         qwen_prompt_cache.put(cache_key, categories)
         return categories
+
+    def resolve_dynamic_inference_settings(
+        self,
+        context_text: str,
+        infer_step: int,
+        guidance_scale: float,
+    ) -> tuple[int, float]:
+        normalized_text = context_text.lower()
+        matched_genres = [k for k in GENRE_PROFILE_KEYWORDS if k in normalized_text]
+
+        if not matched_genres:
+            return infer_step, guidance_scale
+
+        # Keep explicit user overrides untouched and only replace default values.
+        resolved_infer_step = infer_step
+        resolved_guidance_scale = guidance_scale
+        applied_profiles = []
+
+        for genre in matched_genres:
+            profile = GENRE_INFERENCE_PROFILES[genre]
+            applied_profiles.append(genre)
+            if infer_step == AudioGenerationBase.model_fields["infer_step"].default:
+                resolved_infer_step = max(resolved_infer_step, profile["infer_step"])
+            if guidance_scale == AudioGenerationBase.model_fields["guidance_scale"].default:
+                resolved_guidance_scale = max(resolved_guidance_scale, profile["guidance_scale"])
+
+        logger.info(
+            "Dynamic inference settings applied | genres=%s infer_step=%s guidance_scale=%s",
+            ",".join(applied_profiles),
+            resolved_infer_step,
+            resolved_guidance_scale,
+        )
+
+        return resolved_infer_step, resolved_guidance_scale
     
     @retry(
         retry=retry_if_exception_type((
@@ -274,6 +327,12 @@ class MusicGenServer:
             description_for_categorization: str,
             language: str = "English"
     ) -> GenerateMusicResponseS3:
+        infer_step, guidance_scale = self.resolve_dynamic_inference_settings(
+            context_text=f"{prompt} {description_for_categorization}",
+            infer_step=infer_step,
+            guidance_scale=guidance_scale,
+        )
+
         final_lyrics = "[instrumental]" if instrumental else lyrics
         logger.success(f"Generated lyrics: \n{final_lyrics}")
         logger.info(f"Prompt: \n{prompt}")
