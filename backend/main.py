@@ -161,7 +161,14 @@ class MusicGenServer:
             "stabilityai/sdxl-turbo", torch_dtype=torch.float16, variant="fp16", cache_dir="/.cache/huggingface")
         self.image_pipe.to("cuda")
 
-    def prompt_qwen(self, question: str):
+    def prompt_qwen(
+        self,
+        question: str,
+        temperature: float = 0.7,
+        top_p: float = 0.9,
+        top_k: int = 50,
+        max_new_tokens: int = 512,
+    ):
         messages = [
             {"role": "user", "content": question}
         ]
@@ -173,13 +180,22 @@ class MusicGenServer:
         model_inputs = self.tokenizer(
             [text], return_tensors="pt").to(self.llm_model.device)
 
+        generation_kwargs = {
+            "max_new_tokens": max_new_tokens,
+            "do_sample": temperature > 0.0,
+            "temperature": temperature,
+            "top_p": top_p,
+            "top_k": top_k,
+            "pad_token_id": self.tokenizer.eos_token_id,
+        }
+
         try:
             generated_ids = self.llm_model.generate(
                 model_inputs.input_ids,
-                max_new_tokens=512
+                **generation_kwargs,
             )
         except Exception as e:
-            logger.error(f"LLM inference failed | question_length={len(question)}: {e}")
+            logger.error(f"LLM inference failed | question_length={len(question)} temperature={temperature} top_p={top_p} top_k={top_k}: {e}")
             raise
 
         generated_ids = [
