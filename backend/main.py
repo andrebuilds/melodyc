@@ -395,11 +395,9 @@ class MusicGenServer:
             raise
 
         audio_s3_key = f"{uuid.uuid4()}.wav"
-        encoded_prompt = base64.b64encode(prompt.encode("utf-8")).decode("ascii")
 
         audio_extra_args = {
             "Metadata": {
-                "generation-prompt-base64": encoded_prompt,
                 "generation-seed": str(seed),
                 "generation-infer-step": str(infer_step),
                 "generation-guidance-scale": str(guidance_scale),
