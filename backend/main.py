@@ -73,10 +73,10 @@ GENRE_INFERENCE_PROFILES = {
 GENRE_PROFILE_KEYWORDS = tuple(GENRE_INFERENCE_PROFILES.keys())
 
 ALLOWED_CATEGORIES = (
-    "Pop", "Rock", "Hip-Hop", "Electronic", "Jazz", "Classical",
-    "R&B", "Metal", "Folk", "Latin", "Blues", "Country", "Ambient",
-    "Cinematic", "Acoustic", "Instrumental", "Energetic", "Chill",
-    "Sad", "Romantic", "Dark", "Uplifting", "80s", "90s", "2000s",
+    "pop", "rock", "hip-hop", "electronic", "jazz", "classical",
+    "r&b", "metal", "folk", "latin", "blues", "country", "ambient",
+    "cinematic", "acoustic", "instrumental", "energetic", "chill",
+    "sad", "romantic", "dark", "uplifting", "80s", "90s", "2000s",
 )
 
 def _detect_language(text: str) -> str:
@@ -293,12 +293,41 @@ class MusicGenServer:
         categories_by_name = {category.casefold(): category for category in ALLOWED_CATEGORIES}
         categories = []
         for raw_category in response_text.split(","):
-            normalized_category = raw_category.strip().strip("-•*\"'").strip().casefold()
+            normalized_category = (
+                raw_category.strip()
+                .strip("-•*\"'")
+                .rstrip(".,;:!?")
+                .strip()
+                .casefold()
+            )
             category = categories_by_name.get(normalized_category)
             if category and category not in categories:
                 categories.append(category)
             if len(categories) == 5:
                 break
+
+        if len(categories) < 3:
+            fallback_matches = {
+                "pop": "pop",
+                "rock": "rock",
+                "hip hop": "hip-hop",
+                "hip-hop": "hip-hop",
+                "electronic": "electronic",
+                "jazz": "jazz",
+                "classical": "classical",
+                "metal": "metal",
+                "ambient": "ambient",
+                "acoustic": "acoustic",
+                "instrumental": "instrumental",
+            }
+            description_lower = description.casefold()
+            for keyword, category in fallback_matches.items():
+                if keyword in description_lower and category not in categories:
+                    categories.append(category)
+            for category in ("pop", "electronic", "ambient"):
+                if len(categories) == 3 or category in categories:
+                    continue
+                categories.append(category)
 
         qwen_prompt_cache.put(cache_key, categories)
         return categories
@@ -398,7 +427,7 @@ class MusicGenServer:
 
         audio_extra_args = {
             "Metadata": {
-                "generation-seed": str(seed),
+                "generation-requested-seed": str(seed),
                 "generation-infer-step": str(infer_step),
                 "generation-guidance-scale": str(guidance_scale),
                 "generation-audio-duration": str(audio_duration),
@@ -508,10 +537,11 @@ class MusicGenServer:
         logger.info(f"generate_with_lyrics called | audio_duration={request.audio_duration}")
 
         validated_prompt, _ = self.input_validation(request.prompt)
-        validated_lyrics, _ = self.input_validation(request.lyrics)
+        validated_lyrics, lyrics_language = self.input_validation(request.lyrics)
 
         return self.generate_and_upload_to_s3(prompt=validated_prompt, lyrics=validated_lyrics,
                                               description_for_categorization=validated_prompt,
+                                              language=lyrics_language,
                                               **request.model_dump(exclude={"prompt", "lyrics"}))
 
     @modal.fastapi_endpoint(method="POST", requires_proxy_auth=True)
