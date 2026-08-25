@@ -322,12 +322,15 @@ class MusicGenServer:
             }
             description_lower = description.casefold()
             for keyword, category in fallback_matches.items():
+                if len(categories) >= 5:
+                    break
                 if keyword in description_lower and category not in categories:
                     categories.append(category)
             for category in ("pop", "electronic", "ambient"):
-                if len(categories) == 3 or category in categories:
-                    continue
-                categories.append(category)
+                if len(categories) >= 3:
+                    break
+                if category not in categories:
+                    categories.append(category)
 
         qwen_prompt_cache.put(cache_key, categories)
         return categories
