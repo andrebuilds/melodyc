@@ -1,0 +1,118 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  sessions      Session[]
+  accounts      Account[]
+  credits       Int @default(100)
+  likes Like[]
+  songs Song[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Song {
+  id String @id @default(cuid())
+  title String
+  s3Key String?
+  thumbnailS3Key String?
+  status String @default("queued")
+  instrumental Boolean @default(false)
+  prompt String?
+  lyrics String?
+  fullDescribedSong String?
+  describedLyrics String?
+  guidanceScale Float?
+  inferStep Float?
+  audioDuration Float?
+  seed Float?
+  published Boolean @default(false)
+  listenCount Int @default(0)
+  likes Like[]
+  categories Category[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  @@index([s3Key])
+}
+
+model Like {
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  song Song @relation(fields: [songId], references: [id], onDelete: Cascade)
+  songId String
+
+  @@id([userId, songId])
+}
+
+model Category {
+  id String @id @default(cuid())
+  name String @unique
+  songs Song[]
+}
+
+model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
