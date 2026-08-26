@@ -72,6 +72,13 @@ GENRE_INFERENCE_PROFILES = {
 
 GENRE_PROFILE_KEYWORDS = tuple(GENRE_INFERENCE_PROFILES.keys())
 
+ALLOWED_CATEGORIES = (
+    "pop", "rock", "hip-hop", "electronic", "jazz", "classical",
+    "r&b", "metal", "folk", "latin", "blues", "country", "ambient",
+    "cinematic", "acoustic", "instrumental", "energetic", "chill",
+    "sad", "romantic", "dark", "uplifting", "80s", "90s", "2000s",
+)
+
 def _detect_language(text: str) -> str:
     try:
         code = detect(text)
@@ -270,16 +277,60 @@ class MusicGenServer:
         return result
 
     def generate_categories(self, description: str, language: str) -> List[str]:
-        cache_key = _make_cache_key("categories", f"{language}:{description}")
+        cache_key = _make_cache_key("categories-v2", f"{language}:{description}")
         cached = qwen_prompt_cache.get(cache_key)
         if cached is not None:
             logger.info(f"Cache hit | fn=generate_categories key={cache_key}")
             return cached
 
-        prompt = f"Based on the following music description, list 3-5 relevant genres or categories as a comma-separated list. For example: Pop, Electronic, Sad, 80s. Description: '{description}'"
+        allowed_categories = ", ".join(ALLOWED_CATEGORIES)
+        prompt = (
+            "Choose 3-5 relevant categories from this list only: "
+            f"{allowed_categories}. Return only a comma-separated list, "
+            f"with no extra text. Description: '{description}'"
+        )
         response_text = self.prompt_qwen(prompt)
-        categories = [cat.strip()
-                    for cat in response_text.split(",") if cat.strip()]
+        categories_by_name = {category.casefold(): category for category in ALLOWED_CATEGORIES}
+        categories = []
+        for raw_category in response_text.split(","):
+            normalized_category = (
+                raw_category.strip()
+                .strip("-•*\"'")
+                .rstrip(".,;:!?")
+                .strip()
+                .casefold()
+            )
+            category = categories_by_name.get(normalized_category)
+            if category and category not in categories:
+                categories.append(category)
+            if len(categories) == 5:
+                break
+
+        if len(categories) < 3:
+            fallback_matches = {
+                "pop": "pop",
+                "rock": "rock",
+                "hip hop": "hip-hop",
+                "hip-hop": "hip-hop",
+                "electronic": "electronic",
+                "jazz": "jazz",
+                "classical": "classical",
+                "metal": "metal",
+                "ambient": "ambient",
+                "acoustic": "acoustic",
+                "instrumental": "instrumental",
+            }
+            description_lower = description.casefold()
+            for keyword, category in fallback_matches.items():
+                if len(categories) >= 5:
+                    break
+                if keyword in description_lower and category not in categories:
+                    categories.append(category)
+            for category in ("pop", "electronic", "ambient"):
+                if len(categories) >= 3:
+                    break
+                if category not in categories:
+                    categories.append(category)
 
         qwen_prompt_cache.put(cache_key, categories)
         return categories
@@ -328,8 +379,9 @@ class MusicGenServer:
         reraise=True,
         before_sleep=before_sleep_log(logger, "WARNING"),
     )
-    def _upload_to_s3(self, s3_client, local_path, bucket_name, s3_key):
-        s3_client.upload_file(local_path, bucket_name, s3_key)
+    def _upload_to_s3(self, s3_client, local_path, bucket_name, s3_key, extra_args=None):
+        upload_args = {"ExtraArgs": extra_args} if extra_args else {}
+        s3_client.upload_file(local_path, bucket_name, s3_key, **upload_args)
 
     def generate_and_upload_to_s3(
             self,
@@ -376,8 +428,20 @@ class MusicGenServer:
 
         audio_s3_key = f"{uuid.uuid4()}.wav"
 
+        audio_extra_args = {
+            "Metadata": {
+                "generation-requested-seed": str(seed),
+                "generation-infer-step": str(infer_step),
+                "generation-guidance-scale": str(guidance_scale),
+                "generation-audio-duration": str(audio_duration),
+                "generation-instrumental": str(instrumental).lower(),
+                "generation-language": language,
+            },
+        }
+
         try:
-            self._upload_to_s3(s3_client, output_path, bucket_name, audio_s3_key)
+            self._upload_to_s3(
+                s3_client, output_path, bucket_name, audio_s3_key, audio_extra_args)
         except Exception as e:
             logger.error(f"S3 upload failed for audio file {audio_s3_key}: {e}")
             raise
@@ -476,10 +540,11 @@ class MusicGenServer:
         logger.info(f"generate_with_lyrics called | audio_duration={request.audio_duration}")
 
         validated_prompt, _ = self.input_validation(request.prompt)
-        validated_lyrics, _ = self.input_validation(request.lyrics)
+        validated_lyrics, lyrics_language = self.input_validation(request.lyrics)
 
         return self.generate_and_upload_to_s3(prompt=validated_prompt, lyrics=validated_lyrics,
                                               description_for_categorization=validated_prompt,
+                                              language=lyrics_language,
                                               **request.model_dump(exclude={"prompt", "lyrics"}))
 
     @modal.fastapi_endpoint(method="POST", requires_proxy_auth=True)
