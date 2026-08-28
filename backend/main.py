@@ -79,6 +79,11 @@ ALLOWED_CATEGORIES = (
     "sad", "romantic", "dark", "uplifting", "80s", "90s", "2000s",
 )
 
+def _make_song_folder() -> str:
+    """Builds a unique, ASCII-only S3 folder name for one generated song's assets."""
+    return str(uuid.uuid4())
+
+
 def _detect_language(text: str) -> str:
     try:
         code = detect(text)
@@ -408,6 +413,10 @@ class MusicGenServer:
         s3_client = boto3.client("s3", region_name=os.environ.get("AWS_REGION", "us-east-1"))
         bucket_name = os.environ["S3_BUCKET_NAME"]
 
+        # Every asset for this generation (audio + cover) lives together under
+        # one ASCII-safe folder, e.g. "3f9a1c2d-....../".
+        song_folder = _make_song_folder()
+
         output_dir = "/tmp/outputs"
         os.makedirs(output_dir, exist_ok=True)
         output_path = os.path.join(output_dir, f"{uuid.uuid4()}.wav")
@@ -426,7 +435,7 @@ class MusicGenServer:
             logger.error(f"Music inference failed | prompt='{prompt}' seed={seed} duration={audio_duration}: {e}")
             raise
 
-        audio_s3_key = f"{uuid.uuid4()}.wav"
+        audio_s3_key = f"{song_folder}/audio.wav"
 
         audio_extra_args = {
             "Metadata": {
@@ -460,7 +469,7 @@ class MusicGenServer:
         image_output_path = os.path.join(output_dir, f"{uuid.uuid4()}.png")
         image.save(image_output_path)
 
-        image_s3_key = f"{uuid.uuid4()}.png"
+        image_s3_key = f"{song_folder}/cover.png"
 
         try:
             self._upload_to_s3(s3_client, image_output_path, bucket_name, image_s3_key)
