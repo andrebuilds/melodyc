@@ -211,9 +211,6 @@ export function TrackList({ tracks }: { tracks: Track[] }) {
                         <h3 className="text-muted-foreground truncate text-sm font-medium">
                           Processing song...
                         </h3>
-                        <p className="text-muted-foreground truncate text-xs">
-                          Refresh to check the status.
-                        </p>
                       </div>
                     </div>
                   );
