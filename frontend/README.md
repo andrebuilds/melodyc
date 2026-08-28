@@ -1,71 +1,71 @@
 # Melodyc — Frontend
 
-**Autore:** Andrea D'Ambrosio — [github.com/andrebuils](https://github.com/andrebuils)
-**Studente:** Thomas Fortuna
+**Author:** Andrea D'Ambrosio — [github.com/andrebuils](https://github.com/andrebuils)
+**Student:** Thomas Fortuna
 
-Questa cartella contiene il frontend di **Melodyc**, costruito con il T3 Stack su Next.js 15.
+This folder contains the **Melodyc** frontend, built with the T3 Stack on Next.js 15.
 
 ---
 
-## Stack tecnologico
+## Tech stack
 
-| Tecnologia | Scopo |
+| Technology | Purpose |
 |---|---|
-| [Next.js 15](https://nextjs.org) | Framework React con App Router e Server Actions |
+| [Next.js 15](https://nextjs.org) | React framework with App Router and Server Actions |
 | [TypeScript](https://www.typescriptlang.org) | Type safety end-to-end |
 | [Tailwind CSS 4](https://tailwindcss.com) | Styling utility-first |
-| [ShadCN / Radix UI](https://ui.shadcn.com) | Componenti UI accessibili |
-| [Prisma](https://prisma.io) | ORM per PostgreSQL |
-| [Neon](https://neon.tech) | Database PostgreSQL serverless |
-| [Better Auth](https://www.better-auth.com) | Autenticazione |
-| [Inngest](https://inngest.com) | Queue e background jobs |
-| [Polar.sh](https://polar.sh) | Pagamenti e crediti |
-| [AWS S3](https://aws.amazon.com/s3/) | Storage audio e copertine |
+| [ShadCN / Radix UI](https://ui.shadcn.com) | Accessible UI components |
+| [Prisma](https://prisma.io) | ORM for PostgreSQL |
+| [Neon](https://neon.tech) | Serverless PostgreSQL database |
+| [Better Auth](https://www.better-auth.com) | Authentication |
+| [Inngest](https://inngest.com) | Queue and background jobs |
+| [Polar.sh](https://polar.sh) | Payments and credits |
+| [AWS S3](https://aws.amazon.com/s3/) | Audio and cover storage |
 | [Zustand](https://zustand-demo.pmnd.rs) | State management (player audio) |
 | [Vercel](https://vercel.com) | Deployment |
 
 ---
 
-## Guida completa
+## Complete guide
 
-Per la documentazione dettagliata su come costruire questo frontend passo per passo, leggi:
+For detailed documentation on how to build this frontend step by step, read:
 
 **[come-iniziare.md](come-iniziare.md)**
 
-Troverai istruzioni su:
-1. Next.js — T3 Stack (inizializzazione, struttura, variabili d'ambiente)
-2. Autenticazione con Better Auth
-3. Database con Prisma e Neon
-4. Queue con Inngest
+You will find instructions on:
+1. Next.js — T3 Stack (initialization, structure, environment variables)
+2. Authentication with Better Auth
+3. Database with Prisma and Neon
+4. Queue with Inngest
 5. Dashboard layout
-6. Pagina generazione musica
-7. Sound bar e player audio
-8. Home page e feed community
-9. Pagamenti con Polar.sh
-10. Deployment su Vercel
-11. 10 esercizi di ottimizzazione avanzata
+6. Music generation page
+7. Sound bar and audio player
+8. Home page and community feed
+9. Payments with Polar.sh
+10. Deployment on Vercel
+11. 10 advanced optimization exercises
 
 ---
 
-## Comandi rapidi
+## Quick commands
 
 ```bash
-# Installa dipendenze
+# Install dependencies
 npm install
 
-# Avvia in sviluppo
+# Start in development
 npm run dev
 
-# Avvia la queue Inngest (secondo terminale)
+# Start the Inngest queue (second terminal)
 npx inngest-cli@latest dev
 
-# Applica migrazioni database
+# Apply database migrations
 npx prisma migrate dev
 
-# Apri Prisma Studio (GUI database)
+# Open Prisma Studio (database GUI)
 npx prisma studio
 
-# Build di produzione
+# Production build
 npm run build
 
 # Type checking
