@@ -12,11 +12,15 @@ import {
   XCircle,
 } from "lucide-react";
 import { Input } from "../ui/input";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import { getPlayUrl } from "~/actions/generation";
 import { Badge } from "../ui/badge";
-import { renameSong, setPublishedStatus } from "~/actions/song";
+import {
+  getProcessingSongStatuses,
+  renameSong,
+  setPublishedStatus,
+} from "~/actions/song";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -45,11 +49,52 @@ export interface Track {
 
 export function TrackList({ tracks }: { tracks: Track[] }) {
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentTracks, setCurrentTracks] = useState(tracks);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [loadingTrackId, setLoadingTrackId] = useState<string | null>(null);
   const [trackToRename, setTrackToRename] = useState<Track | null>(null);
   const router = useRouter();
   const setTrack = usePlayerStore((state) => state.setTrack);
+
+  useEffect(() => {
+    setCurrentTracks(tracks);
+  }, [tracks]);
+
+  const processingTrackIds = currentTracks
+    .filter(
+      (track) => track.status === "queued" || track.status === "processing",
+    )
+    .map((track) => track.id);
+
+  useEffect(() => {
+    if (processingTrackIds.length === 0) return;
+
+    let isPolling = false;
+
+    const pollStatuses = async () => {
+      if (isPolling) return;
+      isPolling = true;
+
+      try {
+        const statuses = await getProcessingSongStatuses(processingTrackIds);
+        const statusesById = new Map(
+          statuses.map((status) => [status.id, status.status]),
+        );
+
+        setCurrentTracks((previousTracks) =>
+          previousTracks.map((track) => {
+            const status = statusesById.get(track.id);
+            return status ? { ...track, status } : track;
+          }),
+        );
+      } finally {
+        isPolling = false;
+      }
+    };
+
+    const intervalId = setInterval(pollStatuses, 10_000);
+    return () => clearInterval(intervalId);
+  }, [processingTrackIds.join(",")]);
 
   const handleTrackSelect = async (track: Track) => {
     if (loadingTrackId) return;
@@ -73,7 +118,7 @@ export function TrackList({ tracks }: { tracks: Track[] }) {
     setTimeout(() => setIsRefreshing(false), 1000);
   };
 
-  const filteredTracks = tracks.filter(
+  const filteredTracks = currentTracks.filter(
     (track) =>
       track.title?.toLowerCase().includes(searchQuery.toLowerCase()) ??
       track.prompt?.toLowerCase().includes(searchQuery.toLowerCase()),
