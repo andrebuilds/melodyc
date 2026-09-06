@@ -24,16 +24,19 @@ export function HomeFeed({ initialPage }: { initialPage: HomePage }) {
 
   useEffect(() => {
     const loadMore = async () => {
-      const { hasMore, isLoading, nextCursor } = stateRef.current;
-      if (!hasMore || isLoading || !nextCursor) return;
+      const current = stateRef.current;
+      if (!current.hasMore || current.isLoading || !current.nextCursor) return;
 
+      // Lock immediately to prevent overlapping loads before React state/effects update.
+      stateRef.current = { ...current, isLoading: true };
       setIsLoading(true);
       try {
-        const nextPage = await getPublishedSongs(nextCursor);
+        const nextPage = await getPublishedSongs(current.nextCursor);
         setSongs((currentSongs) => [...currentSongs, ...nextPage.songs]);
         setNextCursor(nextPage.nextCursor);
         setHasMore(nextPage.hasMore);
       } finally {
+        stateRef.current = { ...stateRef.current, isLoading: false };
         setIsLoading(false);
       }
     };
