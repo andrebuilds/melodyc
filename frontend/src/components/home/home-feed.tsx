@@ -73,15 +73,15 @@ export function HomeFeed({ initialPage }: { initialPage: HomePage }) {
   const twoDaysAgo = new Date();
   twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
 
-  const filteredSongs = songs.filter((song) => {
-    if (!debouncedQuery) return true;
-
-    return [
-      song.title,
-      song.prompt,
-      ...song.categories.map((category) => category.name),
-    ].some((value) => value?.toLowerCase().includes(debouncedQuery));
-  });
+  const filteredSongs = debouncedQuery
+    ? songs.filter((song) => {
+        return [
+          song.title,
+          song.prompt,
+          ...song.categories.map((category) => category.name),
+        ].some((value) => value?.toLowerCase().includes(debouncedQuery));
+      })
+    : songs;
 
   const trendingSongs = filteredSongs
     .filter((song) => song.createdAt >= twoDaysAgo)
