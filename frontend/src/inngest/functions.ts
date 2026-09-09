@@ -2,6 +2,73 @@ import { db } from "~/server/db";
 import { inngest } from "./client";
 import { env } from "~/env";
 
+type GenerationResponse = {
+  s3_key: string;
+  cover_image_s3_key: string;
+  categories: string[];
+};
+
+export const generateDemoSong = inngest.createFunction(
+  {
+    id: "generate-demo-song",
+    concurrency: { limit: 1 },
+    onFailure: async ({ event }) => {
+      const { demoGenerationId } = event.data.event.data as {
+        demoGenerationId: string;
+      };
+
+      await db.demoGeneration.update({
+        where: { id: demoGenerationId },
+        data: { status: "failed" },
+      });
+    },
+  },
+  { event: "generate-demo-song-event" },
+  async ({ event, step }) => {
+    const { demoGenerationId } = event.data as {
+      demoGenerationId: string;
+    };
+
+    const demo = await step.run("load-demo-generation", async () => {
+      return db.demoGeneration.update({
+        where: { id: demoGenerationId },
+        data: { status: "processing" },
+      });
+    });
+
+    const response = await step.fetch(env.GENERATE_FROM_DESCRIPTION, {
+      method: "POST",
+      body: JSON.stringify({
+        full_described_song: demo.prompt,
+        instrumental: demo.instrumental,
+        audio_duration: 30,
+        infer_step: 30,
+        guidance_scale: 7.5,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        "Modal-Key": env.MODAL_KEY,
+        "Modal-Secret": env.MODAL_SECRET,
+      },
+    });
+
+    const responseData = response.ok
+      ? ((await response.json()) as GenerationResponse)
+      : null;
+
+    await step.run("save-demo-result", async () => {
+      return db.demoGeneration.update({
+        where: { id: demoGenerationId },
+        data: {
+          s3Key: responseData?.s3_key,
+          thumbnailS3Key: responseData?.cover_image_s3_key,
+          status: response.ok ? "processed" : "failed",
+        },
+      });
+    });
+  },
+);
+
 export const generateSong = inngest.createFunction(
   {
     id: "generate-song",
@@ -139,11 +206,7 @@ export const generateSong = inngest.createFunction(
 
       await step.run("update-song-result", async () => {
         const responseData = response.ok
-          ? ((await response.json()) as {
-              s3_key: string;
-              cover_image_s3_key: string;
-              categories: string[];
-            })
+          ? ((await response.json()) as GenerationResponse)
           : null;
 
         await db.song.update({

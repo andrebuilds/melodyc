@@ -126,7 +126,7 @@ export function TrackList({ tracks }: { tracks: Track[] }) {
 
   return (
     <div className="flex flex-1 flex-col overflow-y-scroll">
-      <div className="flex-1 p-6">
+      <div className="flex flex-1 flex-col p-6">
         <div className="mb-4 flex items-center justify-between gap-4">
           <div className="relative max-w-md flex-1">
             <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
@@ -153,7 +153,7 @@ export function TrackList({ tracks }: { tracks: Track[] }) {
         </div>
 
         {/* Track list */}
-        <div className="space-y-2">
+        <div className="flex flex-1 flex-col space-y-2">
           {filteredTracks.length > 0 ? (
             filteredTracks.map((track) => {
               switch (track.status) {
@@ -306,7 +306,7 @@ export function TrackList({ tracks }: { tracks: Track[] }) {
               }
             })
           ) : (
-            <div className="flex flex-col items-center justify-center pt-20 text-center">
+            <div className="flex flex-1 flex-col items-center justify-center text-center">
               <Music className="text-muted-foreground h-10 w-10" />
               <h2 className="mt-4 text-lg font-semibold">No Music Yet</h2>
               <p className="text-muted-foreground mt-1 text-sm">

@@ -72,6 +72,20 @@ model Category {
   songs Song[]
 }
 
+model DemoGeneration {
+  id String @id @default(cuid())
+  prompt String
+  instrumental Boolean @default(false)
+  status String @default("queued")
+  s3Key String?
+  thumbnailS3Key String?
+  rateLimitKey String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([createdAt])
+}
+
 model Session {
   id        String   @id
   expiresAt DateTime

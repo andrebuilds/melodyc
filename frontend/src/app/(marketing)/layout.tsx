@@ -1,24 +1,21 @@
 import "~/styles/globals.css";
 
-import { type Metadata } from "next";
+import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import { Providers } from "~/components/providers";
+import { SiteFooter } from "~/components/layout/site-footer";
 import { SiteHeader } from "~/components/layout/site-header";
+import { Providers } from "~/components/providers";
 import { Toaster } from "~/components/ui/sonner";
-import { privatePageRobots, siteMetadata } from "~/lib/site-metadata";
+import { siteMetadata } from "~/lib/site-metadata";
 
-export const metadata: Metadata = {
-  ...siteMetadata,
-  title: "Melodyc Account",
-  robots: privatePageRobots,
-};
+export const metadata: Metadata = siteMetadata;
 
 const geist = Geist({
   subsets: ["latin"],
   variable: "--font-geist-sans",
 });
 
-export default function RootLayout({
+export default function MarketingLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
@@ -26,7 +23,8 @@ export default function RootLayout({
       <body className="flex min-h-svh flex-col">
         <Providers>
           <SiteHeader />
-          <main className="flex flex-1 flex-col">{children}</main>
+          <main className="flex-1">{children}</main>
+          <SiteFooter />
           <Toaster />
         </Providers>
       </body>

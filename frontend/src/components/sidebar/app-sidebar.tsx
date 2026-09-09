@@ -7,25 +7,34 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarGroupLabel,
+  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarSeparator,
 } from "../ui/sidebar";
-import { Credits } from "./credits";
 import SidebarMenuItems from "./sidebar-menu-items";
-import { User } from "lucide-react";
-import Upgrade from "./upgrade";
+import { UserIcon } from "lucide-react";
+import Link from "next/link";
+import { MelodycLogo } from "~/components/brand/melodyc-logo";
 
 export async function AppSidebar() {
   return (
-    <Sidebar>
+    <Sidebar collapsible="icon">
+      <SidebarHeader className="px-2 pt-4 pb-3">
+        <Link
+          href="/discover"
+          aria-label="Melodyc dashboard"
+          className="overflow-hidden group-data-[collapsible=icon]:[&>span]:gap-0 group-data-[collapsible=icon]:[&>span>span]:hidden"
+        >
+          <MelodycLogo />
+        </Link>
+      </SidebarHeader>
+      <div className="px-3 pb-2" aria-hidden="true">
+        <SidebarSeparator className="mx-0 w-full bg-sidebar-border/80" />
+      </div>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-primary mt-4 mb-12 flex flex-col items-start justify-start px-2 text-3xl font-black tracking-widest uppercase">
-            <p>Music</p>
-            <p className="text-lg">Generator</p>
-          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItems />
@@ -33,18 +42,23 @@ export async function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter>
-        <div className="mb-2 flex w-full items-center justify-center gap-1 text-xs">
-          <Credits />
-          <Upgrade />
-        </div>
+      <SidebarFooter className="border-t p-2">
         <UserButton
           variant="outline"
+          className="w-full justify-start overflow-hidden group-data-[collapsible=icon]:size-8 group-data-[collapsible=icon]:rounded-full group-data-[collapsible=icon]:border-0 group-data-[collapsible=icon]:p-0!"
+          classNames={{
+            trigger: {
+              base: "group-data-[collapsible=icon]:[&>svg:last-child]:hidden",
+              user: {
+                base: "group-data-[collapsible=icon]:[&>*:not(:first-child)]:hidden",
+              },
+            },
+          }}
           additionalLinks={[
             {
               label: "Customer Portal",
               href: "/customer-portal",
-              icon: <User />,
+              icon: <UserIcon />,
             },
           ]}
         />

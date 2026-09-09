@@ -15,12 +15,10 @@ export default function Upgrade() {
   };
   return (
     <Button
-      variant="outline"
-      size="sm"
-      className="ml-2 cursor-pointer text-orange-400"
+      className="mt-6 w-full"
       onClick={upgrade}
     >
-      Upgrade
+      Buy more credits
     </Button>
   );
 }

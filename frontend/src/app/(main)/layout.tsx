@@ -21,11 +21,17 @@ import {
 } from "~/components/ui/breadcrumb";
 import BreadcrumbPageClient from "~/components/sidebar/breadcrumb-page-client";
 import SoundBar from "~/components/sound-bar";
+import { Credits } from "~/components/sidebar/credits";
+import { GitHubRepoButton } from "~/components/layout/github-repo-button";
+import { ModeToggle } from "~/components/theme/mode-toggle";
+import { privatePageRobots, siteMetadata } from "~/lib/site-metadata";
 
 export const metadata: Metadata = {
-  title: "Home",
-  description: "Melodyc",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  ...siteMetadata,
+  title: "Melodyc | Your Music Studio",
+  description:
+    "Create, manage, and discover your music in your personal Melodyc studio.",
+  robots: privatePageRobots,
 };
 
 const geist = Geist({
@@ -37,13 +43,13 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${geist.variable}`}>
+    <html lang="en" className={geist.variable} suppressHydrationWarning>
       <body>
         <Providers>
           <SidebarProvider>
             <AppSidebar />
             <SidebarInset className="flex h-screen flex-col">
-              <header className="bg-background sticky-top z-10 border-b px-4 py-2">
+              <header className="sticky top-0 z-10 border-b bg-background px-4 py-2">
                 <div className="flex shrink-0 grow items-center gap-2">
                   <SidebarTrigger className="-ml-1" />
                   <Separator
@@ -57,6 +63,21 @@ export default function RootLayout({
                       </BreadcrumbItem>
                     </BreadcrumbList>
                   </Breadcrumb>
+                  <div className="ml-auto flex items-center gap-1 sm:gap-2">
+                    <div className="flex h-9 items-center gap-1.5 rounded-md border bg-card px-2.5 text-xs shadow-xs">
+                      <Credits />
+                    </div>
+                    <Separator
+                      orientation="vertical"
+                      className="mx-1 data-[orientation=vertical]:h-5"
+                    />
+                    <GitHubRepoButton />
+                    <Separator
+                      orientation="vertical"
+                      className="mx-1 data-[orientation=vertical]:h-5"
+                    />
+                    <ModeToggle />
+                  </div>
                 </div>
               </header>
               <main className="flex-1 overflow-y-auto">{children}</main>

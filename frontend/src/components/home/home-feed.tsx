@@ -107,7 +107,7 @@ export function HomeFeed({ initialPage }: { initialPage: HomePage }) {
 
   if (songs.length === 0) {
     return (
-      <div className="flex h-full flex-col items-center justify-center p-4 text-center">
+      <div className="flex flex-1 flex-col items-center justify-center text-center">
         <Music className="text-muted-foreground h-20 w-20" />
         <h1 className="mt-4 text-2xl font-bold tracking-tight">
           No Music Here
@@ -120,9 +120,8 @@ export function HomeFeed({ initialPage }: { initialPage: HomePage }) {
   }
 
   return (
-    <div className="p-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-3xl font-bold tracking-tight">Discover Music</h1>
+    <div className="pt-8">
+      <div className="flex justify-end">
         <div className="relative w-full sm:max-w-xs">
           <Search className="text-muted-foreground absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2" />
           <input

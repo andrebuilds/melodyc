@@ -31,6 +31,7 @@
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -50,72 +51,111 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --background: #f6e6ee;
+  --foreground: #5b5b5b;
+  --card: #fdedc9;
+  --card-foreground: #5b5b5b;
+  --popover: #ffffff;
+  --popover-foreground: #5b5b5b;
+  --primary: #d04f99;
+  --primary-foreground: #ffffff;
+  --secondary: #8acfd1;
+  --secondary-foreground: #333333;
+  --muted: #b2e1eb;
+  --muted-foreground: #7a7a7a;
+  --accent: #fbe2a7;
+  --accent-foreground: #333333;
+  --destructive: #f96f70;
+  --destructive-foreground: #ffffff;
+  --border: #d04f99;
+  --input: #e4e4e4;
+  --ring: #e670ab;
+  --chart-1: #e670ab;
+  --chart-2: #84d2e2;
+  --chart-3: #fbe2a7;
+  --chart-4: #f3a0ca;
+  --chart-5: #d7488e;
+  --sidebar: #f8d8ea;
+  --sidebar-foreground: #333333;
+  --sidebar-primary: #ec4899;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f9a8d4;
+  --sidebar-accent-foreground: #333333;
+  --sidebar-border: #f3e8ff;
+  --sidebar-ring: #ec4899;
+  --font-sans: Poppins, sans-serif;
+  --font-serif: Lora, serif;
+  --font-mono: "Fira Code", monospace;
+  --radius: 0.4rem;
+  --shadow-x: 3px;
+  --shadow-y: 3px;
+  --shadow-blur: 0px;
+  --shadow-spread: 0px;
+  --shadow-opacity: 1;
+  --shadow-color: hsl(325.78 58.18% 56.86% / 0.5);
+  --shadow-2xs: 3px 3px 0px 0px hsl(325.78 58.18% 56.86% / 0.5);
+  --shadow-xs: 3px 3px 0px 0px hsl(325.78 58.18% 56.86% / 0.5);
+  --shadow-sm: 3px 3px 0px 0px hsl(325.78 58.18% 56.86% / 1), 3px 1px 2px -1px hsl(325.78 58.18% 56.86% / 1);
+  --shadow: 3px 3px 0px 0px hsl(325.78 58.18% 56.86% / 1), 3px 1px 2px -1px hsl(325.78 58.18% 56.86% / 1);
+  --shadow-md: 3px 3px 0px 0px hsl(325.78 58.18% 56.86% / 1), 3px 2px 4px -1px hsl(325.78 58.18% 56.86% / 1);
+  --shadow-lg: 3px 3px 0px 0px hsl(325.78 58.18% 56.86% / 1), 3px 4px 6px -1px hsl(325.78 58.18% 56.86% / 1);
+  --shadow-xl: 3px 3px 0px 0px hsl(325.78 58.18% 56.86% / 1), 3px 8px 10px -1px hsl(325.78 58.18% 56.86% / 1);
+  --shadow-2xl: 3px 3px 0px 0px hsl(325.78 58.18% 56.86% / 2.5);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
 }
 
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --background: #12242e;
+  --foreground: #f3e3ea;
+  --card: #1c2e38;
+  --card-foreground: #f3e3ea;
+  --popover: #1c2e38;
+  --popover-foreground: #f3e3ea;
+  --primary: #fbe2a7;
+  --primary-foreground: #12242e;
+  --secondary: #e4a2b1;
+  --secondary-foreground: #12242e;
+  --muted: #24272b;
+  --muted-foreground: #e4a2b1;
+  --accent: #c67b96;
+  --accent-foreground: #f3e3ea;
+  --destructive: #e35ea4;
+  --destructive-foreground: #12242e;
+  --border: #324859;
+  --input: #20333d;
+  --ring: #50afb6;
+  --chart-1: #50afb6;
+  --chart-2: #e4a2b1;
+  --chart-3: #c67b96;
+  --chart-4: #175c6c;
+  --chart-5: #24272b;
+  --sidebar: #101f28;
+  --sidebar-foreground: #f3f4f6;
+  --sidebar-primary: #ec4899;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f9a8d4;
+  --sidebar-accent-foreground: #1f2937;
+  --sidebar-border: #374151;
+  --sidebar-ring: #ec4899;
+  --font-sans: Poppins, sans-serif;
+  --font-serif: Lora, serif;
+  --font-mono: "Fira Code", monospace;
+  --radius: 0.4rem;
+  --shadow-x: 3px;
+  --shadow-y: 3px;
+  --shadow-blur: 0px;
+  --shadow-spread: 0px;
+  --shadow-opacity: 1;
+  --shadow-color: #324859;
+  --shadow-2xs: 3px 3px 0px 0px hsl(206.15 28.06% 27.25% / 0.5);
+  --shadow-xs: 3px 3px 0px 0px hsl(206.15 28.06% 27.25% / 0.5);
+  --shadow-sm: 3px 3px 0px 0px hsl(206.15 28.06% 27.25% / 1), 3px 1px 2px -1px hsl(206.15 28.06% 27.25% / 1);
+  --shadow: 3px 3px 0px 0px hsl(206.15 28.06% 27.25% / 1), 3px 1px 2px -1px hsl(206.15 28.06% 27.25% / 1);
+  --shadow-md: 3px 3px 0px 0px hsl(206.15 28.06% 27.25% / 1), 3px 2px 4px -1px hsl(206.15 28.06% 27.25% / 1);
+  --shadow-lg: 3px 3px 0px 0px hsl(206.15 28.06% 27.25% / 1), 3px 4px 6px -1px hsl(206.15 28.06% 27.25% / 1);
+  --shadow-xl: 3px 3px 0px 0px hsl(206.15 28.06% 27.25% / 1), 3px 8px 10px -1px hsl(206.15 28.06% 27.25% / 1);
+  --shadow-2xl: 3px 3px 0px 0px hsl(206.15 28.06% 27.25% / 2.5);
 }
 
 @layer base {
@@ -125,25 +165,62 @@
   body {
     @apply bg-background text-foreground;
   }
-  :root {
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+}
+
+
+/* Add cursor pointer to buttons by default - this is coming from tailwind docs */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+
+/* Theme-aware scrollbar for document and chat surfaces. */
+@layer base {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(
+        in srgb,
+        var(--primary) 70%,
+        var(--background)
+      )
+      var(--background);
   }
 
-  .dark {
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.439 0 0);
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--background);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: color-mix(
+      in srgb,
+      var(--primary) 70%,
+      var(--background)
+    );
+    border: 2px solid var(--background);
+    border-radius: var(--radius);
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: color-mix(
+      in srgb,
+      var(--primary) 88%,
+      var(--foreground)
+    );
+  }
+
+  *::-webkit-scrollbar-thumb:active {
+    background-color: var(--ring);
+  }
+
+  *::-webkit-scrollbar-corner {
+    background: var(--background);
   }
 }
