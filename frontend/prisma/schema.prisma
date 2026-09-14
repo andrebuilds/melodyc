@@ -20,7 +20,7 @@ model User {
   updatedAt     DateTime
   sessions      Session[]
   accounts      Account[]
-  credits       Int @default(100)
+  credits       Int @default(20)
   likes Like[]
   songs Song[]
 

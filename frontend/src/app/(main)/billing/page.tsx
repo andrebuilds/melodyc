@@ -24,7 +24,7 @@ export default async function BillingPage() {
       <DashboardPageHeader
         eyebrow="Your Melodyc plan"
         title="Billing"
-        description="Manage your Melodyc credits, plan, and payment details."
+        description="Manage your Melodyc credits, subscription, and payment details."
         icon={CreditCardIcon}
       />
 
@@ -35,11 +35,10 @@ export default async function BillingPage() {
               <CoinsIcon className="size-5" aria-hidden="true" />
             </div>
             <CardTitle className="mt-4">Available credits</CardTitle>
-            <CardDescription>Credits are used whenever you generate a new song.</CardDescription>
+            <CardDescription>Credits are added after each successful subscription payment and used whenever you generate a new song.</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-4xl font-black tabular-nums">{user.credits}</p>
-            <Upgrade />
           </CardContent>
         </Card>
 
@@ -62,6 +61,18 @@ export default async function BillingPage() {
           </CardContent>
         </Card>
       </div>
+
+      <section className="mt-10" aria-labelledby="subscription-plans-title">
+        <div className="mb-5">
+          <h2 id="subscription-plans-title" className="text-2xl font-bold">
+            Subscription plans
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Choose how many songs you want to create each month. Cancel anytime.
+          </p>
+        </div>
+        <Upgrade />
+      </section>
     </div>
   );
 }

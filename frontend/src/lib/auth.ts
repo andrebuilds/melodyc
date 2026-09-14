@@ -7,19 +7,30 @@ import {
   polar,
   checkout,
   portal,
-  usage,
   webhooks,
 } from "@polar-sh/better-auth";
 
 const polarClient = new Polar({
   accessToken: env.POLAR_ACCESS_TOKEN,
-  server: "sandbox",
+  server: env.POLAR_SERVER,
 });
 
 export const auth = betterAuth({
   database: prismaAdapter(db, {
     provider: "postgresql",
   }),
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => ({
+          data: {
+            ...user,
+            credits: 20,
+          },
+        }),
+      },
+    },
+  },
   emailAndPassword: {
     enabled: true,
   },
@@ -31,19 +42,19 @@ export const auth = betterAuth({
         checkout({
           products: [
             {
-              productId: "a209b547-608c-44e7-9178-4976a73c7135",
-              slug: "small",
+              productId: env.POLAR_TRACK_PRODUCT_ID,
+              slug: "track",
             },
             {
-              productId: "11bce5cb-bfda-4c8f-afcc-4a512e2d7361",
-              slug: "medium",
+              productId: env.POLAR_EP_PRODUCT_ID,
+              slug: "ep",
             },
             {
-              productId: "7ddf3794-111c-45ba-bd4c-36935d8ed81b",
-              slug: "large",
+              productId: env.POLAR_DISCOGRAPHY_PRODUCT_ID,
+              slug: "discography",
             },
           ],
-          successUrl: "/",
+          successUrl: "/billing?payment=success",
           authenticatedUsersOnly: true,
         }),
         portal(),
@@ -62,14 +73,14 @@ export const auth = betterAuth({
             let creditsToAdd = 0;
 
             switch (productId) {
-              case "a209b547-608c-44e7-9178-4976a73c7135":
-                creditsToAdd = 10;
+              case env.POLAR_TRACK_PRODUCT_ID:
+                creditsToAdd = 30;
                 break;
-              case "11bce5cb-bfda-4c8f-afcc-4a512e2d7361":
-                creditsToAdd = 25;
+              case env.POLAR_EP_PRODUCT_ID:
+                creditsToAdd = 70;
                 break;
-              case "7ddf3794-111c-45ba-bd4c-36935d8ed81b":
-                creditsToAdd = 50;
+              case env.POLAR_DISCOGRAPHY_PRODUCT_ID:
+                creditsToAdd = 150;
                 break;
             }
 

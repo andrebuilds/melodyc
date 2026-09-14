@@ -49,6 +49,34 @@ function MobileNav({
           {items.map((item) => {
             const Icon = item.icon;
 
+            if ("items" in item) {
+              return (
+                <div key={item.label} className="py-1">
+                  <div className="flex items-center gap-3 px-3 py-2 text-sm font-semibold text-foreground">
+                    <Icon aria-hidden="true" strokeWidth={1.75} className="size-4" />
+                    {item.label}
+                  </div>
+                  <div className="ml-4 border-l pl-3">
+                    {item.items.map((child) => {
+                      const ChildIcon = child.icon;
+
+                      return (
+                        <SheetClose key={child.href} asChild>
+                          <Link
+                            href={child.href}
+                            className="flex items-center gap-3 rounded-md px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+                          >
+                            <ChildIcon aria-hidden="true" strokeWidth={1.75} className="size-4" />
+                            {child.label}
+                          </Link>
+                        </SheetClose>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            }
+
             return (
               <SheetClose key={item.href} asChild>
                 <Link

@@ -1,5 +1,6 @@
 "use client";
 
+import { ChevronDownIcon } from "lucide-react";
 import Link from "next/link";
 import { useSyncExternalStore } from "react";
 import { MelodycLogo } from "~/components/brand/melodyc-logo";
@@ -7,6 +8,12 @@ import { AuthHeaderActions } from "~/components/layout/auth-header-actions";
 import { GitHubRepoButton } from "~/components/layout/github-repo-button";
 import { MobileNav } from "~/components/layout/mobile-nav";
 import { ModeToggle } from "~/components/theme/mode-toggle";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "~/components/ui/dropdown-menu";
 import { Separator } from "~/components/ui/separator";
 import { mainNav } from "~/lib/site-config";
 import { cn } from "~/lib/utils";
@@ -55,6 +62,40 @@ function SiteHeader() {
           <nav className="hidden items-center gap-6 md:flex" aria-label="Main navigation">
             {mainNav.map((item) => {
               const Icon = item.icon;
+
+              if ("items" in item) {
+                return (
+                  <DropdownMenu key={item.label}>
+                    <DropdownMenuTrigger className="group flex items-center gap-1.5 text-sm font-medium text-muted-foreground outline-none transition-colors hover:text-primary data-[state=open]:text-primary">
+                      <Icon
+                        aria-hidden="true"
+                        strokeWidth={1.75}
+                        className="size-3.5 opacity-75 transition-opacity group-hover:opacity-100"
+                      />
+                      {item.label}
+                      <ChevronDownIcon
+                        aria-hidden="true"
+                        strokeWidth={1.75}
+                        className="size-3.5 transition-transform group-data-[state=open]:rotate-180"
+                      />
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-44">
+                      {item.items.map((child) => {
+                        const ChildIcon = child.icon;
+
+                        return (
+                          <DropdownMenuItem key={child.href} asChild>
+                            <Link href={child.href}>
+                              <ChildIcon aria-hidden="true" />
+                              {child.label}
+                            </Link>
+                          </DropdownMenuItem>
+                        );
+                      })}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                );
+              }
 
               return (
                 <Link

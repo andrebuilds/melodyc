@@ -23,6 +23,10 @@ export const env = createEnv({
     GENERATE_WITH_LYRICS: z.string(),
     POLAR_ACCESS_TOKEN: z.string(),
     POLAR_WEBHOOK_SECRET: z.string(),
+    POLAR_SERVER: z.enum(["sandbox", "production"]).default("sandbox"),
+    POLAR_TRACK_PRODUCT_ID: z.string().uuid(),
+    POLAR_EP_PRODUCT_ID: z.string().uuid(),
+    POLAR_DISCOGRAPHY_PRODUCT_ID: z.string().uuid(),
   },
 
   /**
@@ -53,6 +57,10 @@ export const env = createEnv({
     GENERATE_WITH_LYRICS: process.env.GENERATE_WITH_LYRICS,
     POLAR_ACCESS_TOKEN: process.env.POLAR_ACCESS_TOKEN,
     POLAR_WEBHOOK_SECRET: process.env.POLAR_WEBHOOK_SECRET,
+    POLAR_SERVER: process.env.POLAR_SERVER,
+    POLAR_TRACK_PRODUCT_ID: process.env.POLAR_TRACK_PRODUCT_ID,
+    POLAR_EP_PRODUCT_ID: process.env.POLAR_EP_PRODUCT_ID,
+    POLAR_DISCOGRAPHY_PRODUCT_ID: process.env.POLAR_DISCOGRAPHY_PRODUCT_ID,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

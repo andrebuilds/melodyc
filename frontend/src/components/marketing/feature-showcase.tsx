@@ -4,6 +4,7 @@ import {
   ArrowRightIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  HeadphonesIcon,
   ImageIcon,
 } from "lucide-react";
 import Link from "next/link";
@@ -109,7 +110,8 @@ function FeatureShowcase() {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-10">
         <div className="text-center">
-          <p className="text-sm font-bold text-primary uppercase">
+          <p className="inline-flex items-center gap-2 text-sm font-bold text-primary uppercase">
+            <HeadphonesIcon className="size-4" aria-hidden="true" />
             Inside Melodyc
           </p>
           <h2 className="mx-auto mt-3 text-3xl leading-tight font-bold sm:text-4xl lg:text-5xl lg:whitespace-nowrap">

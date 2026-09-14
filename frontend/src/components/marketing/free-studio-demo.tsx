@@ -129,7 +129,7 @@ function FreeStudioDemo() {
   const isGenerating = status === "queued" || status === "processing";
 
   return (
-    <div className="relative mx-auto mt-16 w-full max-w-6xl text-left">
+    <div id="demo" className="relative mx-auto mt-16 w-full max-w-6xl scroll-mt-24 text-left">
       <div
         className="absolute -top-3 -left-3 size-16 border-t-2 border-l-2 border-secondary"
         aria-hidden="true"
