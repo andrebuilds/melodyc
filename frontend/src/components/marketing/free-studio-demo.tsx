@@ -75,7 +75,7 @@ function FreeStudioDemo() {
         setStatus(data.status);
 
         if (data.status === "queued" || data.status === "processing") {
-          timeout = window.setTimeout(poll, 3000);
+          timeout = window.setTimeout(() => void poll(), 3000);
         }
       } catch (pollError) {
         if (controller.signal.aborted) return;
@@ -88,7 +88,7 @@ function FreeStudioDemo() {
       }
     }
 
-    timeout = window.setTimeout(poll, 1200);
+    timeout = window.setTimeout(() => void poll(), 1200);
 
     return () => {
       controller.abort();

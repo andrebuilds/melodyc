@@ -92,7 +92,7 @@ export function TrackList({ tracks }: { tracks: Track[] }) {
       }
     };
 
-    const intervalId = setInterval(pollStatuses, 10_000);
+    const intervalId = setInterval(() => void pollStatuses(), 10_000);
     return () => clearInterval(intervalId);
   }, [processingTrackIds.join(",")]);
 
