@@ -1,11 +1,18 @@
 import "~/styles/globals.css";
 
-import { type Metadata } from "next";
+import { type Metadata, type Viewport } from "next";
 import { Geist } from "next/font/google";
+import { CookieBanner } from "~/components/cookie-banner";
 import { Providers } from "~/components/providers";
 import { SiteHeader } from "~/components/layout/site-header";
 import { Toaster } from "~/components/ui/sonner";
-import { privatePageRobots, siteMetadata } from "~/lib/site-metadata";
+import {
+  privatePageRobots,
+  siteMetadata,
+  siteViewport,
+} from "~/lib/site-metadata";
+
+export const viewport: Viewport = siteViewport;
 
 export const metadata: Metadata = {
   ...siteMetadata,
@@ -27,6 +34,7 @@ export default function RootLayout({
         <Providers>
           <SiteHeader />
           <main className="flex flex-1 flex-col">{children}</main>
+          <CookieBanner />
           <Toaster />
         </Providers>
       </body>

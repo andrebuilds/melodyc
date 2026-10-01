@@ -2,10 +2,11 @@
 	"id": "/",
 	"name": "Melodyc",
 	"short_name": "Melodyc",
-	"description": "Generate original AI music with the hosted Melodyc service or self-host the complete MIT-licensed codebase.",
+	"description": "Generate original AI music from text, lyrics, or style prompts with the hosted Melodyc studio or self-host the complete MIT-licensed codebase.",
 	"lang": "en",
 	"start_url": "/",
 	"scope": "/",
+	"categories": ["music", "entertainment", "productivity"],
 	"icons": [
 		{
 			"src": "/favicon/android-chrome-192x192.png",
@@ -18,8 +19,8 @@
 			"type": "image/png"
 		}
 	],
-	"theme_color": "#ffffff",
-	"background_color": "#ffffff",
+	"theme_color": "#f6e6ee",
+	"background_color": "#f6e6ee",
 	"display": "standalone",
 	"orientation": "any"
 }

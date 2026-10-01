@@ -5,10 +5,10 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   HeadphonesIcon,
-  ImageIcon,
+  // ImageIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "~/components/ui/button";
 import { cn } from "~/lib/utils";
 
@@ -50,47 +50,64 @@ const features: SliderFeature[] = [
   },
 ];
 
-function FeatureImage({ feature }: { feature: SliderFeature }) {
-  const [failed, setFailed] = useState(false);
+// TODO: restore when the screenshots in /public/landing are available.
+// function FeatureImage({ feature }: { feature: SliderFeature }) {
+//   const [failed, setFailed] = useState(false);
+//
+//   return (
+//     <div className="relative aspect-[16/10] w-full overflow-hidden rounded-md border bg-muted/30 shadow-xl ring-1 ring-border/50">
+//       {!failed && (
+//         <img
+//           src={feature.imageSrc}
+//           alt={feature.imageAlt}
+//           className="size-full object-cover object-top"
+//           onError={() => setFailed(true)}
+//         />
+//       )}
+//       {failed && (
+//         <div className="flex size-full flex-col items-center justify-center p-6 text-center">
+//           <span className="flex size-12 items-center justify-center rounded-md border bg-background text-primary shadow-sm">
+//             <ImageIcon className="size-5" aria-hidden="true" />
+//           </span>
+//           <p className="mt-4 text-sm font-semibold">Screenshot ready</p>
+//           <p className="mt-1 font-mono text-xs text-muted-foreground">
+//             {feature.imageSrc}
+//           </p>
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
 
-  return (
-    <div className="relative aspect-[16/10] w-full overflow-hidden rounded-md border bg-muted/30 shadow-xl ring-1 ring-border/50">
-      {!failed && (
-        <img
-          src={feature.imageSrc}
-          alt={feature.imageAlt}
-          className="size-full object-cover object-top"
-          onError={() => setFailed(true)}
-        />
-      )}
-      {failed && (
-        <div className="flex size-full flex-col items-center justify-center p-6 text-center">
-          <span className="flex size-12 items-center justify-center rounded-md border bg-background text-primary shadow-sm">
-            <ImageIcon className="size-5" aria-hidden="true" />
-          </span>
-          <p className="mt-4 text-sm font-semibold">Screenshot ready</p>
-          <p className="mt-1 font-mono text-xs text-muted-foreground">
-            {feature.imageSrc}
-          </p>
-        </div>
-      )}
-    </div>
-  );
-}
+const AUTOPLAY_INTERVAL_MS = 5000;
 
 function FeatureShowcase() {
   const [current, setCurrent] = useState(0);
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const [paused, setPaused] = useState(false);
   const touchStartX = useRef(0);
   const total = features.length;
-  const previous = useCallback(
-    () => setCurrent((value) => (value - 1 + total) % total),
-    [total],
-  );
-  const next = useCallback(
-    () => setCurrent((value) => (value + 1) % total),
-    [total],
-  );
+  const previous = useCallback(() => {
+    setDirection(-1);
+    setCurrent((value) => (value - 1 + total) % total);
+  }, [total]);
+  const next = useCallback(() => {
+    setDirection(1);
+    setCurrent((value) => (value + 1) % total);
+  }, [total]);
+  const goTo = (index: number) => {
+    if (index === current) return;
+    setDirection(index > current ? 1 : -1);
+    setCurrent(index);
+  };
   const feature = features[current]!;
+
+  // Depends on `current` so manual navigation restarts the countdown.
+  useEffect(() => {
+    if (paused) return;
+    const timer = setTimeout(next, AUTOPLAY_INTERVAL_MS);
+    return () => clearTimeout(timer);
+  }, [current, paused, next]);
 
   const handleTouchEnd = (event: React.TouchEvent) => {
     const delta =
@@ -124,8 +141,11 @@ function FeatureShowcase() {
         </div>
 
         <div
-          key={current}
-          className="animate-in fade-in mt-14 duration-300 sm:mt-16"
+          className="mt-14 sm:mt-16"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onFocus={() => setPaused(true)}
+          onBlur={() => setPaused(false)}
         >
           <div className="md:grid md:grid-cols-[2.75rem_minmax(0,1fr)_2.75rem] md:gap-6">
             <button
@@ -140,8 +160,23 @@ function FeatureShowcase() {
               <ChevronLeftIcon className="size-6" aria-hidden="true" />
             </button>
 
-            <div className="min-w-0">
-              <div className="grid items-start gap-4 lg:grid-cols-2 lg:gap-14">
+            <div
+              className="min-w-0 overflow-hidden"
+              aria-live={paused ? "polite" : "off"}
+              onTouchStart={(event) => {
+                touchStartX.current = event.touches[0]?.clientX ?? 0;
+              }}
+              onTouchEnd={handleTouchEnd}
+            >
+              <div
+                key={current}
+                className={cn(
+                  "animate-in fade-in grid items-start gap-4 duration-500 ease-out motion-reduce:animate-none lg:grid-cols-2 lg:gap-14",
+                  direction === 1
+                    ? "slide-in-from-right-12"
+                    : "slide-in-from-left-12",
+                )}
+              >
                 <h3 className="text-2xl leading-tight font-bold sm:text-3xl lg:text-4xl">
                   {feature.title}
                 </h3>
@@ -150,43 +185,9 @@ function FeatureShowcase() {
                 </p>
               </div>
 
-              <div
-                className="mt-8"
-                onTouchStart={(event) => {
-                  touchStartX.current = event.touches[0]?.clientX ?? 0;
-                }}
-                onTouchEnd={handleTouchEnd}
-              >
+              {/* <div className="mt-8">
                 <FeatureImage feature={feature} />
-              </div>
-
-              <div className="mt-6 flex items-center justify-end gap-4">
-                <div className="flex items-center gap-1">
-                  {features.map((item, index) => (
-                    <button
-                      key={item.imageSrc}
-                      type="button"
-                      onClick={() => setCurrent(index)}
-                      aria-label={`Show feature ${index + 1}`}
-                      aria-current={index === current ? "true" : undefined}
-                      className="inline-flex min-h-10 min-w-7 items-center justify-center rounded-full"
-                    >
-                      <span
-                        className={cn(
-                          "block h-1.5 rounded-full transition-all duration-300",
-                          index === current
-                            ? "w-6 bg-foreground"
-                            : "w-1.5 bg-border hover:bg-muted-foreground",
-                        )}
-                      />
-                    </button>
-                  ))}
-                </div>
-                <span className="font-mono text-sm tabular-nums text-muted-foreground">
-                  {String(current + 1).padStart(2, "0")} /{" "}
-                  {String(total).padStart(2, "0")}
-                </span>
-              </div>
+              </div> */}
             </div>
 
             <button
@@ -200,6 +201,34 @@ function FeatureShowcase() {
             >
               <ChevronRightIcon className="size-6" aria-hidden="true" />
             </button>
+          </div>
+
+          <div className="mt-6 flex items-center justify-end gap-4 md:px-[4.25rem]">
+            <div className="flex items-center gap-1">
+              {features.map((item, index) => (
+                <button
+                  key={item.imageSrc}
+                  type="button"
+                  onClick={() => goTo(index)}
+                  aria-label={`Show feature ${index + 1}`}
+                  aria-current={index === current ? "true" : undefined}
+                  className="inline-flex min-h-10 min-w-7 items-center justify-center rounded-full"
+                >
+                  <span
+                    className={cn(
+                      "block h-1.5 rounded-full transition-all duration-300",
+                      index === current
+                        ? "w-6 bg-foreground"
+                        : "w-1.5 bg-border hover:bg-muted-foreground",
+                    )}
+                  />
+                </button>
+              ))}
+            </div>
+            <span className="font-mono text-sm tabular-nums text-muted-foreground">
+              {String(current + 1).padStart(2, "0")} /{" "}
+              {String(total).padStart(2, "0")}
+            </span>
           </div>
 
           <div className="mt-2 flex items-center justify-between md:hidden">

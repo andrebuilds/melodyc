@@ -1,4 +1,5 @@
-import type { ElementType, Metadata } from "next";
+import type { Metadata } from "next";
+import type { ElementType } from "react";
 import {
   CircleHelpIcon,
   CompassIcon,
@@ -11,13 +12,17 @@ import {
   WandSparklesIcon,
 } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
+import { JsonLd } from "~/components/seo/json-ld";
+import { breadcrumbStructuredData } from "~/lib/structured-data";
+import { pageMetadata } from "~/lib/site-metadata";
 import { cn } from "~/lib/utils";
 
-export const metadata: Metadata = {
-  title: "Changelog | Melodyc",
+export const metadata: Metadata = pageMetadata({
+  title: "Changelog",
   description:
-    "Follow new features, improvements, and fixes shipped to Melodyc.",
-};
+    "See every new feature, improvement, and fix shipped to Melodyc, the open-source AI music generator: releases, dates, and what changed for creators.",
+  path: "/changelog",
+});
 
 type ChangeType = "new" | "improved" | "fixed";
 
@@ -283,6 +288,7 @@ const releases: Release[] = [
 export default function ChangelogPage() {
   return (
     <div className="min-w-0">
+      <JsonLd data={breadcrumbStructuredData("Changelog", "/changelog")} />
       <section className="border-b bg-muted/25 px-4 py-20 text-center sm:px-6 sm:py-24">
         <p className="text-sm font-bold text-primary uppercase">Changelog</p>
         <h1 className="animate-in fade-in slide-in-from-bottom-3 mt-4 text-4xl font-black duration-500 sm:text-5xl lg:text-6xl">

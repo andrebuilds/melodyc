@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 
-const siteName = "Melodyc";
+export const siteName = "Melodyc";
 const siteTitle = "Melodyc | Open-Source AI Music Generator";
-const siteDescription =
+export const siteDescription =
   "Generate original AI music from text, lyrics, or style prompts. Use Melodyc as a hosted service or self-host the complete MIT-licensed codebase.";
 
 const productionUrl =
@@ -36,6 +36,34 @@ const icons: Metadata["icons"] = {
   ],
 };
 
+const ogImage = {
+  url: "/og-image.png",
+  width: 1200,
+  height: 630,
+  type: "image/png",
+  alt: "Melodyc: from a sentence to a complete song",
+};
+
+const defaultOpenGraph = {
+  type: "website",
+  siteName,
+  locale: "en_US",
+  images: [ogImage],
+} satisfies Metadata["openGraph"];
+
+const defaultTwitter = {
+  card: "summary_large_image",
+  images: [ogImage],
+} satisfies Metadata["twitter"];
+
+export const siteViewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f6e6ee" },
+    { media: "(prefers-color-scheme: dark)", color: "#12242e" },
+  ],
+  colorScheme: "light dark",
+};
+
 export const siteMetadata: Metadata = {
   metadataBase: siteUrl,
   applicationName: siteName,
@@ -46,11 +74,15 @@ export const siteMetadata: Metadata = {
   description: siteDescription,
   keywords: [
     "AI music generator",
-    "open-source music generator",
-    "text to music",
+    "free AI music generator",
     "AI song generator",
+    "AI song maker",
+    "text to music",
+    "text to song",
     "lyrics to music",
-    "self-hosted AI",
+    "AI lyrics generator",
+    "open-source music generator",
+    "self-hosted AI music",
     "ACE-Step",
     "generative AI music",
   ],
@@ -60,12 +92,23 @@ export const siteMetadata: Metadata = {
   ],
   creator: "Andrea D'Ambrosio and Thomas Fortuna",
   publisher: siteName,
-  category: "technology",
+  category: "music",
   referrer: "origin-when-cross-origin",
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
   alternates: {
     canonical: "/",
@@ -73,15 +116,13 @@ export const siteMetadata: Metadata = {
   manifest: "/favicon/site.webmanifest",
   icons,
   openGraph: {
-    type: "website",
+    ...defaultOpenGraph,
     url: "/",
-    siteName,
     title: siteTitle,
     description: siteDescription,
-    locale: "en_US",
   },
   twitter: {
-    card: "summary",
+    ...defaultTwitter,
     title: siteTitle,
     description: siteDescription,
   },
@@ -102,3 +143,33 @@ export const privatePageRobots: Metadata["robots"] = {
     noimageindex: true,
   },
 };
+
+// Child metadata replaces openGraph/twitter objects, so each public page must restate them.
+export function pageMetadata({
+  title,
+  description,
+  path,
+}: {
+  title: string;
+  description: string;
+  path: string;
+}): Metadata {
+  const fullTitle = `${title} | ${siteName}`;
+
+  return {
+    title,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      ...defaultOpenGraph,
+      url: path,
+      title: fullTitle,
+      description,
+    },
+    twitter: {
+      ...defaultTwitter,
+      title: fullTitle,
+      description,
+    },
+  };
+}

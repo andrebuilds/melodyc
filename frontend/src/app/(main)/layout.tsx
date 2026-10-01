@@ -1,6 +1,6 @@
 import "~/styles/globals.css";
 
-import { type Metadata } from "next";
+import { type Metadata, type Viewport } from "next";
 import { Geist } from "next/font/google";
 import { Providers } from "~/components/providers";
 import { Toaster } from "~/components/ui/sonner";
@@ -24,7 +24,13 @@ import SoundBar from "~/components/sound-bar";
 import { Credits } from "~/components/sidebar/credits";
 import { GitHubRepoButton } from "~/components/layout/github-repo-button";
 import { ModeToggle } from "~/components/theme/mode-toggle";
-import { privatePageRobots, siteMetadata } from "~/lib/site-metadata";
+import {
+  privatePageRobots,
+  siteMetadata,
+  siteViewport,
+} from "~/lib/site-metadata";
+
+export const viewport: Viewport = siteViewport;
 
 export const metadata: Metadata = {
   ...siteMetadata,

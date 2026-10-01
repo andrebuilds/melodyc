@@ -97,7 +97,15 @@ function SiteFooter() {
       </div>
 
       <div className="relative z-10 mx-auto mt-16 flex max-w-7xl flex-col gap-5 border-t pt-6 text-sm text-muted-foreground lg:flex-row lg:items-center lg:justify-between">
-        <p>&copy; {currentYear} Melodyc. All rights reserved.</p>
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
+          <p>&copy; {currentYear} Melodyc. All rights reserved.</p>
+          <nav aria-label="Legal links">
+            <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
+              <li><Link href="/privacy" className="transition-colors hover:text-foreground">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="transition-colors hover:text-foreground">Terms and Conditions</Link></li>
+            </ul>
+          </nav>
+        </div>
         <div className="flex flex-wrap items-center gap-3">
           <span>Created by</span>
           <div className="flex -space-x-2">

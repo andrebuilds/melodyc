@@ -59,7 +59,7 @@ function FreeStudioDemo() {
     if (!generationId || status === "processed" || status === "failed") return;
 
     const controller = new AbortController();
-    let timeout: ReturnType<typeof setTimeout> | undefined;
+    let timeout: number | undefined;
 
     async function poll() {
       try {

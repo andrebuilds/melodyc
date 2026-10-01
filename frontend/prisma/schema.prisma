@@ -23,6 +23,7 @@ model User {
   credits       Int @default(20)
   likes Like[]
   songs Song[]
+  cookieConsents CookieConsent[]
 
   @@unique([email])
   @@map("user")
@@ -84,6 +85,23 @@ model DemoGeneration {
   updatedAt DateTime @updatedAt
 
   @@index([createdAt])
+}
+
+// Anonymous visitors are identified only by the id stored in the `cookie_consent_id` cookie.
+model CookieConsent {
+  id            String   @id @default(cuid())
+  necessary     Boolean  @default(true)
+  analytics     Boolean  @default(false)
+  marketing     Boolean  @default(false)
+  policyVersion String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user   User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+  userId String?
+
+  @@index([userId])
+  @@map("cookie_consent")
 }
 
 model Session {

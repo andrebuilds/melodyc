@@ -1,14 +1,16 @@
 import "~/styles/globals.css";
 
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist } from "next/font/google";
+import { CookieBanner } from "~/components/cookie-banner";
 import { SiteFooter } from "~/components/layout/site-footer";
 import { SiteHeader } from "~/components/layout/site-header";
 import { Providers } from "~/components/providers";
 import { Toaster } from "~/components/ui/sonner";
-import { siteMetadata } from "~/lib/site-metadata";
+import { siteMetadata, siteViewport } from "~/lib/site-metadata";
 
 export const metadata: Metadata = siteMetadata;
+export const viewport: Viewport = siteViewport;
 
 const geist = Geist({
   subsets: ["latin"],
@@ -25,6 +27,7 @@ export default function MarketingLayout({
           <SiteHeader />
           <main className="flex-1">{children}</main>
           <SiteFooter />
+          <CookieBanner />
           <Toaster />
         </Providers>
       </body>
