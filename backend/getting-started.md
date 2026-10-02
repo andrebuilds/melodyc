@@ -364,7 +364,7 @@ modal run main.py
 
 On first run Modal:
 1. Builds the Docker image (may take a few minutes)
-2. Loads the AI models (ACE-Step, Qwen2, SDXL-Turbo) into the volumes — only the first time, then they are cached
+2. Loads the AI models (ACE-Step, Qwen2, FLUX.1-schnell) into the volumes — only the first time, then they are cached
 3. Runs the `main()` function of the entrypoint
 
 ### 10.2 Deploy the backend

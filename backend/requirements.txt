@@ -7,3 +7,7 @@ torchcodec
 ffmpeg
 tenacity
 langdetect
+accelerate
+bitsandbytes>=0.45.0
+sentencepiece
+protobuf

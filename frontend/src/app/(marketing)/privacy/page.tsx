@@ -175,7 +175,8 @@ export default function PrivacyPolicyPage() {
             <li>
               <Strong>Music generation:</Strong> your prompts and lyrics are
               processed by open-source AI models (ACE-Step for music, Qwen2 for
-              lyrics, style tags, and categories, and SDXL-Turbo for cover
+              lyrics, style tags, titles, categories, and cover art
+              descriptions, and FLUX.1-schnell for cover
               images) that we run on our own dedicated GPU infrastructure
               hosted by Modal.
             </li>

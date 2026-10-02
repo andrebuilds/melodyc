@@ -122,3 +122,18 @@ LYRICS_PROMPTS_BY_GENRE = {
 	"blues": LYRICS_BLUES_PROMPT,
 	"metal": LYRICS_METAL_PROMPT,
 }
+
+COVER_ART_PROMPT = """
+You are the art director of an independent record label designing a professional album cover.
+Write one image-generation prompt, in English, for the cover of a song described as: "{description}"
+
+Rules:
+- Choose ONE concrete visual concept (a scene, a person, an object, or a place) that evokes the mood of the song. Avoid musical instruments, headphones, music notes, and sound waves unless they are essential.
+- Choose ONE realistic cover style, for example: 35mm film photograph, medium format portrait, minimalist graphic design, risograph print, vintage collage, polaroid snapshot, oil painting, flat vector illustration.
+- Describe lighting, color palette, and composition for a square format.
+- Never include text, letters, typography, logos, borders, or watermarks.
+- Avoid typical AI art clichés (glowing particles, galaxies, neon fantasy, hyper-detailed digital art) unless the song explicitly asks for them.
+- Maximum 60 words.
+
+Return only the prompt, with no preamble, quotes, or explanation.
+"""

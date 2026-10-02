@@ -14,7 +14,7 @@ import {
   SidebarSeparator,
 } from "../ui/sidebar";
 import SidebarMenuItems from "./sidebar-menu-items";
-import { UserIcon } from "lucide-react";
+import { CreditCardIcon, UserIcon } from "lucide-react";
 import Link from "next/link";
 import { MelodycLogo } from "~/components/brand/melodyc-logo";
 
@@ -55,6 +55,11 @@ export async function AppSidebar() {
             },
           }}
           additionalLinks={[
+            {
+              label: "Billing",
+              href: "/billing",
+              icon: <CreditCardIcon />,
+            },
             {
               label: "Customer Portal",
               href: "/customer-portal",

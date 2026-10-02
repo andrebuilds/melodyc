@@ -110,13 +110,13 @@ function CreatingMusic() {
       </Paragraph>
       <Heading>What happens after Create</Heading>
       <List ordered>
-        <li>Melodyc queues two variations of your request.</li>
-        <li>Your tracks appear immediately with a queued or processing status.</li>
+        <li>Melodyc queues one song for your request.</li>
+        <li>Your track appears immediately with a queued or processing status.</li>
         <li>The AI generates the audio and matching cover art in the background.</li>
         <li>The library refreshes the status automatically while generation is running.</li>
       </List>
       <Callout title="Credit usage">
-        Each successfully generated song uses one credit. Because one Create request produces two variations, a completed request normally uses two credits. Failed generations are not charged.
+        Each successfully generated song uses one credit, so a completed Create request uses one credit. Failed generations are not charged.
       </Callout>
     </>
   );

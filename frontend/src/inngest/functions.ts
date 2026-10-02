@@ -6,6 +6,7 @@ type GenerationResponse = {
   s3_key: string;
   cover_image_s3_key: string;
   categories: string[];
+  title?: string | null;
 };
 
 export const generateDemoSong = inngest.createFunction(
@@ -94,7 +95,7 @@ export const generateSong = inngest.createFunction(
       userId: string;
     };
 
-    const { userId, credits, endpoint, body } = await step.run(
+    const { userId, credits, endpoint, body, originalTitle } = await step.run(
       "check-credits",
       async () => {
         const song = await db.song.findUniqueOrThrow({
@@ -109,6 +110,7 @@ export const generateSong = inngest.createFunction(
               },
             },
             prompt: true,
+            title: true,
             lyrics: true,
             fullDescribedSong: true,
             describedLyrics: true,
@@ -177,6 +179,7 @@ export const generateSong = inngest.createFunction(
           credits: song.user.credits,
           endpoint: endpoint,
           body: body,
+          originalTitle: song.title,
         };
       },
     );
@@ -219,6 +222,15 @@ export const generateSong = inngest.createFunction(
             status: response.ok ? "processed" : "failed",
           },
         });
+
+        const generatedTitle = responseData?.title?.trim();
+        if (generatedTitle) {
+          // Only replace the fallback title, never one the user renamed meanwhile.
+          await db.song.updateMany({
+            where: { id: songId, title: originalTitle },
+            data: { title: generatedTitle },
+          });
+        }
 
         if (responseData && responseData.categories.length > 0) {
           await db.song.update({

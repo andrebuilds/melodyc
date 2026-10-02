@@ -28,7 +28,7 @@ Built with a modern full-stack architecture, Melodyc is designed to be a real-wo
 
 - 🎵 AI music generation with ACE-Step v1 3.5B
 - 🧠 Automatic lyrics and prompt generation with Qwen2-7B-Instruct
-- 🖼️ AI cover art generation with SDXL-Turbo
+- 🖼️ AI cover art generation with FLUX.1-schnell
 - 🎤 Three generation modes: free description, custom lyrics, described lyrics
 - 🎸 Instrumental track option (no vocals)
 - ⚡ Serverless GPU processing with Modal (GPU L40S)
@@ -55,7 +55,7 @@ Built with a modern full-stack architecture, Melodyc is designed to be a real-wo
 | AI Backend | Python 3.12, Modal (GPU L40S) |
 | Music Model | ACE-Step v1 3.5B |
 | Text Model | Qwen2-7B-Instruct |
-| Image Model | SDXL-Turbo |
+| Image Model | FLUX.1-schnell |
 
 ---
 

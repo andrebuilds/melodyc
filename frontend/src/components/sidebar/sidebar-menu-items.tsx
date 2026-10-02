@@ -1,6 +1,6 @@
 "use client";
 
-import { CompassIcon, CreditCardIcon, Music } from "lucide-react";
+import { CompassIcon, LibraryIcon, Music } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 
@@ -21,9 +21,9 @@ export default function SidebarMenuItems() {
       active: false,
     },
     {
-      title: "Billing",
-      url: "/billing",
-      icon: CreditCardIcon,
+      title: "My Music",
+      url: "/my-music",
+      icon: LibraryIcon,
       active: false,
     },
   ];

@@ -20,7 +20,7 @@ export function RenameDialog({
   onClose,
   onRename,
 }: {
-  track: Track;
+  track: Pick<Track, "id" | "title">;
   onClose: () => void;
   onRename: (trackId: string, newTitle: string) => void;
 }) {
@@ -41,7 +41,7 @@ export function RenameDialog({
           <DialogHeader>
             <DialogTitle>Rename Song</DialogTitle>
             <DialogDescription>
-              Ener a new name for your song. Click save when you&apos;re done.
+              Enter a new name for your song. Click save when you&apos;re done.
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">

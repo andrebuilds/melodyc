@@ -32,7 +32,7 @@ Melodyc is built for creators, songwriters, content makers, and people with no m
 - **Category**: AI music generator, text-to-music, lyrics-to-music, AI song generator.
 - **Inputs**: a free-text song description, custom lyrics, or AI-written lyrics from a described theme, plus genre and style tags.
 - **Outputs**: complete songs with vocals or instrumentals, AI-generated lyrics and style tags, automatic categories, and an AI-generated cover image.
-- **AI models**: open-source models running on dedicated GPU infrastructure: ACE-Step for music, Qwen2 for lyrics and tags, SDXL-Turbo for cover images.
+- **AI models**: open-source models running on dedicated GPU infrastructure: ACE-Step for music, Qwen2 for lyrics and tags, FLUX.1-schnell for cover images.
 - **Privacy**: user prompts, lyrics, and songs are not sent to third-party AI providers and are not used to train AI models.
 - **Free tier**: 20 free credits on sign-up, no credit card required. One credit generates one complete song, and credits are only used when a generation succeeds.
 - **Free demo**: a short song can be generated from the homepage without an account, once per day.

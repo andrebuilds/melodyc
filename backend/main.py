@@ -1,6 +1,6 @@
 import base64
 import logging
-from typing import List
+from typing import List, Optional
 import uuid
 import modal
 import os
@@ -11,10 +11,11 @@ from tenacity import before_sleep_log, retry, retry_if_exception_type, stop_afte
 from pydantic import BaseModel
 import requests
 
-from prompts import LYRICS_GENERATOR_PROMPT, LYRICS_PROMPTS_BY_GENRE, PROMPT_GENERATOR_PROMPT
+from prompts import COVER_ART_PROMPT, LYRICS_GENERATOR_PROMPT, LYRICS_PROMPTS_BY_GENRE, PROMPT_GENERATOR_PROMPT
 from datetime import datetime, timezone
 from loguru import logger
 import hashlib
+import subprocess
 from langdetect import detect, LangDetectException
 
 app = modal.App("melodyc")
@@ -79,6 +80,12 @@ ALLOWED_CATEGORIES = (
     "sad", "romantic", "dark", "uplifting", "80s", "90s", "2000s",
 )
 
+# Extra download formats exported next to the original WAV, as "<song_folder>/audio.<ext>".
+AUDIO_EXPORT_FORMATS = {
+    "mp3": ["-codec:a", "libmp3lame", "-b:a", "320k"],
+    "flac": ["-codec:a", "flac"],
+}
+
 def _make_song_folder() -> str:
     """Builds a unique, ASCII-only S3 folder name for one generated song's assets."""
     return str(uuid.uuid4())
@@ -119,6 +126,7 @@ class GenerateMusicResponseS3(BaseModel):
     s3_key: str
     cover_image_s3_key: str
     categories: List[str]
+    title: Optional[str] = None
 
 
 class GenerateMusicResponse(BaseModel):
@@ -144,8 +152,10 @@ class MusicGenServer:
     @modal.enter()
     def load_model(self):
         from acestep.pipeline_ace_step import ACEStepPipeline
-        from transformers import AutoModelForCausalLM, AutoTokenizer
-        from diffusers import AutoPipelineForText2Image
+        from transformers import AutoModelForCausalLM, AutoTokenizer, T5EncoderModel
+        from transformers import BitsAndBytesConfig as TransformersBitsAndBytesConfig
+        from diffusers import FluxPipeline, FluxTransformer2DModel
+        from diffusers import BitsAndBytesConfig as DiffusersBitsAndBytesConfig
         import torch
 
         # Music Generation Model
@@ -168,9 +178,33 @@ class MusicGenServer:
             cache_dir="/.cache/huggingface"
         )
 
-        # Stable Diffusion Model (thumbnails)
-        self.image_pipe = AutoPipelineForText2Image.from_pretrained(
-            "stabilityai/sdxl-turbo", torch_dtype=torch.float16, variant="fp16", cache_dir="/.cache/huggingface")
+        # FLUX.1-schnell (Apache 2.0) for cover art, quantized to fit next to ACE-Step and Qwen on one L40S.
+        flux_model_id = "black-forest-labs/FLUX.1-schnell"
+        flux_transformer = FluxTransformer2DModel.from_pretrained(
+            flux_model_id,
+            subfolder="transformer",
+            quantization_config=DiffusersBitsAndBytesConfig(
+                load_in_4bit=True,
+                bnb_4bit_quant_type="nf4",
+                bnb_4bit_compute_dtype=torch.bfloat16,
+            ),
+            torch_dtype=torch.bfloat16,
+            cache_dir="/.cache/huggingface",
+        )
+        flux_text_encoder = T5EncoderModel.from_pretrained(
+            flux_model_id,
+            subfolder="text_encoder_2",
+            quantization_config=TransformersBitsAndBytesConfig(load_in_8bit=True),
+            torch_dtype=torch.bfloat16,
+            cache_dir="/.cache/huggingface",
+        )
+        self.image_pipe = FluxPipeline.from_pretrained(
+            flux_model_id,
+            transformer=flux_transformer,
+            text_encoder_2=flux_text_encoder,
+            torch_dtype=torch.bfloat16,
+            cache_dir="/.cache/huggingface",
+        )
         self.image_pipe.to("cuda")
 
     def prompt_qwen(
@@ -340,6 +374,58 @@ class MusicGenServer:
         qwen_prompt_cache.put(cache_key, categories)
         return categories
 
+    def generate_cover_prompt(self, description: str) -> str:
+        style_suffix = "album cover, square composition, no text, no typography"
+        fallback = f"{description}, 35mm film photograph, natural light, {style_suffix}"
+
+        cache_key = _make_cache_key("cover-prompt", description)
+        cached = qwen_prompt_cache.get(cache_key)
+        if cached is not None:
+            logger.info(f"Cache hit | fn=generate_cover_prompt key={cache_key}")
+            return cached
+
+        try:
+            response_text = self.prompt_qwen(
+                COVER_ART_PROMPT.format(description=description), max_new_tokens=120)
+        except Exception as e:
+            logger.warning(f"Cover prompt generation failed, using fallback: {e}")
+            return fallback
+
+        cover_prompt = " ".join(response_text.split()).strip("\"'")
+        if not cover_prompt:
+            return fallback
+
+        cover_prompt = f"{cover_prompt.rstrip('.')}, {style_suffix}"
+        qwen_prompt_cache.put(cache_key, cover_prompt)
+        logger.info(f"Cover prompt: {cover_prompt}")
+        return cover_prompt
+
+    def generate_title(self, description: str, language: str) -> Optional[str]:
+        cache_key = _make_cache_key("title", f"{language}:{description}")
+        cached = qwen_prompt_cache.get(cache_key)
+        if cached is not None:
+            logger.info(f"Cache hit | fn=generate_title key={cache_key}")
+            return cached
+
+        prompt = (
+            f"Write a short, catchy song title in {language} (2 to 5 words) "
+            "for a song matching this description. Return only the title, "
+            f"with no quotes, punctuation at the end, or extra text. Description: '{description}'"
+        )
+        try:
+            response_text = self.prompt_qwen(prompt, max_new_tokens=24)
+        except Exception as e:
+            logger.warning(f"Title generation failed, keeping default title: {e}")
+            return None
+
+        lines = response_text.strip().splitlines()
+        title = lines[0].strip().strip("\"'*#`“”").rstrip(".,;:!?").strip() if lines else ""
+        if not title or len(title) > 60:
+            return None
+
+        qwen_prompt_cache.put(cache_key, title)
+        return title
+
     def resolve_dynamic_inference_settings(
         self,
         context_text: str,
@@ -388,6 +474,24 @@ class MusicGenServer:
         upload_args = {"ExtraArgs": extra_args} if extra_args else {}
         s3_client.upload_file(local_path, bucket_name, s3_key, **upload_args)
 
+    def _upload_extra_audio_formats(self, s3_client, wav_path, bucket_name, song_folder, extra_args=None):
+        for extension, codec_args in AUDIO_EXPORT_FORMATS.items():
+            converted_path = f"{os.path.splitext(wav_path)[0]}.{extension}"
+            s3_key = f"{song_folder}/audio.{extension}"
+            try:
+                subprocess.run(
+                    ["ffmpeg", "-y", "-loglevel", "error", "-i", wav_path, *codec_args, converted_path],
+                    check=True,
+                    timeout=180,
+                )
+                self._upload_to_s3(s3_client, converted_path, bucket_name, s3_key, extra_args)
+            except Exception as e:
+                # A missing extra format must never fail the whole generation.
+                logger.warning(f"Audio export skipped | format={extension} key={s3_key}: {e}")
+            finally:
+                if os.path.exists(converted_path):
+                    os.remove(converted_path)
+
     def generate_and_upload_to_s3(
             self,
             prompt: str,
@@ -398,7 +502,8 @@ class MusicGenServer:
             guidance_scale: float,
             seed: int,
             description_for_categorization: str,
-            language: str = "English"
+            language: str = "English",
+            title_context: Optional[str] = None,
     ) -> GenerateMusicResponseS3:
         infer_step, guidance_scale = self.resolve_dynamic_inference_settings(
             context_text=f"{prompt} {description_for_categorization}",
@@ -451,6 +556,8 @@ class MusicGenServer:
         try:
             self._upload_to_s3(
                 s3_client, output_path, bucket_name, audio_s3_key, audio_extra_args)
+            self._upload_extra_audio_formats(
+                s3_client, output_path, bucket_name, song_folder, audio_extra_args)
         except Exception as e:
             logger.error(f"S3 upload failed for audio file {audio_s3_key}: {e}")
             raise
@@ -458,21 +565,28 @@ class MusicGenServer:
             os.remove(output_path)
 
         # Thumbnail generation
-        thumbnail_prompt = f"{prompt}, album cover art"
+        cover_prompt = self.generate_cover_prompt(description_for_categorization)
         try:
             image = self.image_pipe(
-                prompt=thumbnail_prompt, num_inference_steps=2, guidance_scale=0.0).images[0]
+                prompt=cover_prompt,
+                num_inference_steps=4,
+                guidance_scale=0.0,
+                height=1024,
+                width=1024,
+                max_sequence_length=256,
+            ).images[0]
         except Exception as e:
-            logger.error(f"Image inference failed | thumbnail_prompt='{thumbnail_prompt}': {e}")
+            logger.error(f"Image inference failed | cover_prompt='{cover_prompt}': {e}")
             raise
 
-        image_output_path = os.path.join(output_dir, f"{uuid.uuid4()}.png")
-        image.save(image_output_path)
+        image_output_path = os.path.join(output_dir, f"{uuid.uuid4()}.jpg")
+        image.convert("RGB").save(image_output_path, "JPEG", quality=90)
 
-        image_s3_key = f"{song_folder}/cover.png"
+        image_s3_key = f"{song_folder}/cover.jpg"
 
         try:
-            self._upload_to_s3(s3_client, image_output_path, bucket_name, image_s3_key)
+            self._upload_to_s3(s3_client, image_output_path, bucket_name, image_s3_key,
+                               {"ContentType": "image/jpeg"})
         except Exception as e:
             logger.error(f"S3 upload failed for thumbnail {image_s3_key}: {e}")
             raise
@@ -482,10 +596,13 @@ class MusicGenServer:
         # Category generation: "hip-hop", "rock"
         categories = self.generate_categories(description_for_categorization, language)
 
+        title = self.generate_title(title_context or description_for_categorization, language)
+
         return GenerateMusicResponseS3(
             s3_key=audio_s3_key,
             cover_image_s3_key=image_s3_key,
-            categories=categories
+            categories=categories,
+            title=title,
         )
 
     @modal.fastapi_endpoint(method="GET", requires_proxy_auth=False)
@@ -554,6 +671,7 @@ class MusicGenServer:
         return self.generate_and_upload_to_s3(prompt=validated_prompt, lyrics=validated_lyrics,
                                               description_for_categorization=validated_prompt,
                                               language=lyrics_language,
+                                              title_context=f"Style: {validated_prompt}. Lyrics: {validated_lyrics[:300]}",
                                               **request.model_dump(exclude={"prompt", "lyrics"}))
 
     @modal.fastapi_endpoint(method="POST", requires_proxy_auth=True)
@@ -570,6 +688,7 @@ class MusicGenServer:
         return self.generate_and_upload_to_s3(prompt=validated_prompt, lyrics=lyrics,
                                               description_for_categorization=validated_prompt,
                                               language=language,
+                                              title_context=f"Style: {validated_prompt}. Theme: {request.described_lyrics}",
                                               **request.model_dump(exclude={"described_lyrics", "prompt"}))
 
 @app.local_entrypoint()

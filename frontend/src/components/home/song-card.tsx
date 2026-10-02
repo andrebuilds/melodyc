@@ -1,11 +1,14 @@
 "use client";
 
 import type { Category, Like, Song } from "@prisma/client";
-import { Heart, Loader2, Music, Play } from "lucide-react";
+import { Globe, Heart, Loader2, Lock, Music, Play } from "lucide-react";
 import { useState } from "react";
 import { getPlayUrl } from "~/actions/generation";
 import { toggleLikeSong } from "~/actions/song";
 import { usePlayerStore } from "~/stores/use-player-store";
+import { Badge } from "~/components/ui/badge";
+import { SongDownloadMenu } from "~/components/my-music/song-download-menu";
+import { SongActionsMenu } from "~/components/my-music/song-actions-menu";
 
 type SongWithRelation = Song & {
   user: { name: string | null };
@@ -17,7 +20,17 @@ type SongWithRelation = Song & {
   likes?: Like[];
 };
 
-export function SongCard({ song }: { song: SongWithRelation }) {
+export function SongCard({
+  song: initialSong,
+  showVisibility = false,
+  manageable = false,
+}: {
+  song: SongWithRelation;
+  showVisibility?: boolean;
+  manageable?: boolean;
+}) {
+  const [song, setSong] = useState(initialSong);
+  const [isDeleted, setIsDeleted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const setTrack = usePlayerStore((state) => state.setTrack);
   const [isLiked, setIsLiked] = useState(
@@ -50,10 +63,29 @@ export function SongCard({ song }: { song: SongWithRelation }) {
     await toggleLikeSong(song.id);
   };
 
+  if (isDeleted) return null;
+
   return (
     <div>
-      <div onClick={handlePlay} className="cursor-pointer">
-        <div className="group relative aspect-square w-full overflow-hidden rounded-md bg-gray-200 group-hover:opacity-75">
+      <div onClick={handlePlay} className="relative cursor-pointer">
+        {showVisibility && (
+          <Badge
+            variant="outline"
+            className={`absolute top-0 right-2 z-10 -translate-y-1/2 gap-1 rounded-full bg-background px-2 py-0.5 text-[11px] font-semibold shadow-sm ${
+              song.published
+                ? "border-primary/40 text-primary"
+                : "border-border text-muted-foreground"
+            }`}
+          >
+            {song.published ? (
+              <Globe className="size-3" aria-hidden="true" />
+            ) : (
+              <Lock className="size-3" aria-hidden="true" />
+            )}
+            {song.published ? "Public" : "Private"}
+          </Badge>
+        )}
+        <div className="group relative aspect-square w-full overflow-hidden rounded-md bg-muted group-hover:opacity-75">
           {song.thumbnailUrl ? (
             <img
               className="h-full w-full object-cover object-center"
@@ -77,13 +109,31 @@ export function SongCard({ song }: { song: SongWithRelation }) {
           </div>
         </div>
 
-        <h3 className="mt-2 truncate text-sm font-medium text-gray-900">
-          {song.title}
-        </h3>
+        <div className="mt-2 flex items-center justify-between gap-2">
+          <h3 className="min-w-0 truncate text-sm font-medium text-foreground">
+            {song.title}
+          </h3>
+          {manageable && (
+            <div className="flex shrink-0 items-center">
+              <SongDownloadMenu songId={song.id} />
+              <SongActionsMenu
+                song={song}
+                onChange={(changes) =>
+                  setSong((current) => ({
+                    ...current,
+                    published: changes.published,
+                    title: changes.title ?? current.title,
+                  }))
+                }
+                onDeleted={() => setIsDeleted(true)}
+              />
+            </div>
+          )}
+        </div>
 
-        <p className="text-xs text-gray-500">{song.user.name}</p>
+        <p className="text-xs text-muted-foreground">{song.user.name}</p>
 
-        <div className="mt-1 flex items-center justify-between text-xs text-gray-900">
+        <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
           <span>{song.listenCount} listens</span>
           <button
             onClick={handleLike}

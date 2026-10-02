@@ -6,9 +6,10 @@ import { redirect } from "next/navigation";
 import { inngest } from "~/inngest/client";
 import { auth } from "~/lib/auth";
 import { db } from "~/server/db";
-import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { GetObjectCommand, HeadObjectCommand } from "@aws-sdk/client-s3";
 import { env } from "~/env";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { createS3Client } from "~/lib/s3";
 
 export interface GenerateRequest {
   prompt?: string;
@@ -26,9 +27,28 @@ export async function generateSong(generateRequest: GenerateRequest) {
   if (!session) redirect("/auth/sign-in");
 
   await queueSong(generateRequest, 7.5, session.user.id);
-  await queueSong(generateRequest, 15, session.user.id);
 
   revalidatePath("/create");
+}
+
+function buildFallbackTitle(generateRequest: GenerateRequest) {
+  const firstLyricsLine = generateRequest.lyrics
+    ?.split("\n")
+    .map((line) => line.trim())
+    .find((line) => line && !line.startsWith("["));
+
+  const source = [
+    generateRequest.fullDescribedSong,
+    generateRequest.describedLyrics,
+    firstLyricsLine,
+    generateRequest.prompt,
+  ].find((value) => value?.trim());
+
+  const words = source?.trim().split(/\s+/).slice(0, 6).join(" ");
+  if (!words) return "Untitled";
+
+  const title = words.length > 60 ? words.slice(0, 60).trim() : words;
+  return title.charAt(0).toUpperCase() + title.slice(1);
 }
 
 export async function queueSong(
@@ -36,12 +56,7 @@ export async function queueSong(
   guidanceScale: number,
   userId: string,
 ) {
-  let title = "Untitled";
-  if (generateRequest.describedLyrics) title = generateRequest.describedLyrics;
-  if (generateRequest.fullDescribedSong)
-    title = generateRequest.fullDescribedSong;
-
-  title = title.charAt(0).toUpperCase() + title.slice(1);
+  const title = buildFallbackTitle(generateRequest);
 
   const song = await db.song.create({
     data: {
@@ -98,13 +113,7 @@ export async function getPlayUrl(songId: string) {
 }
 
 export async function getPresignedUrl(key: string) {
-  const s3Client = new S3Client({
-    region: env.AWS_REGION,
-    credentials: {
-      accessKeyId: env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: env.AWS_SECRET_ACCESS_KEY_ID,
-    },
-  });
+  const s3Client = createS3Client();
 
   const command = new GetObjectCommand({
     Bucket: env.S3_BUCKET_NAME,
@@ -113,5 +122,77 @@ export async function getPresignedUrl(key: string) {
 
   return await getSignedUrl(s3Client, command, {
     expiresIn: 3600,
+  });
+}
+
+const DOWNLOAD_FORMATS = ["wav", "mp3", "flac"] as const;
+export type DownloadFormat = (typeof DOWNLOAD_FORMATS)[number];
+
+async function getDownloadableSong(songId: string) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) redirect("/auth/sign-in");
+
+  return db.song.findUniqueOrThrow({
+    where: {
+      id: songId,
+      OR: [{ userId: session.user.id }, { published: true }],
+      s3Key: { not: null },
+    },
+    select: { s3Key: true, title: true },
+  });
+}
+
+function getFormatKey(wavKey: string, format: DownloadFormat) {
+  return wavKey.replace(/\.wav$/i, `.${format}`);
+}
+
+export async function getDownloadFormats(songId: string) {
+  const song = await getDownloadableSong(songId);
+  const s3Client = createS3Client();
+
+  const available = await Promise.all(
+    DOWNLOAD_FORMATS.map(async (format) => {
+      if (format === "wav") return format;
+      try {
+        await s3Client.send(
+          new HeadObjectCommand({
+            Bucket: env.S3_BUCKET_NAME,
+            Key: getFormatKey(song.s3Key!, format),
+          }),
+        );
+        return format;
+      } catch {
+        return null;
+      }
+    }),
+  );
+
+  return available.filter((format): format is DownloadFormat => !!format);
+}
+
+export async function getDownloadUrl(songId: string, format: DownloadFormat) {
+  if (!DOWNLOAD_FORMATS.includes(format)) throw new Error("Invalid format.");
+
+  const song = await getDownloadableSong(songId);
+  const baseName =
+    (song.title ?? "melodyc-song")
+      .normalize("NFKD")
+      .replace(/[^\w\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, "-")
+      .slice(0, 80) || "melodyc-song";
+  const fileName = `${baseName}.${format}`;
+
+  const command = new GetObjectCommand({
+    Bucket: env.S3_BUCKET_NAME,
+    Key: getFormatKey(song.s3Key!, format),
+    ResponseContentDisposition: `attachment; filename="${fileName}"`,
+  });
+
+  return await getSignedUrl(createS3Client(), command, {
+    expiresIn: 300,
   });
 }

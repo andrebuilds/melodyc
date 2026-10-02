@@ -8,6 +8,8 @@ import { DashboardPageHeader } from "~/components/layout/dashboard-page-header";
 import { Button } from "~/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "~/components/ui/card";
 import Link from "next/link";
+import { Suspense } from "react";
+import { PaymentSuccessRefresher } from "~/components/billing/payment-success-refresher";
 
 export default async function BillingPage() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -21,6 +23,9 @@ export default async function BillingPage() {
 
   return (
     <div className="mx-auto w-full max-w-5xl p-4 sm:p-6 lg:p-8">
+      <Suspense>
+        <PaymentSuccessRefresher credits={user.credits} />
+      </Suspense>
       <DashboardPageHeader
         eyebrow="Your Melodyc plan"
         title="Billing"

@@ -10,6 +10,7 @@ const disallow = [
   "/create",
   "/customer-portal",
   "/discover",
+  "/my-music",
 ];
 
 // AI search, answer, and assistant crawlers, explicitly welcomed for AEO/GEO visibility.

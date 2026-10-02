@@ -9,6 +9,7 @@ import {
   Play,
   RefreshCcw,
   Search,
+  Trash2,
   XCircle,
 } from "lucide-react";
 import { Input } from "../ui/input";
@@ -17,6 +18,7 @@ import { Button } from "../ui/button";
 import { getPlayUrl } from "~/actions/generation";
 import { Badge } from "../ui/badge";
 import {
+  deleteSong,
   getProcessingSongStatuses,
   renameSong,
   setPublishedStatus,
@@ -28,6 +30,8 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { RenameDialog } from "./rename-dialog";
+import { DeleteSongDialog } from "./delete-song-dialog";
+import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { usePlayerStore } from "~/stores/use-player-store";
 
@@ -53,6 +57,8 @@ export function TrackList({ tracks }: { tracks: Track[] }) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [loadingTrackId, setLoadingTrackId] = useState<string | null>(null);
   const [trackToRename, setTrackToRename] = useState<Track | null>(null);
+  const [trackToDelete, setTrackToDelete] = useState<Track | null>(null);
+  const [deletingTrackId, setDeletingTrackId] = useState<string | null>(null);
   const router = useRouter();
   const setTrack = usePlayerStore((state) => state.setTrack);
 
@@ -87,6 +93,12 @@ export function TrackList({ tracks }: { tracks: Track[] }) {
             return status ? { ...track, status } : track;
           }),
         );
+
+        // Reload server data so cover, title and header credits update without a manual refresh.
+        const hasFinishedTrack = statuses.some(
+          (song) => song.status !== "queued" && song.status !== "processing",
+        );
+        if (hasFinishedTrack) router.refresh();
       } finally {
         isPolling = false;
       }
@@ -110,6 +122,23 @@ export function TrackList({ tracks }: { tracks: Track[] }) {
       prompt: track.prompt,
       createdByUserName: track.createdByUserName,
     });
+  };
+
+  const removeTrack = (trackId: string) =>
+    setCurrentTracks((previousTracks) =>
+      previousTracks.filter((track) => track.id !== trackId),
+    );
+
+  const handleDismissFailed = async (trackId: string) => {
+    setDeletingTrackId(trackId);
+    try {
+      await deleteSong(trackId);
+      removeTrack(trackId);
+    } catch {
+      toast.error("Unable to remove this track. Please try again.");
+    } finally {
+      setDeletingTrackId(null);
+    }
   };
 
   const handleRefresh = async () => {
@@ -174,6 +203,19 @@ export function TrackList({ tracks }: { tracks: Track[] }) {
                           Please try creating the song again.
                         </p>
                       </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Remove failed track"
+                        disabled={deletingTrackId === track.id}
+                        onClick={() => void handleDismissFailed(track.id)}
+                      >
+                        {deletingTrackId === track.id ? (
+                          <Loader2 className="animate-spin" />
+                        ) : (
+                          <Trash2 />
+                        )}
+                      </Button>
                     </div>
                   );
 
@@ -194,6 +236,19 @@ export function TrackList({ tracks }: { tracks: Track[] }) {
                           Please purchase more credits to generate this song.
                         </p>
                       </div>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Remove track"
+                        disabled={deletingTrackId === track.id}
+                        onClick={() => void handleDismissFailed(track.id)}
+                      >
+                        {deletingTrackId === track.id ? (
+                          <Loader2 className="animate-spin" />
+                        ) : (
+                          <Trash2 />
+                        )}
+                      </Button>
                     </div>
                   );
 
@@ -298,6 +353,15 @@ export function TrackList({ tracks }: { tracks: Track[] }) {
                             >
                               <Pencil className="mr-2" /> Rename
                             </DropdownMenuItem>
+                            <DropdownMenuItem
+                              variant="destructive"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setTrackToDelete(track);
+                              }}
+                            >
+                              <Trash2 className="mr-2" /> Delete
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
@@ -324,6 +388,14 @@ export function TrackList({ tracks }: { tracks: Track[] }) {
           track={trackToRename}
           onClose={() => setTrackToRename(null)}
           onRename={(trackId, newTitle) => renameSong(trackId, newTitle)}
+        />
+      )}
+
+      {trackToDelete && (
+        <DeleteSongDialog
+          song={trackToDelete}
+          onClose={() => setTrackToDelete(null)}
+          onDeleted={removeTrack}
         />
       )}
     </div>

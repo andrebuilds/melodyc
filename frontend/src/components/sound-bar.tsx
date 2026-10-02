@@ -7,6 +7,7 @@ import {
   Pause,
   Play,
   Volume2,
+  X,
 } from "lucide-react";
 import { usePlayerStore } from "~/stores/use-player-store";
 import { Card } from "./ui/card";
@@ -21,7 +22,7 @@ import {
 } from "./ui/dropdown-menu";
 
 export default function SoundBar() {
-  const { track } = usePlayerStore();
+  const { track, clearTrack } = usePlayerStore();
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState([100]);
   const [currentTime, setCurrentTime] = useState(0);
@@ -109,6 +110,12 @@ export default function SoundBar() {
     return `${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
   };
 
+  const handleClose = () => {
+    audioRef.current?.pause();
+    setIsPlaying(false);
+    clearTrack();
+  };
+
   if (!track) return null;
 
   return (
@@ -178,6 +185,14 @@ export default function SoundBar() {
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleClose}
+                aria-label="Close player"
+              >
+                <X className="h-4 w-4" />
+              </Button>
             </div>
           </div>
 
