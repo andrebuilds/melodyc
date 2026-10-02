@@ -211,9 +211,10 @@ export default function PrivacyPolicyPage() {
             </li>
             <li>
               <Strong>Account emails:</Strong> to verify your email address,
-              reset your password, and send service notifications (song ready,
+              welcome you once your account is confirmed, reset your password,
+              and send service notifications (song ready,
               generation failed, payment confirmed). You can turn notification
-              emails on or off in your account settings or with the unsubscribe
+              emails on or off in your notification settings or with the unsubscribe
               link in every notification. Verification and password reset
               emails cannot be disabled because they are required for account
               security.

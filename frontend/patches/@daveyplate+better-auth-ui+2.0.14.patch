@@ -1,0 +1,26 @@
+diff --git a/node_modules/@daveyplate/better-auth-ui/dist/index.cjs b/node_modules/@daveyplate/better-auth-ui/dist/index.cjs
+index 7720532..bc54c2c 100644
+--- a/node_modules/@daveyplate/better-auth-ui/dist/index.cjs
++++ b/node_modules/@daveyplate/better-auth-ui/dist/index.cjs
+@@ -6908,7 +6908,7 @@ function ProvidersCard({
+ 
+ function PasswordInput({
+   className,
+-  enableToggle,
++  enableToggle = true,
+   onChange,
+   ...props
+ }) {
+diff --git a/node_modules/@daveyplate/better-auth-ui/dist/index.js b/node_modules/@daveyplate/better-auth-ui/dist/index.js
+index 568ee57..0038aec 100644
+--- a/node_modules/@daveyplate/better-auth-ui/dist/index.js
++++ b/node_modules/@daveyplate/better-auth-ui/dist/index.js
+@@ -6908,7 +6908,7 @@ import { useState as useState25 } from "react";
+ import { Fragment as Fragment17, jsx as jsx62, jsxs as jsxs49 } from "react/jsx-runtime";
+ function PasswordInput({
+   className,
+-  enableToggle,
++  enableToggle = true,
+   onChange,
+   ...props
+ }) {

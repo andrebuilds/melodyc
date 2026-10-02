@@ -68,6 +68,7 @@ type EmailContent = {
   preheader: string;
   heading: string;
   paragraphs: string[];
+  list?: { title: string; text: string }[];
   cta?: { label: string; url: string };
   footnote?: string;
 };
@@ -79,6 +80,15 @@ function renderEmail(content: EmailContent, unsubscribeUrl?: string) {
         `<p style="margin:0 0 16px;font-size:15px;line-height:24px;color:#3f3f46;">${escapeHtml(text)}</p>`,
     )
     .join("");
+
+  const list = content.list
+    ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 20px;">${content.list
+        .map(
+          (item) =>
+            `<tr><td style="padding:10px 12px;border-left:3px solid ${BRAND_COLOR};background:#fdf2f8;"><p style="margin:0 0 2px;font-size:14px;font-weight:700;color:#18181b;">${escapeHtml(item.title)}</p><p style="margin:0;font-size:14px;line-height:21px;color:#52525b;">${escapeHtml(item.text)}</p></td></tr><tr><td style="height:8px;"></td></tr>`,
+        )
+        .join("")}</table>`
+    : "";
 
   const cta = content.cta
     ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:8px 0 24px;"><tr><td style="border-radius:6px;background:${BRAND_COLOR};">
@@ -92,7 +102,7 @@ function renderEmail(content: EmailContent, unsubscribeUrl?: string) {
     : "";
 
   const unsubscribe = unsubscribeUrl
-    ? ` &middot; <a href="${escapeHtml(unsubscribeUrl)}" style="color:#a1a1aa;">Unsubscribe</a> &middot; <a href="${absoluteUrl("/account/settings")}" style="color:#a1a1aa;">Email preferences</a>`
+    ? ` &middot; <a href="${escapeHtml(unsubscribeUrl)}" style="color:#a1a1aa;">Unsubscribe</a> &middot; <a href="${absoluteUrl("/account/notifications")}" style="color:#a1a1aa;">Email preferences</a>`
     : "";
 
   return `<!doctype html>
@@ -111,7 +121,7 @@ function renderEmail(content: EmailContent, unsubscribeUrl?: string) {
           </td></tr>
           <tr><td style="padding:20px 32px 28px;">
             <h1 style="margin:0 0 16px;font-size:22px;line-height:30px;color:#18181b;">${escapeHtml(content.heading)}</h1>
-            ${paragraphs}${cta}${footnote}
+            ${paragraphs}${list}${cta}${footnote}
           </td></tr>
         </table>
         <p style="margin:20px 0 0;font-size:12px;line-height:18px;color:#a1a1aa;">Melodyc &middot; <a href="${absoluteUrl("/")}" style="color:#a1a1aa;">melodyc.com</a>${unsubscribe}</p>
@@ -126,6 +136,7 @@ function renderText(content: EmailContent, unsubscribeUrl?: string) {
     content.heading,
     "",
     ...content.paragraphs,
+    ...(content.list ?? []).map((item) => `- ${item.title}: ${item.text}`),
     content.cta ? `\n${content.cta.label}: ${content.cta.url}` : "",
     content.footnote ? `\n${content.footnote}` : "",
     unsubscribeUrl ? `\nUnsubscribe: ${unsubscribeUrl}` : "",
@@ -171,6 +182,46 @@ export function sendVerificationEmail(to: string, name: string, url: string) {
     cta: { label: "Verify email", url },
     footnote:
       "This link expires in 1 hour. If you did not create a Melodyc account, you can ignore this email.",
+  });
+}
+
+export function sendWelcomeEmail(to: string, name: string) {
+  return sendEmail(to, {
+    subject: "Welcome to Melodyc: your account is confirmed",
+    preheader: "Your email is verified. Here is everything you can do with Melodyc.",
+    heading: `You're all set, ${name}`,
+    paragraphs: [
+      "Your email is verified and your Melodyc account is ready. You have 20 free credits to start creating right away.",
+      "Here is what you can do:",
+    ],
+    list: [
+      {
+        title: "Create songs from a description",
+        text: "Describe a mood, a story, or a genre and Melodyc writes the lyrics, composes the music, and designs the cover.",
+      },
+      {
+        title: "Use your own lyrics and style",
+        text: "Switch to Custom mode to write your lyrics, choose styles, or generate instrumental tracks.",
+      },
+      {
+        title: "Manage your library in My Music",
+        text: "Rename, publish or keep private, and delete your songs whenever you want.",
+      },
+      {
+        title: "Download in studio quality",
+        text: "Export your songs in WAV, MP3, or FLAC and download the cover art.",
+      },
+      {
+        title: "Discover the community",
+        text: "Listen to and like songs published by other creators in Discover.",
+      },
+      {
+        title: "Get more credits",
+        text: "Choose a monthly plan from Billing in your account menu. Unused credits roll over.",
+      },
+    ],
+    cta: { label: "Create your first song", url: absoluteUrl("/create") },
+    footnote: `Need help? Visit the Help Center at ${absoluteUrl("/help")}`,
   });
 }
 

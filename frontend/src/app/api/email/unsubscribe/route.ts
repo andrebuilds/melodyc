@@ -23,7 +23,7 @@ function page(title: string, body: string) {
 const invalidLink = () =>
   page(
     "Invalid link",
-    `<p style="line-height:24px;color:#3f3f46;">This unsubscribe link is invalid. You can manage your email preferences from your <a href="${absoluteUrl("/account/settings")}" style="color:#d04f99;">account settings</a>.</p>`,
+    `<p style="line-height:24px;color:#3f3f46;">This unsubscribe link is invalid. You can manage your email preferences from your <a href="${absoluteUrl("/account/notifications")}" style="color:#d04f99;">notification settings</a>.</p>`,
   );
 
 // GET only shows a confirmation, so link scanners cannot unsubscribe users by prefetching.
@@ -52,6 +52,6 @@ export async function POST(request: Request) {
 
   return page(
     "You are unsubscribed",
-    `<p style="line-height:24px;color:#3f3f46;">You will no longer receive ${LABELS[data.type]} emails. You can change this at any time from your <a href="${absoluteUrl("/account/settings")}" style="color:#d04f99;">account settings</a>.</p>`,
+    `<p style="line-height:24px;color:#3f3f46;">You will no longer receive ${LABELS[data.type]} emails. You can change this at any time from your <a href="${absoluteUrl("/account/notifications")}" style="color:#d04f99;">notification settings</a>.</p>`,
   );
 }

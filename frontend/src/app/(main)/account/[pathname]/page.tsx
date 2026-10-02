@@ -5,7 +5,7 @@ import { auth } from "~/lib/auth";
 import { getNotificationSettings } from "~/lib/notifications";
 import { db } from "~/server/db";
 
-const accountViews = new Set(["settings", "security"]);
+const accountViews = new Set(["settings", "security", "notifications"]);
 
 export default async function AccountPage({
   params,

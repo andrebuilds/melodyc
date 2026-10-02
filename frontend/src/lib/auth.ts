@@ -9,7 +9,11 @@ import {
   portal,
   webhooks,
 } from "@polar-sh/better-auth";
-import { sendResetPasswordEmail, sendVerificationEmail } from "~/lib/email";
+import {
+  sendResetPasswordEmail,
+  sendVerificationEmail,
+  sendWelcomeEmail,
+} from "~/lib/email";
 import { notifyPaymentConfirmed } from "~/lib/notifications";
 
 const polarClient = new Polar({
@@ -46,6 +50,13 @@ export const auth = betterAuth({
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
       await sendVerificationEmail(user.email, user.name, url);
+    },
+    onEmailVerification: async (user) => {
+      try {
+        await sendWelcomeEmail(user.email, user.name);
+      } catch (error) {
+        console.error("Welcome email failed", error);
+      }
     },
   },
   plugins: [

@@ -5,6 +5,7 @@ import {
   SecuritySettingsCards,
 } from "@daveyplate/better-auth-ui";
 import {
+  BellIcon,
   ChevronRightIcon,
   LockKeyholeIcon,
   ShieldCheckIcon,
@@ -22,7 +23,7 @@ const navigation = [
     pathname: "settings",
     href: "/account/settings",
     label: "Account",
-    description: "Profile, username, and email notifications",
+    description: "Profile and username",
     icon: UserRoundIcon,
   },
   {
@@ -31,6 +32,13 @@ const navigation = [
     label: "Security",
     description: "Password and active sessions",
     icon: ShieldCheckIcon,
+  },
+  {
+    pathname: "notifications",
+    href: "/account/notifications",
+    label: "Notifications",
+    description: "Email notification preferences",
+    icon: BellIcon,
   },
 ] as const;
 
@@ -60,18 +68,28 @@ function AccountSettingsView({
   initialNotificationSettings: Record<NotificationType, boolean>;
 }) {
   const isSecurity = pathname === "security";
+  const isNotifications = pathname === "notifications";
+  const activeView = navigation.find((item) => item.pathname === pathname);
 
   return (
     <div className="mx-auto w-full max-w-6xl p-4 sm:p-6 lg:p-8">
       <DashboardPageHeader
         eyebrow="Your Melodyc account"
-        title={isSecurity ? "Security" : "Account settings"}
+        title={
+          isSecurity
+            ? "Security"
+            : isNotifications
+              ? "Notifications"
+              : "Account settings"
+        }
         description={
           isSecurity
             ? "Control your password, connected providers, and active sessions."
-            : "Keep your profile and personal information up to date."
+            : isNotifications
+              ? "Choose which emails Melodyc sends you."
+              : "Keep your profile and personal information up to date."
         }
-        icon={isSecurity ? ShieldCheckIcon : UserRoundIcon}
+        icon={activeView?.icon ?? UserRoundIcon}
       />
 
       <div className="mt-8 grid items-start gap-8 lg:grid-cols-[17rem_minmax(0,1fr)]">
@@ -146,11 +164,15 @@ function AccountSettingsView({
 
         <section
           className="min-w-0"
-          aria-label={isSecurity ? "Security settings" : "Account settings"}
+          aria-label={`${activeView?.label ?? "Account"} settings`}
         >
           {isSecurity ? (
             <SecuritySettingsCards
               classNames={{ cards: "gap-5", card: cardClassNames }}
+            />
+          ) : isNotifications ? (
+            <NotificationSettingsCard
+              initialSettings={initialNotificationSettings}
             />
           ) : (
             <>
@@ -158,9 +180,6 @@ function AccountSettingsView({
                 classNames={{ cards: "gap-5", card: cardClassNames }}
               />
               <UsernameSettingsCard initialUsername={initialUsername} />
-              <NotificationSettingsCard
-                initialSettings={initialNotificationSettings}
-              />
             </>
           )}
         </section>
