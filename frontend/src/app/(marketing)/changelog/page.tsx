@@ -6,6 +6,7 @@ import {
   CreditCardIcon,
   DatabaseIcon,
   LanguagesIcon,
+  LibraryIcon,
   MusicIcon,
   RefreshCcwIcon,
   TagsIcon,
@@ -60,6 +61,65 @@ const typeMeta: Record<ChangeType, { label: string; className: string }> = {
 };
 
 const releases: Release[] = [
+  {
+    version: "Launch",
+    date: "October 2, 2026",
+    dateTime: "2026-10-02",
+    title: "My Music, downloads, and better cover art",
+    description:
+      "Melodyc is live on melodyc.com with a personal music library, full control over every track, and more realistic artwork.",
+    icon: LibraryIcon,
+    changes: [
+      {
+        type: "new",
+        text: "My Music library: every song you created in one place, with Public and Private badges, search, and infinite scrolling.",
+      },
+      {
+        type: "new",
+        text: "Publish or unpublish, rename, and delete your songs directly from My Music.",
+      },
+      {
+        type: "new",
+        text: "Download your songs in WAV, MP3 (320 kbps), or FLAC, and download the cover image.",
+      },
+      {
+        type: "new",
+        text: "AI-generated song titles in the language of the song, which you can rename at any time.",
+      },
+      {
+        type: "new",
+        text: "Remove failed or insufficient-credit tracks from the Create library with one click.",
+      },
+      {
+        type: "new",
+        text: "Close the player at any time to stop playback.",
+      },
+      {
+        type: "improved",
+        text: "Cover art is now generated with FLUX.1-schnell at 1024 × 1024, guided by an AI art director for a more authentic album cover look.",
+      },
+      {
+        type: "improved",
+        text: "Each Create request now generates a single song and uses one credit.",
+      },
+      {
+        type: "improved",
+        text: "Covers, titles, and credits update automatically when a generation finishes or a payment completes, without reloading the page.",
+      },
+      {
+        type: "improved",
+        text: "Billing moved from the sidebar to the account menu.",
+      },
+      {
+        type: "fixed",
+        text: "Song titles, listens, and likes are now readable in dark mode.",
+      },
+      {
+        type: "fixed",
+        text: "Updated Next.js to patch a security vulnerability in React Server Components.",
+      },
+    ],
+  },
   {
     version: "Unreleased",
     date: "September 14, 2026",
