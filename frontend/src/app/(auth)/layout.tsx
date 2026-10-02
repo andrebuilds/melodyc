@@ -16,7 +16,6 @@ export const viewport: Viewport = siteViewport;
 
 export const metadata: Metadata = {
   ...siteMetadata,
-  title: "Melodyc Account",
   robots: privatePageRobots,
 };
 

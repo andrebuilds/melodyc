@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { authViewPaths } from "@daveyplate/better-auth-ui/server";
 import { notFound } from "next/navigation";
 import { AuthView } from "./view";
@@ -8,6 +9,22 @@ export function generateStaticParams() {
   return Object.values(authViewPaths)
     .filter((pathname) => !dashboardViews.has(pathname))
     .map((pathname) => ({ pathname }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ pathname: string }>;
+}): Promise<Metadata> {
+  const { pathname } = await params;
+  const title =
+    pathname === authViewPaths.SIGN_IN
+      ? "Sign in"
+      : pathname === authViewPaths.SIGN_UP
+        ? "Sign up"
+        : "Account";
+
+  return { title };
 }
 
 export default async function AuthPage({
