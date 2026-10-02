@@ -69,7 +69,7 @@ export function AvatarSettingsCard() {
       formData.append("file", await resizeImage(file));
       const image = await uploadAvatar(formData);
       await authClient.updateUser({ image });
-      await refetch();
+      refetch();
       toast.success("Profile picture updated.");
     } catch (error) {
       toast.error(
@@ -84,7 +84,7 @@ export function AvatarSettingsCard() {
     setIsUploading(true);
     try {
       await authClient.updateUser({ image: null });
-      await refetch();
+      refetch();
     } catch {
       toast.error("Unable to remove the profile picture.");
     } finally {

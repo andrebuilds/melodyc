@@ -123,7 +123,7 @@ function CreatingMusic() {
         <li>Your track appears immediately with a queued or processing status and a temporary title.</li>
         <li>The AI composes the audio, writes a short title in the language of the song, and designs a matching album cover.</li>
         <li>When the song is ready, the cover, title, and your credit balance update automatically, without reloading the page.</li>
-        <li>If you enabled it, you also receive a "Your song is ready" email.</li>
+        <li>If you enabled it, you also receive a &quot;Your song is ready&quot; email.</li>
       </List>
       <Callout title="Credit usage">
         Each successfully generated song uses one credit, so a completed Create request uses one credit. Failed generations are not charged.
@@ -340,7 +340,7 @@ function PublicDemo() {
     <>
       <Heading>Try Melodyc before signing up</Heading>
       <Paragraph>
-        The studio demo on the homepage creates a 30-second preview from a text prompt. You can choose instrumental mode, listen to the result, and download it without using account credits.
+        The studio demo on the homepage creates a 30-second preview from a text prompt. You can choose instrumental mode, play the result from its cover card or the built-in player, and download it without using account credits.
       </Paragraph>
       <Heading>Demo limits</Heading>
       <List>

@@ -10,6 +10,7 @@ import {
   MusicIcon,
   RefreshCcwIcon,
   TagsIcon,
+  UsersIcon,
   WandSparklesIcon,
 } from "lucide-react";
 import { Badge } from "~/components/ui/badge";
@@ -61,6 +62,57 @@ const typeMeta: Record<ChangeType, { label: string; className: string }> = {
 };
 
 const releases: Release[] = [
+  {
+    version: "Community update",
+    date: "October 2, 2026",
+    dateTime: "2026-10-02",
+    title: "Profiles, followers, and notifications",
+    description:
+      "Melodyc becomes a community: personalize your profile, follow other creators, and never miss what happens to your music.",
+    icon: UsersIcon,
+    changes: [
+      {
+        type: "new",
+        text: "Follow other creators and see their latest songs in a new From creators you follow section in Discover.",
+      },
+      {
+        type: "new",
+        text: "Follower and following counts on every profile, with the full list of people one click away.",
+      },
+      {
+        type: "new",
+        text: "In-app notifications: a bell next to your credits shows likes, new followers, listen milestones, finished songs, and added credits.",
+      },
+      {
+        type: "new",
+        text: "Upload a profile picture that replaces your initials across Melodyc.",
+      },
+      {
+        type: "new",
+        text: "Open your public profile from My profile in the account menu.",
+      },
+      {
+        type: "new",
+        text: "Email verification, a welcome email, and password reset, with password confirmation and show/hide toggles.",
+      },
+      {
+        type: "new",
+        text: "Email notifications for finished songs, failed generations, payments, and new followers, managed from a new Notifications panel with one-click unsubscribe.",
+      },
+      {
+        type: "new",
+        text: "Delete your account yourself from Security: songs, files, and subscriptions are removed.",
+      },
+      {
+        type: "improved",
+        text: "The homepage demo now shows your track as a cover card with a built-in player, just like My Music.",
+      },
+      {
+        type: "improved",
+        text: "Account settings cards share one consistent design.",
+      },
+    ],
+  },
   {
     version: "Launch",
     date: "October 2, 2026",

@@ -15,6 +15,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - AI-generated song titles in the language of the song, applied only if the user has not renamed the song.
 - Removal of failed and insufficient-credit tracks from the Create library.
 - Close button for the player.
+- Email verification, welcome email, and password reset with Resend, including password confirmation and show/hide toggles.
+- Email notifications (song ready, generation failed, payment confirmed, new follower) with a dedicated Notifications settings panel and signed one-click unsubscribe links.
+- Self-service account deletion that removes songs, audio files, covers, profile picture, and the Polar customer.
+- Profile picture upload stored in S3 and served through `/api/avatar/[userId]`.
+- My profile link in the account menu.
+- Follow system with follower and following counts and lists, and a "From creators you follow" section in Discover.
+- In-app notifications bell for likes, new followers, listen milestones, generation results, and added credits.
 
 ### Changed
 
@@ -23,6 +30,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Covers, titles, and credits refresh automatically when a generation finishes or a payment completes.
 - Billing moved from the sidebar to the account menu.
 - Model references updated in the Privacy Policy, llms.txt, README, and backend documentation.
+- Public username and notification cards restyled to match the other settings cards.
+- Homepage demo result redesigned with a My Music style cover card and a custom player.
+- Privacy Policy, Terms, and Help Center updated for emails, profiles, follows, notifications, and account deletion.
 
 ### Deprecated
 

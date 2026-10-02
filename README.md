@@ -36,9 +36,12 @@ Built with a modern full-stack architecture, Melodyc is designed to be a real-wo
 - 📊 Background job queue system with Inngest
 - 💳 Credit-based usage system
 - 💰 Polar.sh integration for purchasing credit packages
-- 👤 User authentication with BetterAuth
+- 👤 User authentication with BetterAuth, email verification, and password reset
+- 📧 Transactional and notification emails with Resend
 - 🎧 Community feed to discover, listen to, and like generated tracks
-- 🎛️ Personal dashboard to manage, listen to, and publish your music
+- 🎛️ Personal library (My Music) to manage, publish, and download your music in WAV, MP3, and FLAC
+- 🧑‍🎤 Public creator profiles with username, profile picture, followers, and following
+- 🔔 In-app notifications for likes, followers, listen milestones, and generation results
 - 📱 Modern UI with Next.js, Tailwind CSS and ShadCN
 
 ---
@@ -49,6 +52,7 @@ Built with a modern full-stack architecture, Melodyc is designed to be a real-wo
 |---|---|
 | Frontend | Next.js 15, React 19, TypeScript, Tailwind CSS 4, ShadCN |
 | Authentication | BetterAuth |
+| Email | Resend |
 | Payments | Polar.sh |
 | Database | PostgreSQL (Neon) + Prisma ORM |
 | Queue / Workflow | Inngest |
@@ -71,6 +75,7 @@ Built with a modern full-stack architecture, Melodyc is designed to be a real-wo
 - A [Polar.sh](https://polar.sh) account
 - An [AWS](https://aws.amazon.com) account (S3)
 - An [Inngest](https://inngest.com) account
+- A [Resend](https://resend.com) account
 
 ### Clone the repository
 
