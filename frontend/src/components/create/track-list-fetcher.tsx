@@ -20,7 +20,7 @@ export default async function TrackListFetcher() {
     where: { userId: session?.user?.id },
     include: {
       user: {
-        select: { name: true },
+        select: { name: true, username: true },
       },
     },
     orderBy: {
@@ -47,6 +47,8 @@ export default async function TrackListFetcher() {
         playUrl: null,
         status: song.status,
         createdByUserName: song.user?.name,
+        createdByUserId: song.userId,
+        createdByUserHandle: song.user?.username ?? song.userId,
         published: song.published,
       };
     }),

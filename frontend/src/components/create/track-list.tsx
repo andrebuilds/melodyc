@@ -48,6 +48,8 @@ export interface Track {
   playUrl: string | null;
   status: string | null;
   createdByUserName: string | null;
+  createdByUserId?: string;
+  createdByUserHandle?: string;
   published: boolean;
 }
 
@@ -121,6 +123,8 @@ export function TrackList({ tracks }: { tracks: Track[] }) {
       artwork: track.thumbnailUrl,
       prompt: track.prompt,
       createdByUserName: track.createdByUserName,
+      createdByUserId: track.createdByUserId,
+      createdByUserHandle: track.createdByUserHandle,
     });
   };
 

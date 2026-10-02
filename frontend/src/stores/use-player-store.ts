@@ -7,6 +7,8 @@ interface PlayerTrack {
   artwork?: string | null;
   prompt: string | null;
   createdByUserName: string | null;
+  createdByUserId?: string;
+  createdByUserHandle?: string;
 }
 
 interface PlayerState {

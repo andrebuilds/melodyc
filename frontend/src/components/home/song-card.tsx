@@ -3,6 +3,7 @@
 import type { Category, Like, Song } from "@prisma/client";
 import { Globe, Heart, Loader2, Lock, Music, Play } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
 import { getPlayUrl } from "~/actions/generation";
 import { toggleLikeSong } from "~/actions/song";
 import { usePlayerStore } from "~/stores/use-player-store";
@@ -11,7 +12,7 @@ import { SongDownloadMenu } from "~/components/my-music/song-download-menu";
 import { SongActionsMenu } from "~/components/my-music/song-actions-menu";
 
 type SongWithRelation = Song & {
-  user: { name: string | null };
+  user: { name: string | null; username: string | null };
   _count: {
     likes: number;
   };
@@ -49,6 +50,8 @@ export function SongCard({
       artwork: song.thumbnailUrl,
       prompt: song.prompt,
       createdByUserName: song.user.name,
+      createdByUserId: song.userId,
+      createdByUserHandle: song.user.username ?? song.userId,
     });
 
     setIsLoading(false);
@@ -71,7 +74,7 @@ export function SongCard({
         {showVisibility && (
           <Badge
             variant="outline"
-            className={`absolute top-0 right-2 z-10 -translate-y-1/2 gap-1 rounded-full bg-background px-2 py-0.5 text-[11px] font-semibold shadow-sm ${
+            className={`bg-background absolute top-0 right-2 z-10 -translate-y-1/2 gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold shadow-sm ${
               song.published
                 ? "border-primary/40 text-primary"
                 : "border-border text-muted-foreground"
@@ -85,7 +88,7 @@ export function SongCard({
             {song.published ? "Public" : "Private"}
           </Badge>
         )}
-        <div className="group relative aspect-square w-full overflow-hidden rounded-md bg-muted group-hover:opacity-75">
+        <div className="group bg-muted relative aspect-square w-full overflow-hidden rounded-md group-hover:opacity-75">
           {song.thumbnailUrl ? (
             <img
               className="h-full w-full object-cover object-center"
@@ -110,7 +113,7 @@ export function SongCard({
         </div>
 
         <div className="mt-2 flex items-center justify-between gap-2">
-          <h3 className="min-w-0 truncate text-sm font-medium text-foreground">
+          <h3 className="text-foreground min-w-0 truncate text-sm font-medium">
             {song.title}
           </h3>
           {manageable && (
@@ -131,9 +134,15 @@ export function SongCard({
           )}
         </div>
 
-        <p className="text-xs text-muted-foreground">{song.user.name}</p>
+        <Link
+          href={`/user/${song.user.username ?? song.userId}`}
+          onClick={(event) => event.stopPropagation()}
+          className="text-muted-foreground text-xs hover:underline"
+        >
+          {song.user.name}
+        </Link>
 
-        <div className="mt-1 flex items-center justify-between text-xs text-muted-foreground">
+        <div className="text-muted-foreground mt-1 flex items-center justify-between text-xs">
           <span>{song.listenCount} listens</span>
           <button
             onClick={handleLike}
