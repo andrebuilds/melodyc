@@ -141,8 +141,19 @@ async function getDownloadableSong(songId: string) {
       OR: [{ userId: session.user.id }, { published: true }],
       s3Key: { not: null },
     },
-    select: { s3Key: true, title: true },
+    select: { s3Key: true, title: true, thumbnailS3Key: true },
   });
+}
+
+function toFileBaseName(title: string | null) {
+  return (
+    (title ?? "melodyc-song")
+      .normalize("NFKD")
+      .replace(/[^\w\s-]/g, "")
+      .trim()
+      .replace(/\s+/g, "-")
+      .slice(0, 80) || "melodyc-song"
+  );
 }
 
 function getFormatKey(wavKey: string, format: DownloadFormat) {
@@ -170,21 +181,36 @@ export async function getDownloadFormats(songId: string) {
     }),
   );
 
-  return available.filter((format): format is DownloadFormat => !!format);
+  const formats = available.filter(
+    (format): format is DownloadFormat => !!format,
+  );
+
+  return { formats, hasCover: !!song.thumbnailS3Key };
+}
+
+export async function getCoverDownloadUrl(songId: string) {
+  const song = await getDownloadableSong(songId);
+  if (!song.thumbnailS3Key) throw new Error("This song has no cover.");
+
+  const extension = song.thumbnailS3Key.split(".").pop() ?? "png";
+  const fileName = `${toFileBaseName(song.title)}-cover.${extension}`;
+
+  const command = new GetObjectCommand({
+    Bucket: env.S3_BUCKET_NAME,
+    Key: song.thumbnailS3Key,
+    ResponseContentDisposition: `attachment; filename="${fileName}"`,
+  });
+
+  return await getSignedUrl(createS3Client(), command, {
+    expiresIn: 300,
+  });
 }
 
 export async function getDownloadUrl(songId: string, format: DownloadFormat) {
   if (!DOWNLOAD_FORMATS.includes(format)) throw new Error("Invalid format.");
 
   const song = await getDownloadableSong(songId);
-  const baseName =
-    (song.title ?? "melodyc-song")
-      .normalize("NFKD")
-      .replace(/[^\w\s-]/g, "")
-      .trim()
-      .replace(/\s+/g, "-")
-      .slice(0, 80) || "melodyc-song";
-  const fileName = `${baseName}.${format}`;
+  const fileName = `${toFileBaseName(song.title)}.${format}`;
 
   const command = new GetObjectCommand({
     Bucket: env.S3_BUCKET_NAME,

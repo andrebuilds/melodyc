@@ -1,9 +1,10 @@
 "use client";
 
-import { Download, Loader2 } from "lucide-react";
+import { Download, ImageIcon, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import {
+  getCoverDownloadUrl,
   getDownloadFormats,
   getDownloadUrl,
   type DownloadFormat,
@@ -24,28 +25,35 @@ const FORMAT_LABELS: Record<DownloadFormat, string> = {
   flac: "FLAC (lossless, smaller)",
 };
 
+type DownloadTarget = DownloadFormat | "cover";
+
 export function SongDownloadMenu({ songId }: { songId: string }) {
-  const [formats, setFormats] = useState<DownloadFormat[] | null>(null);
-  const [downloadingFormat, setDownloadingFormat] =
-    useState<DownloadFormat | null>(null);
+  const [options, setOptions] = useState<{
+    formats: DownloadFormat[];
+    hasCover: boolean;
+  } | null>(null);
+  const [downloading, setDownloading] = useState<DownloadTarget | null>(null);
 
   const handleOpenChange = async (open: boolean) => {
-    if (!open || formats) return;
+    if (!open || options) return;
     try {
-      setFormats(await getDownloadFormats(songId));
+      setOptions(await getDownloadFormats(songId));
     } catch {
-      setFormats(["wav"]);
+      setOptions({ formats: ["wav"], hasCover: false });
     }
   };
 
-  const handleDownload = async (format: DownloadFormat) => {
-    setDownloadingFormat(format);
+  const handleDownload = async (target: DownloadTarget) => {
+    setDownloading(target);
     try {
-      window.location.href = await getDownloadUrl(songId, format);
+      window.location.href =
+        target === "cover"
+          ? await getCoverDownloadUrl(songId)
+          : await getDownloadUrl(songId, target);
     } catch {
-      toast.error("Unable to download this song. Please try again.");
+      toast.error("Unable to download this file. Please try again.");
     } finally {
-      setDownloadingFormat(null);
+      setDownloading(null);
     }
   };
 
@@ -60,7 +68,7 @@ export function SongDownloadMenu({ songId }: { songId: string }) {
             className="size-7"
             aria-label="Download song"
           >
-            {downloadingFormat ? (
+            {downloading ? (
               <Loader2 className="size-4 animate-spin" />
             ) : (
               <Download className="size-4" />
@@ -68,18 +76,32 @@ export function SongDownloadMenu({ songId }: { songId: string }) {
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-52">
-          <DropdownMenuLabel>Download as</DropdownMenuLabel>
+          <DropdownMenuLabel>Download</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          {formats ? (
-            formats.map((format) => (
-              <DropdownMenuItem
-                key={format}
-                disabled={downloadingFormat !== null}
-                onClick={() => void handleDownload(format)}
-              >
-                {FORMAT_LABELS[format]}
-              </DropdownMenuItem>
-            ))
+          {options ? (
+            <>
+              {options.formats.map((format) => (
+                <DropdownMenuItem
+                  key={format}
+                  disabled={downloading !== null}
+                  onClick={() => void handleDownload(format)}
+                >
+                  {FORMAT_LABELS[format]}
+                </DropdownMenuItem>
+              ))}
+              {options.hasCover && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    disabled={downloading !== null}
+                    onClick={() => void handleDownload("cover")}
+                  >
+                    <ImageIcon className="mr-2 size-4" />
+                    Cover image
+                  </DropdownMenuItem>
+                </>
+              )}
+            </>
           ) : (
             <DropdownMenuItem disabled>
               <Loader2 className="mr-2 size-4 animate-spin" />
