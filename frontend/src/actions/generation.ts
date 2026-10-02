@@ -10,6 +10,7 @@ import { GetObjectCommand, HeadObjectCommand } from "@aws-sdk/client-s3";
 import { env } from "~/env";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { createS3Client } from "~/lib/s3";
+import { notifyListenMilestone } from "~/lib/in-app-notifications";
 
 export interface GenerateRequest {
   prompt?: string;
@@ -98,7 +99,7 @@ export async function getPlayUrl(songId: string) {
     },
   });
 
-  await db.song.update({
+  const updated = await db.song.update({
     where: {
       id: songId,
     },
@@ -107,7 +108,10 @@ export async function getPlayUrl(songId: string) {
         increment: 1,
       },
     },
+    select: { userId: true, listenCount: true },
   });
+
+  await notifyListenMilestone(songId, updated.userId, updated.listenCount);
 
   return await getPresignedUrl(song.s3Key!);
 }

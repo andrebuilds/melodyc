@@ -12,6 +12,7 @@ import {
 } from "~/components/ui/card";
 import { Label } from "~/components/ui/label";
 import { Switch } from "~/components/ui/switch";
+import { settingsCardClassNames as styles } from "~/components/settings/settings-card-styles";
 import type { NotificationType } from "~/lib/email";
 
 type NotificationSettings = Record<NotificationType, boolean>;
@@ -32,6 +33,11 @@ const OPTIONS: { type: NotificationType; label: string; description: string }[] 
       type: "paymentConfirmed",
       label: "Payment confirmed",
       description: "When a payment is completed and credits are added.",
+    },
+    {
+      type: "newFollower",
+      label: "New follower",
+      description: "When someone starts following you.",
     },
     {
       type: "productUpdates",
@@ -58,15 +64,15 @@ export function NotificationSettingsCard({
   };
 
   return (
-    <Card className="mt-5">
-      <CardHeader>
-        <CardTitle>Email notifications</CardTitle>
-        <CardDescription>
+    <Card className={styles.base}>
+      <CardHeader className={styles.header}>
+        <CardTitle className={styles.title}>Email notifications</CardTitle>
+        <CardDescription className={styles.description}>
           Choose which emails you want to receive. Security emails, such as
           password resets, are always sent.
         </CardDescription>
       </CardHeader>
-      <CardContent className="divide-border/60 divide-y">
+      <CardContent className={`${styles.content} divide-border/60 divide-y`}>
         {OPTIONS.map((option) => (
           <div
             key={option.type}

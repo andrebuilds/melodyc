@@ -26,6 +26,10 @@ model User {
   songs Song[]
   cookieConsents CookieConsent[]
   notificationPreference NotificationPreference?
+  followers Follow[] @relation("followers")
+  following Follow[] @relation("following")
+  notifications Notification[] @relation("recipient")
+  actedNotifications Notification[] @relation("actor")
 
   @@unique([email])
   @@map("user")
@@ -37,10 +41,23 @@ model NotificationPreference {
   songReady        Boolean  @default(true)
   songFailed       Boolean  @default(true)
   paymentConfirmed Boolean  @default(true)
+  newFollower      Boolean  @default(true)
   productUpdates   Boolean  @default(false)
   updatedAt        DateTime @updatedAt
 
   @@map("notification_preference")
+}
+
+model Follow {
+  follower    User     @relation("following", fields: [followerId], references: [id], onDelete: Cascade)
+  followerId  String
+  following   User     @relation("followers", fields: [followingId], references: [id], onDelete: Cascade)
+  followingId String
+  createdAt   DateTime @default(now())
+
+  @@id([followerId, followingId])
+  @@index([followingId])
+  @@map("follow")
 }
 
 model Song {
@@ -62,6 +79,7 @@ model Song {
   listenCount Int @default(0)
   likes Like[]
   categories Category[]
+  notifications Notification[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -70,6 +88,24 @@ model Song {
   userId String
 
   @@index([s3Key])
+}
+
+// type: like | follow | listen_milestone | song_ready | song_failed | credits_added
+model Notification {
+  id        String    @id @default(cuid())
+  type      String
+  user      User      @relation("recipient", fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  actor     User?     @relation("actor", fields: [actorId], references: [id], onDelete: Cascade)
+  actorId   String?
+  song      Song?     @relation(fields: [songId], references: [id], onDelete: Cascade)
+  songId    String?
+  value     Int?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, createdAt])
+  @@map("notification")
 }
 
 model Like {

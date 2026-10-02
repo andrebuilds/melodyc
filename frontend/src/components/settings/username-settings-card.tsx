@@ -9,11 +9,13 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "~/components/ui/card";
 import { Input } from "~/components/ui/input";
-import { Label } from "~/components/ui/label";
+import { settingsCardClassNames as styles } from "~/components/settings/settings-card-styles";
+import { cn } from "~/lib/utils";
 
 export function UsernameSettingsCard({
   initialUsername,
@@ -38,40 +40,51 @@ export function UsernameSettingsCard({
   };
 
   return (
-    <Card className="mt-5">
-      <CardHeader>
-        <CardTitle>Public username</CardTitle>
-        <CardDescription>
-          Your public profile will be available at /user/
-          {username || "username"}.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="username">Username</Label>
-            <div className="flex items-center gap-2">
-              <span className="text-muted-foreground">@</span>
-              <Input
-                id="username"
-                value={username}
-                onChange={(event) => setUsername(event.target.value)}
-                placeholder="Username"
-                autoComplete="username"
-                maxLength={24}
-              />
-            </div>
+    <Card className={cn("mt-5", styles.base)}>
+      <form onSubmit={handleSubmit}>
+        <CardHeader className={styles.header}>
+          <CardTitle className={styles.title}>Public username</CardTitle>
+          <CardDescription className={styles.description}>
+            Your public profile will be available at /user/
+            {username || "username"}.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className={styles.content}>
+          <div className="relative">
+            <span className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm">
+              @
+            </span>
+            <Input
+              id="username"
+              aria-label="Username"
+              value={username}
+              onChange={(event) => setUsername(event.target.value)}
+              placeholder="username"
+              autoComplete="username"
+              maxLength={24}
+              className={cn(styles.input, "pl-7")}
+            />
           </div>
-          {message && (
-            <p className="text-muted-foreground text-sm" aria-live="polite">
-              {message}
-            </p>
+        </CardContent>
+        <CardFooter
+          className={cn(
+            styles.footer,
+            "flex flex-col justify-between gap-3 sm:flex-row sm:items-center",
           )}
-          <Button type="submit" disabled={isSaving}>
-            {isSaving ? "Saving..." : "Save username"}
+        >
+          <p className={styles.instructions} aria-live="polite">
+            {message ?? "Use 3-24 lowercase letters, numbers, or underscores."}
+          </p>
+          <Button
+            type="submit"
+            size="sm"
+            disabled={isSaving}
+            className={styles.primaryButton}
+          >
+            {isSaving ? "Saving..." : "Save"}
           </Button>
-        </form>
-      </CardContent>
+        </CardFooter>
+      </form>
     </Card>
   );
 }

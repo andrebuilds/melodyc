@@ -17,6 +17,7 @@ export function Providers({ children }: { children: ReactNode }) {
         redirectTo="/discover"
         emailVerification
         credentials={{ confirmPassword: true }}
+        deleteUser
         settings={{ basePath: "/account" }}
         navigate={(url) => router.push(url)}
         replace={(url) => router.replace(url)}

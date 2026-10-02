@@ -14,11 +14,25 @@ import {
   SidebarSeparator,
 } from "../ui/sidebar";
 import SidebarMenuItems from "./sidebar-menu-items";
-import { CreditCardIcon, UserIcon } from "lucide-react";
+import { CircleUserRoundIcon, CreditCardIcon, UserIcon } from "lucide-react";
 import Link from "next/link";
+import { headers } from "next/headers";
 import { MelodycLogo } from "~/components/brand/melodyc-logo";
+import { auth } from "~/lib/auth";
+import { db } from "~/server/db";
 
 export async function AppSidebar() {
+  const session = await auth.api.getSession({ headers: await headers() });
+  const profileUser = session
+    ? await db.user.findUnique({
+        where: { id: session.user.id },
+        select: { id: true, username: true },
+      })
+    : null;
+  const profileHref = profileUser
+    ? `/user/${profileUser.username ?? profileUser.id}`
+    : null;
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader className="px-2 pt-4 pb-3">
@@ -55,6 +69,15 @@ export async function AppSidebar() {
             },
           }}
           additionalLinks={[
+            ...(profileHref
+              ? [
+                  {
+                    label: "My profile",
+                    href: profileHref,
+                    icon: <CircleUserRoundIcon />,
+                  },
+                ]
+              : []),
             {
               label: "Billing",
               href: "/billing",

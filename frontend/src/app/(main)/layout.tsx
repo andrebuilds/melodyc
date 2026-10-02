@@ -22,6 +22,7 @@ import {
 import BreadcrumbPageClient from "~/components/sidebar/breadcrumb-page-client";
 import SoundBar from "~/components/sound-bar";
 import { Credits } from "~/components/sidebar/credits";
+import { NotificationsBell } from "~/components/layout/notifications-bell";
 import { GitHubRepoButton } from "~/components/layout/github-repo-button";
 import { ModeToggle } from "~/components/theme/mode-toggle";
 import {
@@ -73,6 +74,11 @@ export default function RootLayout({
                     <div className="flex h-9 items-center gap-1.5 rounded-md border bg-card px-2.5 text-xs shadow-xs">
                       <Credits />
                     </div>
+                    <Separator
+                      orientation="vertical"
+                      className="mx-1 data-[orientation=vertical]:h-5"
+                    />
+                    <NotificationsBell />
                     <Separator
                       orientation="vertical"
                       className="mx-1 data-[orientation=vertical]:h-5"

@@ -11,6 +11,7 @@ export const NOTIFICATION_TYPES = [
   "songReady",
   "songFailed",
   "paymentConfirmed",
+  "newFollower",
   "productUpdates",
 ] as const;
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
@@ -277,6 +278,27 @@ export function sendSongFailedEmail(
       cta: { label: "Try again", url: absoluteUrl("/create") },
     },
     { userId, type: "songFailed" },
+  );
+}
+
+export function sendNewFollowerEmail(
+  to: string,
+  userId: string,
+  followerName: string,
+  followerProfilePath: string,
+) {
+  return sendEmail(
+    to,
+    {
+      subject: `${followerName} started following you on Melodyc`,
+      preheader: "You have a new follower.",
+      heading: "You have a new follower",
+      paragraphs: [
+        `${followerName} started following you. They will see your new published songs in Discover.`,
+      ],
+      cta: { label: "View profile", url: absoluteUrl(followerProfilePath) },
+    },
+    { userId, type: "newFollower" },
   );
 }
 

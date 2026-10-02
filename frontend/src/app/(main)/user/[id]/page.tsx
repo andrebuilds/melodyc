@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { Heart, Music } from "lucide-react";
 import { getPresignedUrl } from "~/actions/generation";
 import { SongCard } from "~/components/home/song-card";
 import { DashboardPageHeader } from "~/components/layout/dashboard-page-header";
+import { FollowControls } from "~/components/profile/follow-controls";
+import { auth } from "~/lib/auth";
 import { db } from "~/server/db";
 
 export async function generateMetadata({
@@ -30,12 +33,17 @@ export default async function UserProfilePage({
 }) {
   const { id } = await params;
   const lookup = id.startsWith("@") ? id.slice(1) : id;
+  const session = await auth.api.getSession({ headers: await headers() });
   const user = await db.user.findFirst({
     where: { OR: [{ id: lookup }, { username: lookup }] },
     select: {
       id: true,
       name: true,
       image: true,
+      _count: { select: { followers: true, following: true } },
+      followers: session
+        ? { where: { followerId: session.user.id }, select: { followerId: true } }
+        : false,
       songs: {
         where: { published: true },
         include: {
@@ -64,7 +72,7 @@ export default async function UserProfilePage({
   );
 
   return (
-    <div className="mx-auto flex h-full w-full max-w-7xl flex-col gap-8 p-4 sm:p-6 lg:p-8">
+    <div className="mx-auto flex min-h-full w-full max-w-7xl flex-col gap-8 p-4 pb-8 sm:p-6 sm:pb-10 lg:p-8 lg:pb-12">
       <DashboardPageHeader
         eyebrow="Melodyc creator"
         title={user.name}
@@ -80,7 +88,7 @@ export default async function UserProfilePage({
             user.name.slice(0, 1).toUpperCase()
           )}
         </div>
-        <div>
+        <div className="space-y-2">
           <p className="text-lg font-semibold">{user.name}</p>
           <div className="text-muted-foreground flex items-center gap-4 text-sm">
             <span>{songs.length} published songs</span>
@@ -89,6 +97,13 @@ export default async function UserProfilePage({
               {likesReceived} likes received
             </span>
           </div>
+          <FollowControls
+            userId={user.id}
+            isOwnProfile={session?.user.id === user.id}
+            initialIsFollowing={(user.followers ?? []).length > 0}
+            initialFollowersCount={user._count.followers}
+            followingCount={user._count.following}
+          />
         </div>
       </div>
 

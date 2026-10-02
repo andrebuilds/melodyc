@@ -109,11 +109,16 @@ export default function TermsPage() {
               styles, genres, and generation settings.
             </li>
             <li>
-              Store your songs in a personal library, play and download them.
+              Store your songs in a personal library, play them, and download
+              them in WAV, MP3, or FLAC together with their cover image.
             </li>
             <li>
               Publish your songs to Discover, explore music created by the
               community, and like the songs you enjoy.
+            </li>
+            <li>
+              Create a public profile with a username and a profile picture,
+              follow other creators, and be followed by them.
             </li>
             <li>
               Try a limited free demo without creating an account.
@@ -131,7 +136,13 @@ export default function TermsPage() {
           <LegalList>
             <li>
               Registration is free and requires a name, a valid email address,
-              and a password.
+              and a password. You must verify your email address before you
+              can sign in.
+            </li>
+            <li>
+              You may choose a public username and upload a profile picture.
+              You must own or have the right to use the image, and both must
+              comply with Section 6.
             </li>
             <li>
               You must be at least <Strong>16 years of age</Strong> to use the
@@ -323,12 +334,14 @@ export default function TermsPage() {
               as long as it remains published.
             </li>
             <li>
-              Published songs show your account name. You can unpublish a song
+              Published songs show your name, username, and profile picture,
+              and appear on your public profile page. You can unpublish a song
               at any time; it will then no longer be visible to other users.
             </li>
             <li>
-              We may remove Published Content that violates these Terms or the
-              law, or that is reported to us as infringing third-party rights.
+              We may remove Published Content, profile pictures, or usernames
+              that violate these Terms or the law, or that are reported to us
+              as infringing third-party rights.
             </li>
           </LegalList>
 
@@ -378,6 +391,11 @@ export default function TermsPage() {
               Present AI-generated Output as created entirely by a human where
               disclosure is required by law, or remove any marking that
               identifies the Output as AI-generated.
+            </li>
+            <li>
+              Use a username or profile picture that impersonates another
+              person or brand, infringes third-party rights, or is offensive,
+              obscene, or misleading.
             </li>
             <li>
               Resell, sublicense, or share access to your account or credits
@@ -475,14 +493,15 @@ export default function TermsPage() {
           <LegalSubheading>10.1 By the User</LegalSubheading>
           <LegalList>
             <li>
-              You may stop using the Service and request the deletion of your
-              account at any time by writing to{" "}
+              You may stop using the Service and delete your account at any
+              time from Account &gt; Security, or by writing to{" "}
               <Mail address={legalEntity.email} />.
             </li>
             <li>
-              Deleting your account permanently removes your songs and any
-              remaining credits. Before deleting, you can download your songs
-              and request a copy of your data (Art. 20 GDPR).
+              Deleting your account permanently removes your songs, cover
+              images, and any remaining credits, and cancels any active
+              subscription. Before deleting, you can download your songs and
+              request a copy of your data (Art. 20 GDPR).
             </li>
             <li>
               Remember to cancel any active subscription to stop future

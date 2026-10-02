@@ -15,6 +15,8 @@ import {
   sendWelcomeEmail,
 } from "~/lib/email";
 import { notifyPaymentConfirmed } from "~/lib/notifications";
+import { avatarKey, createS3Client, deleteSongFiles } from "~/lib/s3";
+import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 
 const polarClient = new Polar({
   accessToken: env.POLAR_ACCESS_TOKEN,
@@ -34,6 +36,36 @@ export const auth = betterAuth({
             credits: 20,
           },
         }),
+      },
+    },
+  },
+  user: {
+    deleteUser: {
+      enabled: true,
+      // Database rows (songs, likes, sessions, preferences) are removed by cascade after this.
+      beforeDelete: async (user) => {
+        const songs = await db.song.findMany({
+          where: { userId: user.id },
+          select: { s3Key: true, thumbnailS3Key: true },
+        });
+        try {
+          await deleteSongFiles(songs);
+          await createS3Client().send(
+            new DeleteObjectCommand({
+              Bucket: env.S3_BUCKET_NAME,
+              Key: avatarKey(user.id),
+            }),
+          );
+        } catch (error) {
+          console.error(`S3 cleanup failed for deleted user ${user.id}`, error);
+        }
+
+        try {
+          // Also cancels active subscriptions on Polar.
+          await polarClient.customers.deleteExternal({ externalId: user.id });
+        } catch (error) {
+          console.error(`Polar customer deletion failed for user ${user.id}`, error);
+        }
       },
     },
   },

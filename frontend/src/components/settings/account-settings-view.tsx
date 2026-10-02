@@ -14,7 +14,9 @@ import {
 import Link from "next/link";
 import { DashboardPageHeader } from "~/components/layout/dashboard-page-header";
 import { UsernameSettingsCard } from "~/components/settings/username-settings-card";
+import { AvatarSettingsCard } from "~/components/settings/avatar-settings-card";
 import { NotificationSettingsCard } from "~/components/settings/notification-settings-card";
+import { settingsCardClassNames as cardClassNames } from "~/components/settings/settings-card-styles";
 import type { NotificationType } from "~/lib/email";
 import { cn } from "~/lib/utils";
 
@@ -41,22 +43,6 @@ const navigation = [
     icon: BellIcon,
   },
 ] as const;
-
-const cardClassNames = {
-  base: "gap-0 overflow-hidden rounded-md border-border/70 bg-card py-0 shadow-sm",
-  header: "border-b border-border/60 bg-transparent px-5 py-3 sm:px-6",
-  content: "px-5 py-5 sm:px-6",
-  footer:
-    "border-t border-border/60 bg-transparent px-5 py-4 sm:px-6 [&_button]:min-w-24",
-  title: "text-base font-bold text-foreground",
-  description: "mt-1 leading-6 text-muted-foreground",
-  instructions: "text-xs leading-5 text-muted-foreground",
-  input: "bg-background",
-  cell: "rounded-md border-border/60 bg-background/70 shadow-none",
-  icon: "text-primary",
-  primaryButton: "shadow-xs",
-  destructiveButton: "shadow-none",
-};
 
 function AccountSettingsView({
   pathname,
@@ -176,6 +162,7 @@ function AccountSettingsView({
             />
           ) : (
             <>
+              <AvatarSettingsCard />
               <AccountSettingsCards
                 classNames={{ cards: "gap-5", card: cardClassNames }}
               />

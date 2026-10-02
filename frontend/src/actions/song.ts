@@ -1,13 +1,15 @@
 "use server";
 
-import { DeleteObjectsCommand } from "@aws-sdk/client-s3";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getPresignedUrl } from "~/actions/generation";
-import { env } from "~/env";
 import { auth } from "~/lib/auth";
-import { createS3Client } from "~/lib/s3";
+import { deleteSongFiles } from "~/lib/s3";
+import {
+  createInAppNotification,
+  removeLikeNotification,
+} from "~/lib/in-app-notifications";
 import { db } from "~/server/db";
 
 const HOME_PAGE_SIZE = 20;
@@ -197,26 +199,10 @@ export async function deleteSong(songId: string) {
     select: { s3Key: true, thumbnailS3Key: true },
   });
 
-  const keys = [
-    song.s3Key,
-    song.s3Key?.replace(/\.wav$/i, ".mp3"),
-    song.s3Key?.replace(/\.wav$/i, ".flac"),
-    song.thumbnailS3Key,
-  ].filter(
-    (key, index, all): key is string => !!key && all.indexOf(key) === index,
-  );
-
-  if (keys.length > 0) {
-    try {
-      await createS3Client().send(
-        new DeleteObjectsCommand({
-          Bucket: env.S3_BUCKET_NAME,
-          Delete: { Objects: keys.map((Key) => ({ Key })), Quiet: true },
-        }),
-      );
-    } catch (error) {
-      console.error(`S3 cleanup failed for song ${songId}`, error);
-    }
+  try {
+    await deleteSongFiles([song]);
+  } catch (error) {
+    console.error(`S3 cleanup failed for song ${songId}`, error);
   }
 
   await db.song.delete({ where: { id: songId } });
@@ -251,12 +237,20 @@ export async function toggleLikeSong(songId: string) {
         },
       },
     });
+    await removeLikeNotification(session.user.id, songId);
   } else {
-    await db.like.create({
+    const like = await db.like.create({
       data: {
         userId: session.user.id,
         songId,
       },
+      select: { song: { select: { userId: true } } },
+    });
+    await createInAppNotification({
+      type: "like",
+      userId: like.song.userId,
+      actorId: session.user.id,
+      songId,
     });
   }
 

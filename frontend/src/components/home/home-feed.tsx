@@ -8,7 +8,13 @@ import { SongCard } from "~/components/home/song-card";
 type HomePage = Awaited<ReturnType<typeof getPublishedSongs>>;
 type HomeSong = HomePage["songs"][number];
 
-export function HomeFeed({ initialPage }: { initialPage: HomePage }) {
+export function HomeFeed({
+  initialPage,
+  followingSongs = [],
+}: {
+  initialPage: HomePage;
+  followingSongs?: HomeSong[];
+}) {
   const [songs, setSongs] = useState<HomeSong[]>(initialPage.songs);
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
@@ -142,6 +148,17 @@ export function HomeFeed({ initialPage }: { initialPage: HomePage }) {
           <p className="text-muted-foreground mt-2">
             Try a different title, prompt, or category.
           </p>
+        </div>
+      )}
+
+      {!debouncedQuery && followingSongs.length > 0 && (
+        <div className="mt-6">
+          <h2 className="text-xl font-semibold">From creators you follow</h2>
+          <div className="mt-4 grid grid-cols-2 gap-x-4 gap-y-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+            {followingSongs.map((song) => (
+              <SongCard key={song.id} song={song} />
+            ))}
+          </div>
         </div>
       )}
 

@@ -4,17 +4,20 @@ import type { ElementType, ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
+  BellIcon,
   ChevronRightIcon,
   CircleHelpIcon,
   Code2Icon,
   CompassIcon,
   CreditCardIcon,
+  DiscIcon,
   InfoIcon,
   LibraryIcon,
   Mic2Icon,
   PlayCircleIcon,
   ShieldCheckIcon,
   UserPlusIcon,
+  UsersIcon,
   WandSparklesIcon,
 } from "lucide-react";
 import { subscriptionPlans } from "~/lib/pricing";
@@ -31,9 +34,12 @@ const sections: HelpSection[] = [
   { id: "getting-started", label: "Getting started", icon: UserPlusIcon },
   { id: "creating-music", label: "Creating music", icon: WandSparklesIcon },
   { id: "lyrics-instrumentals", label: "Lyrics and instrumentals", icon: Mic2Icon },
-  { id: "track-library", label: "Track library", icon: LibraryIcon },
+  { id: "track-library", label: "Track library", icon: DiscIcon },
+  { id: "my-music", label: "My Music", icon: LibraryIcon },
   { id: "discover", label: "Discover", icon: CompassIcon },
+  { id: "profile-community", label: "Profile and community", icon: UsersIcon },
   { id: "credits-billing", label: "Credits and billing", icon: CreditCardIcon },
+  { id: "notifications", label: "Notifications", icon: BellIcon },
   { id: "account-security", label: "Account and security", icon: ShieldCheckIcon },
   { id: "public-demo", label: "Public demo", icon: PlayCircleIcon },
   { id: "self-hosting", label: "Self-hosting", icon: Code2Icon },
@@ -81,15 +87,18 @@ function GettingStarted() {
         <Link href="/auth/sign-up" className="font-medium text-primary hover:underline">
           Create a Melodyc account
         </Link>{" "}
-        with your email and password. New accounts receive 20 free credits, with no credit card required.
+        with your email and password, then confirm your email address with the link we send you. You need to verify your email before you can sign in. Once your account is confirmed, you receive a welcome email and 20 free credits, with no credit card required.
       </Paragraph>
       <Heading>Find your way around</Heading>
-      <Paragraph>After signing in, the dashboard gives you three main destinations:</Paragraph>
+      <Paragraph>After signing in, the sidebar gives you three main destinations:</Paragraph>
       <List>
-        <li><strong className="text-foreground">Discover</strong> for published music from the community.</li>
-        <li><strong className="text-foreground">Create</strong> for generating and managing your tracks.</li>
-        <li><strong className="text-foreground">Billing</strong> for credits, subscriptions, and payment history.</li>
+        <li><strong className="text-foreground">Discover</strong> for published music from the community and from the creators you follow.</li>
+        <li><strong className="text-foreground">Create</strong> for generating new tracks and following their progress.</li>
+        <li><strong className="text-foreground">My Music</strong> for your complete library, downloads, and publishing.</li>
       </List>
+      <Paragraph>
+        The account menu at the bottom of the sidebar opens My profile, Billing, the customer portal, and your account settings.
+      </Paragraph>
       <Callout title="Start with an idea">
         You do not need production experience. A mood, genre, scene, or short story is enough to create your first track.
       </Callout>
@@ -111,9 +120,10 @@ function CreatingMusic() {
       <Heading>What happens after Create</Heading>
       <List ordered>
         <li>Melodyc queues one song for your request.</li>
-        <li>Your track appears immediately with a queued or processing status.</li>
-        <li>The AI generates the audio and matching cover art in the background.</li>
-        <li>The library refreshes the status automatically while generation is running.</li>
+        <li>Your track appears immediately with a queued or processing status and a temporary title.</li>
+        <li>The AI composes the audio, writes a short title in the language of the song, and designs a matching album cover.</li>
+        <li>When the song is ready, the cover, title, and your credit balance update automatically, without reloading the page.</li>
+        <li>If you enabled it, you also receive a "Your song is ready" email.</li>
       </List>
       <Callout title="Credit usage">
         Each successfully generated song uses one credit, so a completed Create request uses one credit. Failed generations are not charged.
@@ -149,17 +159,44 @@ function TrackLibrary() {
     <>
       <Heading>Your tracks</Heading>
       <Paragraph>
-        The Create workspace also contains your personal track library. Search by title or prompt, refresh the list, and follow queued, processing, completed, failed, or no-credit states.
+        The Create workspace shows the tracks you are generating next to the creation panel. Search by title or prompt, refresh the list, and follow queued, processing, completed, failed, or no-credit states.
       </Paragraph>
       <Heading>Play and organize</Heading>
       <List>
-        <li>Select a completed track to load it into the persistent audio player.</li>
-        <li>Rename a track from its actions menu.</li>
-        <li>Download completed audio when you want a local copy.</li>
+        <li>Select a completed track to load it into the audio player. Close the player at any time with the X button.</li>
+        <li>Rename, download, or delete a track from its actions menu.</li>
         <li>Publish a track to make it available in Discover, or unpublish it to make it private again.</li>
+        <li>Remove failed or no-credit tracks with the trash icon. They never use credits.</li>
       </List>
       <Callout title="Private by default">
-        Your generated tracks stay in your personal library until you explicitly publish them.
+        Your generated tracks stay private until you explicitly publish them.
+      </Callout>
+    </>
+  );
+}
+
+function MyMusic() {
+  return (
+    <>
+      <Heading>Your complete library</Heading>
+      <Paragraph>
+        <Link href="/my-music" className="font-medium text-primary hover:underline">My Music</Link> shows every song you have created as cover cards, with search by title, prompt, or category. A badge on each cover tells you whether the song is Public or Private.
+      </Paragraph>
+      <Heading>Manage each song</Heading>
+      <List>
+        <li><strong className="text-foreground">Publish or Make private</strong> to control whether the song appears in Discover and on your profile.</li>
+        <li><strong className="text-foreground">Rename</strong> to replace the AI-generated title with your own.</li>
+        <li><strong className="text-foreground">Delete</strong> to permanently remove the song, its audio files, and its cover. This cannot be undone.</li>
+      </List>
+      <Heading>Download in studio quality</Heading>
+      <List>
+        <li><strong className="text-foreground">WAV</strong>: the original lossless file.</li>
+        <li><strong className="text-foreground">MP3</strong>: 320 kbps, ideal for sharing and mobile devices.</li>
+        <li><strong className="text-foreground">FLAC</strong>: lossless and smaller than WAV.</li>
+        <li><strong className="text-foreground">Cover image</strong>: the album artwork of the song.</li>
+      </List>
+      <Callout title="Older songs">
+        Songs created before multi-format export was introduced are available in WAV only.
       </Callout>
     </>
   );
@@ -170,15 +207,41 @@ function Discover() {
     <>
       <Heading>Explore community music</Heading>
       <Paragraph>
-        Discover collects tracks that creators have chosen to publish. Recent music appears in Trending, while categorized tracks are grouped by their primary genre or mood.
+        Discover collects tracks that creators have chosen to publish. Songs from the creators you follow appear first, recent music appears in Trending, and categorized tracks are grouped by their primary genre or mood.
       </Paragraph>
       <Heading>Search, listen, and like</Heading>
       <List>
         <li>Search published music by title, prompt, or category.</li>
         <li>Select cover art to play a track in the global audio player.</li>
         <li>Like a track to support the creator, or select the heart again to remove your like.</li>
+        <li>Select a creator name to open their profile.</li>
         <li>Keep scrolling to load more published music automatically.</li>
       </List>
+    </>
+  );
+}
+
+function ProfileCommunity() {
+  return (
+    <>
+      <Heading>Your public profile</Heading>
+      <Paragraph>
+        Every creator has a profile page with their name, profile picture, published songs, likes received, followers, and following. Open yours from <strong className="text-foreground">My profile</strong> in the account menu.
+      </Paragraph>
+      <Heading>Username and profile picture</Heading>
+      <List>
+        <li>Choose a public username in <Link href="/account/settings" className="font-medium text-primary hover:underline">Account settings</Link>: your profile becomes available at /user/your-username. Use 3 to 24 lowercase letters, numbers, or underscores.</li>
+        <li>Upload a PNG, JPEG, or WebP profile picture. It is cropped to a square and replaces your initials across Melodyc. You can remove it at any time.</li>
+      </List>
+      <Heading>Follow other creators</Heading>
+      <List>
+        <li>Select <strong className="text-foreground">Follow</strong> on a creator&apos;s profile to see their new published songs in Discover. Select <strong className="text-foreground">Following</strong> to unfollow.</li>
+        <li>Select the followers or following count to see the list of people and open their profiles.</li>
+        <li>When someone follows you, you can receive an email notification.</li>
+      </List>
+      <Callout title="What others can see">
+        Other signed-in users can see your name, username, profile picture, follower and following lists, and only the songs you publish.
+      </Callout>
     </>
   );
 }
@@ -203,8 +266,45 @@ function CreditsAndBilling() {
       </Paragraph>
       <Heading>Manage payments</Heading>
       <Paragraph>
-        Open <Link href="/billing" className="font-medium text-primary hover:underline">Billing</Link> to view your balance, choose a plan, or enter the Polar customer portal. The portal lets you review payments and manage or cancel your subscription.
+        Open <Link href="/billing" className="font-medium text-primary hover:underline">Billing</Link> from the account menu at the bottom of the sidebar to view your balance, choose a plan, or enter the Polar customer portal. The portal lets you review payments and manage or cancel your subscription.
       </Paragraph>
+      <Paragraph>
+        After a payment, your credits appear automatically within a few seconds and you receive a payment confirmation email.
+      </Paragraph>
+    </>
+  );
+}
+
+function Notifications() {
+  return (
+    <>
+      <Heading>In-app notifications</Heading>
+      <Paragraph>
+        The bell icon next to your credits shows your recent activity. A pink badge counts the notifications you have not seen yet, and the list updates automatically every 30 seconds.
+      </Paragraph>
+      <List>
+        <li>Someone likes one of your songs or starts following you.</li>
+        <li>A song reaches a listen milestone, such as 10, 50, 100, or 1,000 listens.</li>
+        <li>A song is ready or could not be generated.</li>
+        <li>Credits are added after a payment.</li>
+      </List>
+      <Paragraph>
+        Opening the panel marks everything as read. Select a notification to open the related song, profile, or page. Notifications from the last 90 days are shown.
+      </Paragraph>
+      <Heading>Emails we send</Heading>
+      <List>
+        <li><strong className="text-foreground">Song ready</strong> and <strong className="text-foreground">Generation failed</strong> when a generation finishes.</li>
+        <li><strong className="text-foreground">Payment confirmed</strong> when credits are added to your account.</li>
+        <li><strong className="text-foreground">New follower</strong> when someone starts following you.</li>
+        <li><strong className="text-foreground">Product updates</strong> about new features, off by default.</li>
+      </List>
+      <Heading>Choose what you receive</Heading>
+      <Paragraph>
+        Turn each email on or off in <Link href="/account/notifications" className="font-medium text-primary hover:underline">Notifications</Link>, or use the Unsubscribe link at the bottom of any notification.
+      </Paragraph>
+      <Callout title="Security emails">
+        Email verification, welcome, and password reset emails are always sent because they are needed to protect your account.
+      </Callout>
     </>
   );
 }
@@ -214,11 +314,19 @@ function AccountSecurity() {
     <>
       <Heading>Account settings</Heading>
       <Paragraph>
-        Visit <Link href="/account/settings" className="font-medium text-primary hover:underline">Account settings</Link> to update your profile and personal details.
+        Visit <Link href="/account/settings" className="font-medium text-primary hover:underline">Account settings</Link> to update your profile picture, name, email, and public username.
       </Paragraph>
       <Heading>Security controls</Heading>
       <Paragraph>
         The <Link href="/account/security" className="font-medium text-primary hover:underline">Security</Link> page contains password, connected provider, and active session controls. These settings are visible only to you.
+      </Paragraph>
+      <Heading>Forgot your password?</Heading>
+      <Paragraph>
+        Select <strong className="text-foreground">Forgot password</strong> on the sign-in page and enter your email. The link we send expires after one hour and lets you choose a new password. Use the eye icon to check what you typed.
+      </Paragraph>
+      <Heading>Delete your account</Heading>
+      <Paragraph>
+        At the bottom of the Security page you can permanently delete your account after confirming your password. This removes your profile, songs, audio files, covers, profile picture, followers, and preferences, and cancels any active subscription. Download the songs you want to keep first.
       </Paragraph>
       <Callout title="Protect your account">
         Use a unique password and review active sessions if you sign in on a shared or unfamiliar device.
@@ -276,8 +384,11 @@ const sectionContent: Record<string, () => ReactNode> = {
   "creating-music": CreatingMusic,
   "lyrics-instrumentals": LyricsAndInstrumentals,
   "track-library": TrackLibrary,
+  "my-music": MyMusic,
   discover: Discover,
+  "profile-community": ProfileCommunity,
   "credits-billing": CreditsAndBilling,
+  notifications: Notifications,
   "account-security": AccountSecurity,
   "public-demo": PublicDemo,
   "self-hosting": SelfHosting,

@@ -5,14 +5,18 @@ import {
   DownloadIcon,
   Loader2Icon,
   MusicIcon,
+  PauseIcon,
+  PlayIcon,
   PlusIcon,
   RefreshCcwIcon,
   SearchIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { type FormEvent, useEffect, useState } from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
+import { Badge } from "~/components/ui/badge";
 import { Button } from "~/components/ui/button";
 import { Input } from "~/components/ui/input";
+import { Slider } from "~/components/ui/slider";
 import { Switch } from "~/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger } from "~/components/ui/tabs";
 import { Textarea } from "~/components/ui/textarea";
@@ -33,6 +37,152 @@ const inspiration = [
   "Upbeat indie pop with warm vocals",
   "Cinematic orchestral sunrise",
 ];
+
+function formatTime(time: number) {
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time % 60);
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
+function DemoResult({ result }: { result: DemoGeneration }) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+
+  const togglePlay = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (isPlaying) {
+      audio.pause();
+    } else {
+      await audio.play();
+    }
+  };
+
+  return (
+    <div className="animate-in fade-in slide-in-from-bottom-2 flex w-full flex-col items-center gap-6 duration-300 sm:flex-row sm:items-start">
+      <div className="w-full max-w-[13rem] shrink-0">
+        <button
+          type="button"
+          onClick={() => void togglePlay()}
+          className="group relative block w-full cursor-pointer"
+          aria-label={isPlaying ? "Pause demo track" : "Play demo track"}
+        >
+          <Badge
+            variant="outline"
+            className="border-primary/40 bg-background text-primary absolute top-0 right-2 z-10 -translate-y-1/2 rounded-full px-2 py-0.5 text-[11px] font-semibold shadow-sm"
+          >
+            30 sec demo
+          </Badge>
+          <div className="bg-muted relative aspect-square w-full overflow-hidden rounded-md">
+            {result.thumbnailUrl ? (
+              <img
+                src={result.thumbnailUrl}
+                alt="Demo track cover"
+                className="h-full w-full object-cover object-center"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center">
+                <MusicIcon className="text-muted-foreground size-12" aria-hidden="true" />
+              </div>
+            )}
+            <div
+              className={`absolute inset-0 flex items-center justify-center bg-black/50 transition-opacity ${isPlaying ? "opacity-100" : "opacity-0 group-hover:opacity-100"}`}
+            >
+              <div className="flex size-12 items-center justify-center rounded-full bg-black/60 transition-transform group-hover:scale-105">
+                {isPlaying ? (
+                  <PauseIcon className="size-6 fill-white text-white" aria-hidden="true" />
+                ) : (
+                  <PlayIcon className="size-6 fill-white text-white" aria-hidden="true" />
+                )}
+              </div>
+            </div>
+          </div>
+        </button>
+        <div className="mt-2 flex items-center justify-between gap-2">
+          <div className="min-w-0">
+            <h2 className="text-foreground truncate text-sm font-medium">
+              Your demo track
+            </h2>
+            <p className="text-muted-foreground text-xs">Melodyc demo</p>
+          </div>
+          <Button variant="ghost" size="icon" className="size-7" asChild>
+            <a href={result.audioUrl ?? undefined} download aria-label="Download demo track">
+              <DownloadIcon className="size-4" aria-hidden="true" />
+            </a>
+          </Button>
+        </div>
+      </div>
+
+      <div className="flex w-full min-w-0 flex-1 flex-col gap-4">
+        <div>
+          <p className="text-sm font-semibold">Your song is ready</p>
+          <p className="text-muted-foreground mt-1 line-clamp-3 text-sm leading-6">
+            {result.prompt}
+          </p>
+        </div>
+
+        <div className="bg-muted/40 flex items-center gap-3 rounded-md border px-3 py-2">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="size-8 shrink-0"
+            onClick={() => void togglePlay()}
+            aria-label={isPlaying ? "Pause" : "Play"}
+          >
+            {isPlaying ? <PauseIcon className="size-4" /> : <PlayIcon className="size-4" />}
+          </Button>
+          <span className="text-muted-foreground w-9 text-right text-[11px] tabular-nums">
+            {formatTime(currentTime)}
+          </span>
+          <Slider
+            className="flex-1"
+            value={[currentTime]}
+            max={duration || 30}
+            step={0.1}
+            onValueChange={(value) => {
+              if (audioRef.current && value[0] !== undefined) {
+                audioRef.current.currentTime = value[0];
+                setCurrentTime(value[0]);
+              }
+            }}
+            aria-label="Seek"
+          />
+          <span className="text-muted-foreground w-9 text-[11px] tabular-nums">
+            {formatTime(duration)}
+          </span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <Button size="sm" asChild>
+            <Link href="/auth/sign-up">Create full tracks</Link>
+          </Button>
+          <p className="text-muted-foreground text-xs">
+            Full songs, custom lyrics, My Music, and downloads in WAV, MP3, and FLAC with a free account.
+          </p>
+        </div>
+      </div>
+
+      <audio
+        ref={audioRef}
+        src={result.audioUrl ?? undefined}
+        preload="metadata"
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        onEnded={() => {
+          setIsPlaying(false);
+          setCurrentTime(0);
+        }}
+        onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)}
+        onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)}
+      >
+        <track kind="captions" />
+      </audio>
+    </div>
+  );
+}
 
 function FreeStudioDemo() {
   const [prompt, setPrompt] = useState(
@@ -299,41 +449,7 @@ function FreeStudioDemo() {
               )}
 
               {status === "processed" && result?.audioUrl && (
-                <div className="animate-in fade-in slide-in-from-bottom-2 w-full duration-300">
-                  <div className="flex items-center gap-4 rounded-md p-3 transition-colors hover:bg-muted/50">
-                    <div
-                      className="flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted bg-cover bg-center"
-                      style={result.thumbnailUrl ? { backgroundImage: `url(${result.thumbnailUrl})` } : undefined}
-                    >
-                      {!result.thumbnailUrl && <MusicIcon className="size-6 text-muted-foreground" aria-hidden="true" />}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <h2 className="truncate text-sm font-medium">Your demo track</h2>
-                        <span className="rounded-md border px-2 py-0.5 text-xs">30 sec</span>
-                      </div>
-                      <p className="mt-1 truncate text-xs text-muted-foreground">{result.prompt}</p>
-                    </div>
-                    <Button variant="ghost" size="icon" asChild>
-                      <a href={result.audioUrl} download aria-label="Download demo track">
-                        <DownloadIcon aria-hidden="true" />
-                      </a>
-                    </Button>
-                  </div>
-                  <audio
-                    className="mt-5 h-10 w-full"
-                    controls
-                    preload="metadata"
-                    src={result.audioUrl}
-                  >
-                    <track kind="captions" />
-                  </audio>
-                  <div className="mt-5 flex justify-end">
-                    <Button size="sm" asChild>
-                      <Link href="/auth/sign-up">Create full tracks</Link>
-                    </Button>
-                  </div>
-                </div>
+                <DemoResult result={result} />
               )}
             </div>
           </div>

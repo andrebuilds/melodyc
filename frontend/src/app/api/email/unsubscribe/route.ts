@@ -5,6 +5,7 @@ const LABELS = {
   songReady: "song ready",
   songFailed: "generation failed",
   paymentConfirmed: "payment confirmation",
+  newFollower: "new follower",
   productUpdates: "product update",
 } as const;
 
