@@ -9,6 +9,7 @@ import {
   Volume2,
   X,
 } from "lucide-react";
+import Link from "next/link";
 import { usePlayerStore } from "~/stores/use-player-store";
 import { Card } from "./ui/card";
 import { Button } from "./ui/button";
@@ -136,9 +137,18 @@ export default function SoundBar() {
               </div>
               <div className="max-w-24 min-w-0 flex-1 md:max-w-full">
                 <p className="truncate text-sm font-medium">{track?.title}</p>
-                <p className="text-muted-foreground truncate text-xs">
-                  {track?.createdByUserName}
-                </p>
+                {(track.createdByUserHandle ?? track.createdByUserId) ? (
+                  <Link
+                    href={`/user/${track.createdByUserHandle ?? track.createdByUserId}`}
+                    className="text-muted-foreground truncate text-xs hover:underline"
+                  >
+                    {track.createdByUserName}
+                  </Link>
+                ) : (
+                  <p className="text-muted-foreground truncate text-xs">
+                    {track.createdByUserName}
+                  </p>
+                )}
               </div>
             </div>
 

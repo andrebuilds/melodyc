@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { DashboardPageHeader } from "~/components/layout/dashboard-page-header";
+import { UsernameSettingsCard } from "~/components/settings/username-settings-card";
 import { cn } from "~/lib/utils";
 
 const navigation = [
@@ -47,7 +48,13 @@ const cardClassNames = {
   destructiveButton: "shadow-none",
 };
 
-function AccountSettingsView({ pathname }: { pathname: string }) {
+function AccountSettingsView({
+  pathname,
+  initialUsername,
+}: {
+  pathname: string;
+  initialUsername: string | null;
+}) {
   const isSecurity = pathname === "security";
 
   return (
@@ -68,7 +75,7 @@ function AccountSettingsView({ pathname }: { pathname: string }) {
           className="grid gap-2 sm:grid-cols-2 lg:sticky lg:top-20 lg:grid-cols-1"
           aria-label="Account settings"
         >
-          <p className="mb-1 hidden px-3 text-xs font-bold text-muted-foreground uppercase lg:block">
+          <p className="text-muted-foreground mb-1 hidden px-3 text-xs font-bold uppercase lg:block">
             Settings
           </p>
           {navigation.map((item) => {
@@ -84,7 +91,7 @@ function AccountSettingsView({ pathname }: { pathname: string }) {
                   "group flex min-h-16 items-center gap-3 rounded-md border px-3 py-2.5 transition-colors",
                   isActive
                     ? "border-primary bg-primary text-primary-foreground shadow-sm"
-                    : "border-transparent text-muted-foreground hover:border-border hover:bg-card hover:text-foreground",
+                    : "text-muted-foreground hover:border-border hover:bg-card hover:text-foreground border-transparent",
                 )}
               >
                 <span
@@ -121,20 +128,33 @@ function AccountSettingsView({ pathname }: { pathname: string }) {
             );
           })}
 
-          <div className="mt-4 hidden rounded-md border bg-muted/30 p-4 lg:block">
-            <LockKeyholeIcon className="size-4 text-primary" aria-hidden="true" />
+          <div className="bg-muted/30 mt-4 hidden rounded-md border p-4 lg:block">
+            <LockKeyholeIcon
+              className="text-primary size-4"
+              aria-hidden="true"
+            />
             <p className="mt-3 text-sm font-semibold">Private by default</p>
-            <p className="mt-1 text-xs leading-5 text-muted-foreground">
+            <p className="text-muted-foreground mt-1 text-xs leading-5">
               Your account data and security controls are only visible to you.
             </p>
           </div>
         </nav>
 
-        <section className="min-w-0" aria-label={isSecurity ? "Security settings" : "Account settings"}>
+        <section
+          className="min-w-0"
+          aria-label={isSecurity ? "Security settings" : "Account settings"}
+        >
           {isSecurity ? (
-            <SecuritySettingsCards classNames={{ cards: "gap-5", card: cardClassNames }} />
+            <SecuritySettingsCards
+              classNames={{ cards: "gap-5", card: cardClassNames }}
+            />
           ) : (
-            <AccountSettingsCards classNames={{ cards: "gap-5", card: cardClassNames }} />
+            <>
+              <AccountSettingsCards
+                classNames={{ cards: "gap-5", card: cardClassNames }}
+              />
+              <UsernameSettingsCard initialUsername={initialUsername} />
+            </>
           )}
         </section>
       </div>

@@ -27,6 +27,7 @@ export async function getPublishedSongs(cursor?: string) {
       user: {
         select: {
           name: true,
+          username: true,
         },
       },
       _count: {
@@ -82,6 +83,7 @@ export async function getMySongs(cursor?: string) {
       user: {
         select: {
           name: true,
+          username: true,
         },
       },
       _count: {
@@ -200,7 +202,9 @@ export async function deleteSong(songId: string) {
     song.s3Key?.replace(/\.wav$/i, ".mp3"),
     song.s3Key?.replace(/\.wav$/i, ".flac"),
     song.thumbnailS3Key,
-  ].filter((key, index, all): key is string => !!key && all.indexOf(key) === index);
+  ].filter(
+    (key, index, all): key is string => !!key && all.indexOf(key) === index,
+  );
 
   if (keys.length > 0) {
     try {
