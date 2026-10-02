@@ -210,6 +210,15 @@ export default function PrivacyPolicyPage() {
               through Polar and add the purchased credits to your account.
             </li>
             <li>
+              <Strong>Account emails:</Strong> to verify your email address,
+              reset your password, and send service notifications (song ready,
+              generation failed, payment confirmed). You can turn notification
+              emails on or off in your account settings or with the unsubscribe
+              link in every notification. Verification and password reset
+              emails cannot be disabled because they are required for account
+              security.
+            </li>
+            <li>
               <Strong>Security:</Strong> to authenticate you, protect accounts
               from unauthorized access, prevent fraud and abuse, and keep the
               Service available.
@@ -243,6 +252,10 @@ export default function PrivacyPolicyPage() {
               ],
               [
                 "Payments, subscriptions, and credits via Polar",
+                "Contract performance (Art. 6(1)(b))",
+              ],
+              [
+                "Email verification, password reset, and service notification emails",
                 "Contract performance (Art. 6(1)(b))",
               ],
               [
@@ -325,6 +338,11 @@ export default function PrivacyPolicyPage() {
                 "Background job orchestration for song generation",
                 "United States (SCC)",
               ],
+              [
+                "Resend",
+                "Delivery of account emails: email verification, password reset, and service notifications",
+                "EU (Ireland) sending region, United States (SCC)",
+              ],
             ]}
           />
 
@@ -406,7 +424,15 @@ export default function PrivacyPolicyPage() {
               ["Account data", "Until you delete your account"],
               [
                 "Songs, prompts, lyrics, and cover images",
+                "Until you delete the song or your account",
+              ],
+              [
+                "Email notification preferences",
                 "Until you delete your account",
+              ],
+              [
+                "Email delivery logs",
+                "According to our email provider's log retention",
               ],
               [
                 "Active sessions",

@@ -1,6 +1,7 @@
 import { db } from "~/server/db";
 import { inngest } from "./client";
 import { env } from "~/env";
+import { notifySongResult } from "~/lib/notifications";
 
 type GenerationResponse = {
   s3_key: string;
@@ -77,15 +78,23 @@ export const generateSong = inngest.createFunction(
       limit: 1,
       key: "event.data.userId",
     },
-    onFailure: async ({ event, error }) => {
+    onFailure: async ({ event }) => {
+      const { songId } = event?.data?.event?.data as { songId: string };
+
       await db.song.update({
         where: {
-          id: (event?.data?.event?.data as { songId: string }).songId,
+          id: songId,
         },
         data: {
           status: "failed",
         },
       });
+
+      try {
+        await notifySongResult(songId, false);
+      } catch (error) {
+        console.error("Song failure email failed", error);
+      }
     },
   },
   { event: "generate-song-event" },
@@ -249,7 +258,7 @@ export const generateSong = inngest.createFunction(
         }
       });
 
-      return await step.run("deduct-credits", async () => {
+      await step.run("deduct-credits", async () => {
         if (!response.ok) return;
 
         return await db.user.update({
@@ -260,6 +269,15 @@ export const generateSong = inngest.createFunction(
             },
           },
         });
+      });
+
+      await step.run("notify-user", async () => {
+        try {
+          await notifySongResult(songId, response.ok);
+        } catch (error) {
+          // A failed email must not retry or fail an already completed generation.
+          console.error("Song result email failed", error);
+        }
       });
     } else {
       // Set song status "not enough credits"

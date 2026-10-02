@@ -27,6 +27,8 @@ export const env = createEnv({
     POLAR_TRACK_PRODUCT_ID: z.string().uuid(),
     POLAR_EP_PRODUCT_ID: z.string().uuid(),
     POLAR_DISCOGRAPHY_PRODUCT_ID: z.string().uuid(),
+    RESEND_API_KEY: z.string(),
+    EMAIL_FROM: z.string(),
   },
 
   /**
@@ -61,6 +63,8 @@ export const env = createEnv({
     POLAR_TRACK_PRODUCT_ID: process.env.POLAR_TRACK_PRODUCT_ID,
     POLAR_EP_PRODUCT_ID: process.env.POLAR_EP_PRODUCT_ID,
     POLAR_DISCOGRAPHY_PRODUCT_ID: process.env.POLAR_DISCOGRAPHY_PRODUCT_ID,
+    RESEND_API_KEY: process.env.RESEND_API_KEY,
+    EMAIL_FROM: process.env.EMAIL_FROM,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**

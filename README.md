@@ -2,7 +2,8 @@
 
 <p align="center">
   <strong>AI-powered music generation platform</strong><br/>
-  Generate original songs from text descriptions, custom lyrics, or style prompts.
+  Generate original songs from text descriptions, custom lyrics, or style prompts.<br/>
+  <a href="https://www.melodyc.com"><strong>www.melodyc.com</strong></a>
 </p>
 
 <p align="center">

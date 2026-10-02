@@ -13,6 +13,8 @@ import {
 import Link from "next/link";
 import { DashboardPageHeader } from "~/components/layout/dashboard-page-header";
 import { UsernameSettingsCard } from "~/components/settings/username-settings-card";
+import { NotificationSettingsCard } from "~/components/settings/notification-settings-card";
+import type { NotificationType } from "~/lib/email";
 import { cn } from "~/lib/utils";
 
 const navigation = [
@@ -20,7 +22,7 @@ const navigation = [
     pathname: "settings",
     href: "/account/settings",
     label: "Account",
-    description: "Profile and personal details",
+    description: "Profile, username, and email notifications",
     icon: UserRoundIcon,
   },
   {
@@ -51,9 +53,11 @@ const cardClassNames = {
 function AccountSettingsView({
   pathname,
   initialUsername,
+  initialNotificationSettings,
 }: {
   pathname: string;
   initialUsername: string | null;
+  initialNotificationSettings: Record<NotificationType, boolean>;
 }) {
   const isSecurity = pathname === "security";
 
@@ -154,6 +158,9 @@ function AccountSettingsView({
                 classNames={{ cards: "gap-5", card: cardClassNames }}
               />
               <UsernameSettingsCard initialUsername={initialUsername} />
+              <NotificationSettingsCard
+                initialSettings={initialNotificationSettings}
+              />
             </>
           )}
         </section>

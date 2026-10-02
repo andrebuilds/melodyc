@@ -25,9 +25,22 @@ model User {
   likes Like[]
   songs Song[]
   cookieConsents CookieConsent[]
+  notificationPreference NotificationPreference?
 
   @@unique([email])
   @@map("user")
+}
+
+model NotificationPreference {
+  userId           String   @id
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  songReady        Boolean  @default(true)
+  songFailed       Boolean  @default(true)
+  paymentConfirmed Boolean  @default(true)
+  productUpdates   Boolean  @default(false)
+  updatedAt        DateTime @updatedAt
+
+  @@map("notification_preference")
 }
 
 model Song {

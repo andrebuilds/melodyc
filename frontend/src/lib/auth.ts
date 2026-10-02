@@ -9,6 +9,8 @@ import {
   portal,
   webhooks,
 } from "@polar-sh/better-auth";
+import { sendResetPasswordEmail, sendVerificationEmail } from "~/lib/email";
+import { notifyPaymentConfirmed } from "~/lib/notifications";
 
 const polarClient = new Polar({
   accessToken: env.POLAR_ACCESS_TOKEN,
@@ -33,6 +35,18 @@ export const auth = betterAuth({
   },
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification: true,
+    sendResetPassword: async ({ user, url }) => {
+      await sendResetPasswordEmail(user.email, user.name, url);
+    },
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    sendOnSignIn: true,
+    autoSignInAfterVerification: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendVerificationEmail(user.email, user.name, url);
+    },
   },
   plugins: [
     polar({
@@ -92,6 +106,13 @@ export const auth = betterAuth({
                 },
               },
             });
+
+            try {
+              await notifyPaymentConfirmed(externalCustomerId, creditsToAdd);
+            } catch (error) {
+              // Credits are already added; an email failure must not make Polar retry the webhook.
+              console.error("Payment confirmation email failed", error);
+            }
           },
         }),
       ],
