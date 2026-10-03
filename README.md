@@ -43,8 +43,11 @@ Built with a modern full-stack architecture, Melodyc is designed to be a real-wo
 - 📧 Transactional and notification emails with Resend
 - 🎧 Community feed to discover, listen to, and like generated tracks
 - 🎛️ Personal library (My Music) to manage, publish, and download your music in WAV, MP3, and FLAC
-- 🧑‍🎤 Public creator profiles with username, profile picture, followers, and following
+- 🧑‍🎤 Public creator profiles with username, profile picture, mascot, followers, and following
 - 🔔 In-app notifications for likes, followers, listen milestones, and generation results
+- ⚖️ GDPR-oriented legal pages in English and Italian, consent records, and a granular cookie banner
+- 📈 Cookieless Vercel Web Analytics and Speed Insights, loaded only with consent
+- 🛡️ Security headers and server-side input validation
 - 📱 Modern UI with Next.js, Tailwind CSS and ShadCN
 
 ---
@@ -57,6 +60,7 @@ Built with a modern full-stack architecture, Melodyc is designed to be a real-wo
 | Authentication | BetterAuth |
 | Email | Resend |
 | Payments | Polar.sh |
+| Analytics | Vercel Web Analytics, Vercel Speed Insights (consent-based) |
 | Database | PostgreSQL (Neon) + Prisma ORM |
 | Queue / Workflow | Inngest |
 | Storage | AWS S3 |

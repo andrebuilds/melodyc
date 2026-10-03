@@ -173,13 +173,16 @@ export async function renameSong(songId: string, newTitle: string) {
 
   if (!session) redirect("/auth/sign-in");
 
+  const title = newTitle.trim();
+  if (!title || title.length > 100) throw new Error("Invalid title.");
+
   await db.song.update({
     where: {
       id: songId,
       userId: session.user.id,
     },
     data: {
-      title: newTitle,
+      title,
     },
   });
 

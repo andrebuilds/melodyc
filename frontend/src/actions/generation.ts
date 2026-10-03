@@ -11,6 +11,21 @@ import { env } from "~/env";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { createS3Client } from "~/lib/s3";
 import { notifyListenMilestone } from "~/lib/in-app-notifications";
+import { z } from "zod";
+
+// Mirrors the 500-character limit enforced by the Modal backend.
+const MAX_INPUT_LENGTH = 500;
+const optionalText = z.string().trim().max(MAX_INPUT_LENGTH).optional();
+
+const generateRequestSchema = z
+  .object({
+    prompt: optionalText,
+    lyrics: optionalText,
+    fullDescribedSong: optionalText,
+    describedLyrics: optionalText,
+    instrumental: z.boolean().optional(),
+  })
+  .refine((data) => Boolean(data.prompt) || Boolean(data.fullDescribedSong));
 
 export interface GenerateRequest {
   prompt?: string;
@@ -27,7 +42,10 @@ export async function generateSong(generateRequest: GenerateRequest) {
 
   if (!session) redirect("/auth/sign-in");
 
-  await queueSong(generateRequest, 7.5, session.user.id);
+  const parsed = generateRequestSchema.safeParse(generateRequest);
+  if (!parsed.success) throw new Error("Invalid song request.");
+
+  await queueSong(parsed.data, 7.5, session.user.id);
 
   revalidatePath("/create");
 }

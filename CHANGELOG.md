@@ -22,6 +22,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - My profile link in the account menu.
 - Follow system with follower and following counts and lists, and a "From creators you follow" section in Discover.
 - In-app notifications bell for likes, new followers, listen milestones, generation results, and added credits.
+- Melodyc mascot picker in Account settings, shown in the sidebar and on the public profile.
+- Italian versions of the Privacy Policy, Cookie Policy, and Terms, with a language switcher based on the `legal_lang` cookie and `Accept-Language`.
+- Mandatory acceptance of the Terms, Privacy Policy, and specific clauses at sign-up, stored with the accepted Terms version.
+- Vercel Web Analytics and Speed Insights, loaded through `ConsentedAnalytics` only after Analytics consent in the cookie banner.
 
 ### Changed
 
@@ -33,6 +37,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Public username and notification cards restyled to match the other settings cards.
 - Homepage demo result redesigned with a My Music style cover card and a custom player.
 - Privacy Policy, Terms, and Help Center updated for emails, profiles, follows, notifications, and account deletion.
+- Cookie Policy and Privacy Policy updated for Vercel Web Analytics and Speed Insights; cookie policy version bumped so visitors confirm their choices again.
+- Analytics consent now honors the cookie policy version and the consent expiry.
 
 ### Deprecated
 
@@ -48,3 +54,5 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Security
 
 - Pinned Next.js to 15.4.10 to patch the React Server Components vulnerability.
+- Security headers on every route: `X-Frame-Options`, CSP `frame-ancestors 'none'`, `X-Content-Type-Options`, `Referrer-Policy`, HSTS, and `Permissions-Policy`; `X-Powered-By` removed.
+- Server-side Zod validation for song generation requests (500 characters per field, matching the Modal backend) and a 100-character limit on song titles.

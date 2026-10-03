@@ -9,6 +9,7 @@ import {
   LibraryIcon,
   MusicIcon,
   RefreshCcwIcon,
+  ShieldCheckIcon,
   TagsIcon,
   UsersIcon,
   WandSparklesIcon,
@@ -62,6 +63,45 @@ const typeMeta: Record<ChangeType, { label: string; className: string }> = {
 };
 
 const releases: Release[] = [
+  {
+    version: "Privacy and security update",
+    date: "October 3, 2026",
+    dateTime: "2026-10-03",
+    title: "Mascots, clearer policies, and a safer platform",
+    description:
+      "Pick your own Melodyc mascot, read our policies in English or Italian, and enjoy a platform hardened behind the scenes.",
+    icon: ShieldCheckIcon,
+    changes: [
+      {
+        type: "new",
+        text: "Choose a Melodyc mascot: it replaces the logo in your sidebar and appears on your public profile.",
+      },
+      {
+        type: "new",
+        text: "Privacy Policy, Cookie Policy, and Terms are now available in Italian, with a language switcher at the top of each page.",
+      },
+      {
+        type: "new",
+        text: "Sign-up now asks you to accept the Terms, the Privacy Policy, and the specific clauses before creating your account.",
+      },
+      {
+        type: "new",
+        text: "Optional, cookieless analytics (Vercel Web Analytics and Speed Insights) that load only if you allow Analytics in the cookie banner.",
+      },
+      {
+        type: "improved",
+        text: "Cookie and Privacy policies now describe our analytics tools, so the cookie banner asks you to confirm your choices again.",
+      },
+      {
+        type: "improved",
+        text: "Stronger security headers across the whole site, including protection against clickjacking.",
+      },
+      {
+        type: "improved",
+        text: "Song descriptions, lyrics, and styles are limited to 500 characters and titles to 100, with checks on the server.",
+      },
+    ],
+  },
   {
     version: "Community update",
     date: "October 2, 2026",

@@ -128,6 +128,9 @@ function CreatingMusic() {
       <Callout title="Credit usage">
         Each successfully generated song uses one credit, so a completed Create request uses one credit. Failed generations are not charged.
       </Callout>
+      <Paragraph>
+        Descriptions, lyrics, and styles can contain up to 500 characters each. Song titles can contain up to 100 characters.
+      </Paragraph>
     </>
   );
 }
@@ -232,6 +235,7 @@ function ProfileCommunity() {
       <List>
         <li>Choose a public username in <Link href="/account/settings" className="font-medium text-primary hover:underline">Account settings</Link>: your profile becomes available at /user/your-username. Use 3 to 24 lowercase letters, numbers, or underscores.</li>
         <li>Upload a PNG, JPEG, or WebP profile picture. It is cropped to a square and replaces your initials across Melodyc. You can remove it at any time.</li>
+        <li>Pick a Melodyc mascot in Account settings. It replaces the logo in your sidebar and appears on your public profile.</li>
       </List>
       <Heading>Follow other creators</Heading>
       <List>
@@ -327,6 +331,10 @@ function AccountSecurity() {
       <Heading>Delete your account</Heading>
       <Paragraph>
         At the bottom of the Security page you can permanently delete your account after confirming your password. This removes your profile, songs, audio files, covers, profile picture, followers, and preferences, and cancels any active subscription. Download the songs you want to keep first.
+      </Paragraph>
+      <Heading>Cookies and analytics</Heading>
+      <Paragraph>
+        Melodyc uses only necessary cookies by default. Cookieless analytics (Vercel Web Analytics and Speed Insights) run only if you allow Analytics in the cookie banner. Change your choice at any time with the cookie tab on the bottom left of the page, and read the details in the <Link href="/cookies" className="font-medium text-primary hover:underline">Cookie Policy</Link>.
       </Paragraph>
       <Callout title="Protect your account">
         Use a unique password and review active sessions if you sign in on a shared or unfamiliar device.

@@ -134,6 +134,7 @@ export function SongPanel() {
               <Textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+                maxLength={500}
                 placeholder="A dreamy lofi hip hop song, perfect for studying of relaxing"
                 className="min-h-[120px] resize-none"
               />
@@ -216,6 +217,7 @@ export function SongPanel() {
                 }
                 value={lyrics}
                 onChange={(e) => setLyrics(e.target.value)}
+                maxLength={500}
                 className="min-h-[100px] resize-none"
               />
             </div>
@@ -235,6 +237,7 @@ export function SongPanel() {
                 placeholder="Enter style tags"
                 value={styleInput}
                 onChange={(e) => setStyleInput(e.target.value)}
+                maxLength={500}
                 className="min-h-[60px] resize-none"
               />
               <div className="w-full overflow-x-auto whitespace-nowrap">

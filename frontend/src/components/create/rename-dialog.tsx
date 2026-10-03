@@ -53,6 +53,7 @@ export function RenameDialog({
                 id="name"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
+                maxLength={100}
                 className="col-span-3"
               />
             </div>
