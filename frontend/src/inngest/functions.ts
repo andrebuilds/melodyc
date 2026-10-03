@@ -2,6 +2,44 @@ import { db } from "~/server/db";
 import { inngest } from "./client";
 import { env } from "~/env";
 import { notifySongResult } from "~/lib/notifications";
+import { deleteSongFiles } from "~/lib/s3";
+
+const DEMO_RETENTION_DAYS = 30;
+const DEMO_CLEANUP_BATCH = 500;
+
+// Enforces the 30-day demo retention stated in the Privacy Policy (section 9).
+export const cleanupDemoGenerations = inngest.createFunction(
+  { id: "cleanup-demo-generations" },
+  { cron: "TZ=Europe/Rome 0 3 * * *" },
+  async ({ step }) => {
+    const cutoff = new Date(
+      Date.now() - DEMO_RETENTION_DAYS * 24 * 60 * 60 * 1000,
+    ).toISOString();
+    let deleted = 0;
+
+    for (let batch = 0; ; batch++) {
+      const count = await step.run(`delete-batch-${batch}`, async () => {
+        const demos = await db.demoGeneration.findMany({
+          where: { createdAt: { lt: new Date(cutoff) } },
+          select: { id: true, s3Key: true, thumbnailS3Key: true },
+          take: DEMO_CLEANUP_BATCH,
+        });
+        if (demos.length === 0) return 0;
+
+        await deleteSongFiles(demos);
+        await db.demoGeneration.deleteMany({
+          where: { id: { in: demos.map((demo) => demo.id) } },
+        });
+        return demos.length;
+      });
+
+      deleted += count;
+      if (count < DEMO_CLEANUP_BATCH) break;
+    }
+
+    return { deleted, cutoff };
+  },
+);
 
 type GenerationResponse = {
   s3_key: string;
