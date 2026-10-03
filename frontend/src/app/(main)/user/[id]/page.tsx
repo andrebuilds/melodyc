@@ -39,6 +39,7 @@ export default async function UserProfilePage({
     select: {
       id: true,
       name: true,
+      username: true,
       image: true,
       _count: { select: { followers: true, following: true } },
       followers: session
@@ -89,7 +90,12 @@ export default async function UserProfilePage({
           )}
         </div>
         <div className="space-y-2">
-          <p className="text-lg font-semibold">{user.name}</p>
+          <div>
+            <p className="text-lg leading-tight font-semibold">{user.name}</p>
+            {user.username && (
+              <p className="text-muted-foreground text-sm">@{user.username}</p>
+            )}
+          </div>
           <div className="text-muted-foreground flex items-center gap-4 text-sm">
             <span>{songs.length} published songs</span>
             <span className="inline-flex items-center gap-1">
