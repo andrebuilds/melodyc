@@ -103,6 +103,7 @@ function SiteFooter() {
             <ul className="flex flex-wrap items-center gap-x-5 gap-y-2">
               <li><Link href="/privacy" className="transition-colors hover:text-foreground">Privacy Policy</Link></li>
               <li><Link href="/terms" className="transition-colors hover:text-foreground">Terms and Conditions</Link></li>
+              <li><Link href="/cookies" className="transition-colors hover:text-foreground">Cookie Policy</Link></li>
             </ul>
           </nav>
         </div>

@@ -17,11 +17,16 @@ model User {
   email         String
   emailVerified Boolean
   image         String?
+  mascot        String?
   createdAt     DateTime
   updatedAt     DateTime
   sessions      Session[]
   accounts      Account[]
   credits       Int @default(20)
+  acceptedTerms   Boolean   @default(false)
+  acceptedClauses Boolean   @default(false)
+  termsAcceptedAt DateTime?
+  termsVersion    String?
   likes Like[]
   songs Song[]
   cookieConsents CookieConsent[]

@@ -1,4 +1,7 @@
-# Melodyc
+<h1 align="center">
+  <img src="frontend/public/logo.png" alt="Melodyc logo" width="44" align="center" />
+  Melodyc
+</h1>
 
 <p align="center">
   <strong>AI-powered music generation platform</strong><br/>

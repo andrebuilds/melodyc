@@ -77,8 +77,11 @@ export function homeStructuredData() {
           "Turn your own lyrics into music",
           "AI-written lyrics from a described theme",
           "Vocal and instrumental tracks",
-          "AI-generated cover art",
+          "AI-generated song titles and cover art",
+          "Downloads in WAV, MP3, and FLAC",
+          "Personal music library with public and private songs",
           "Publish and discover community music",
+          "Creator profiles, followers, and notifications",
           "Self-hostable MIT-licensed codebase",
         ],
         offers: [

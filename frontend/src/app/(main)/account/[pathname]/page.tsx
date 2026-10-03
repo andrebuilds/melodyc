@@ -23,7 +23,7 @@ export default async function AccountPage({
   const [user, notificationSettings] = await Promise.all([
     db.user.findUniqueOrThrow({
       where: { id: session.user.id },
-      select: { username: true },
+      select: { username: true, mascot: true },
     }),
     getNotificationSettings(session.user.id),
   ]);
@@ -32,6 +32,7 @@ export default async function AccountPage({
     <AccountSettingsView
       pathname={pathname}
       initialUsername={user.username}
+      initialMascot={user.mascot}
       initialNotificationSettings={notificationSettings}
     />
   );

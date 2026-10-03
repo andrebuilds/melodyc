@@ -7,6 +7,7 @@ import { SongCard } from "~/components/home/song-card";
 import { DashboardPageHeader } from "~/components/layout/dashboard-page-header";
 import { FollowControls } from "~/components/profile/follow-controls";
 import { auth } from "~/lib/auth";
+import { isMascotId, mascotLabel, mascotSrc } from "~/lib/mascots";
 import { db } from "~/server/db";
 
 export async function generateMetadata({
@@ -47,6 +48,7 @@ export default async function UserProfilePage({
       name: true,
       username: true,
       image: true,
+      mascot: true,
       _count: { select: { followers: true, following: true } },
       followers: session
         ? { where: { followerId: session.user.id }, select: { followerId: true } }
@@ -117,6 +119,18 @@ export default async function UserProfilePage({
             followingCount={user._count.following}
           />
         </div>
+        {user.mascot && isMascotId(user.mascot) && (
+          <div className="ml-auto flex flex-col items-center gap-1.5">
+            <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+              {session?.user.id === user.id ? "My mascot" : "Mascot"}
+            </p>
+            <img
+              src={mascotSrc(user.mascot)}
+              alt={mascotLabel(user.mascot)}
+              className="size-20 object-contain sm:size-24"
+            />
+          </div>
+        )}
       </div>
 
       {songs.length > 0 ? (

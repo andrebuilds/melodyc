@@ -31,13 +31,13 @@ Melodyc is built for creators, songwriters, content makers, and people with no m
 
 - **Category**: AI music generator, text-to-music, lyrics-to-music, AI song generator.
 - **Inputs**: a free-text song description, custom lyrics, or AI-written lyrics from a described theme, plus genre and style tags.
-- **Outputs**: complete songs with vocals or instrumentals, AI-generated lyrics and style tags, automatic categories, and an AI-generated cover image.
+- **Outputs**: complete songs with vocals or instrumentals, AI-generated lyrics, titles, and style tags, automatic categories, and an AI-generated cover image. Songs can be downloaded in WAV, MP3, or FLAC.
 - **AI models**: open-source models running on dedicated GPU infrastructure: ACE-Step for music, Qwen2 for lyrics and tags, FLUX.1-schnell for cover images.
 - **Privacy**: user prompts, lyrics, and songs are not sent to third-party AI providers and are not used to train AI models.
 - **Free tier**: 20 free credits on sign-up, no credit card required. One credit generates one complete song, and credits are only used when a generation succeeds.
 - **Free demo**: a short song can be generated from the homepage without an account, once per day.
 - **Ownership**: Melodyc claims no ownership of generated songs; users may use them for any lawful purpose, including commercial use, subject to the Terms.
-- **Community**: users can publish songs to Discover, browse music by genre and mood, search, and like tracks.
+- **Community**: users can publish songs to Discover, browse music by genre and mood, search, like tracks, follow creators, and get notified about likes, new followers, and listen milestones. Each creator has a public profile with username and profile picture.
 - **Open source**: the full platform is released under the MIT License and can be self-hosted with your own models, storage, and database.
 - **Language of the interface**: English.
 - **Operator**: ${legalEntity.name}, Italy (EU). Personal data is processed under the GDPR.
@@ -51,7 +51,7 @@ ${plans}
 ## Main pages
 
 - [Home](${url("/")}): product overview, free demo, features, pricing, FAQ, and open-source information.
-- [Help Center](${url("/help")}): documentation for creating music, lyrics and instrumentals, the track library, Discover, credits and billing, account security, the public demo, and self-hosting.
+- [Help Center](${url("/help")}): documentation for creating music, lyrics and instrumentals, the track library, My Music, Discover, profiles and following, credits and billing, notifications, account security, the public demo, and self-hosting.
 - [Changelog](${url("/changelog")}): new features, improvements, and fixes shipped to Melodyc.
 - [Sign up](${url("/auth/sign-up")}): create a free account with 20 credits.
 

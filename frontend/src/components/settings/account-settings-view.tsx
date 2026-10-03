@@ -15,6 +15,7 @@ import Link from "next/link";
 import { DashboardPageHeader } from "~/components/layout/dashboard-page-header";
 import { UsernameSettingsCard } from "~/components/settings/username-settings-card";
 import { AvatarSettingsCard } from "~/components/settings/avatar-settings-card";
+import { MascotSettingsCard } from "~/components/settings/mascot-settings-card";
 import { NotificationSettingsCard } from "~/components/settings/notification-settings-card";
 import { settingsCardClassNames as cardClassNames } from "~/components/settings/settings-card-styles";
 import type { NotificationType } from "~/lib/email";
@@ -47,10 +48,12 @@ const navigation = [
 function AccountSettingsView({
   pathname,
   initialUsername,
+  initialMascot,
   initialNotificationSettings,
 }: {
   pathname: string;
   initialUsername: string | null;
+  initialMascot: string | null;
   initialNotificationSettings: Record<NotificationType, boolean>;
 }) {
   const isSecurity = pathname === "security";
@@ -167,6 +170,7 @@ function AccountSettingsView({
                 classNames={{ cards: "gap-5", card: cardClassNames }}
               />
               <UsernameSettingsCard initialUsername={initialUsername} />
+              <MascotSettingsCard initialMascot={initialMascot} />
             </>
           )}
         </section>

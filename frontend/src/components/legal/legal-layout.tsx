@@ -1,6 +1,8 @@
 import { ScaleIcon } from "lucide-react";
 import type { CSSProperties, ReactNode } from "react";
+import { LegalLanguageSwitcher } from "~/components/legal/legal-language-switcher";
 import { legalEntity } from "~/lib/legal";
+import type { LegalLanguage } from "~/lib/legal-language";
 import { cn } from "~/lib/utils";
 
 export const legalLinkClass = "font-medium text-primary hover:underline";
@@ -13,22 +15,34 @@ function staggerStyle(index: number): CSSProperties {
 export function LegalPageHero({
   title,
   updatedAt,
+  lang = "en",
 }: {
   title: string;
   updatedAt: string;
+  lang?: LegalLanguage;
 }) {
+  const isItalian = lang === "it";
+
   return (
     <section className="border-b bg-muted/25 px-4 py-20 text-center sm:px-6 sm:py-24">
       <p className="inline-flex items-center gap-2 text-sm font-bold text-primary uppercase">
         <ScaleIcon className="size-4" aria-hidden="true" />
-        Legal
+        {isItalian ? "Note legali" : "Legal"}
       </p>
       <h1 className="animate-in fade-in slide-in-from-bottom-3 mt-4 text-4xl font-black duration-500 sm:text-5xl lg:text-6xl">
         {title}
       </h1>
       <p className="mx-auto mt-6 text-base text-muted-foreground">
-        Last updated: {updatedAt}
+        {isItalian ? "Ultimo aggiornamento" : "Last updated"}: {updatedAt}
       </p>
+      <div className="mt-6 flex flex-col items-center gap-3">
+        <LegalLanguageSwitcher current={lang} />
+        <p className="max-w-xl text-xs leading-5 text-muted-foreground">
+          {isItalian
+            ? "Questo documento è disponibile in italiano e in inglese. In caso di differenze tra le due versioni, prevale la versione italiana."
+            : "This document is available in Italian and English. In case of any discrepancy between the two versions, the Italian version prevails."}
+        </p>
+      </div>
     </section>
   );
 }
@@ -43,23 +57,31 @@ export function LegalContent({ children }: { children: ReactNode }) {
 
 export function LegalControllerCard({
   index = 0,
-  title = "Data Controller",
+  title,
+  lang = "en",
 }: {
   index?: number;
   title?: string;
+  lang?: LegalLanguage;
 }) {
+  const isItalian = lang === "it";
+
   return (
     <div
       className="animate-in fade-in slide-in-from-bottom-4 mb-12 rounded-xl border bg-card p-6 shadow-sm duration-500"
       style={staggerStyle(index)}
     >
-      <h2 className="mb-4 text-xl font-semibold">{title}</h2>
+      <h2 className="mb-4 text-xl font-semibold">
+        {title ?? (isItalian ? "Titolare del trattamento" : "Data Controller")}
+      </h2>
       <div className="grid grid-cols-1 gap-4 text-sm leading-6 text-muted-foreground sm:grid-cols-2">
         <div>
           <strong className={legalStrongClass}>{legalEntity.name}</strong>
           <br />
           {legalEntity.parentCompany
-            ? `Company subject to the direction and coordination of ${legalEntity.parentCompany}`
+            ? isItalian
+              ? `Società soggetta all'attività di direzione e coordinamento di ${legalEntity.parentCompany}`
+              : `Company subject to the direction and coordination of ${legalEntity.parentCompany}`
             : legalEntity.legalForm}
         </div>
         <div>

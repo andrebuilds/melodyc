@@ -23,30 +23,51 @@ const features: SliderFeature[] = [
   {
     title: "From a sentence to a complete song",
     description:
-      "Describe the track in your head and Melodyc turns it into structured music with vocals, instruments, and production ready to play.",
+      "Describe the track in your head and Melodyc composes it with vocals, instruments, and production, then gives it a title in the language of the song.",
     imageSrc: "/landing/create.webp",
     imageAlt: "Melodyc song creation workspace",
   },
   {
     title: "Your lyrics, style, and creative direction",
     description:
-      "Write your own lyrics, combine genres, choose instrumental mode, and guide the result with every detail that matters.",
+      "Write your own lyrics or let the AI write them, combine genres, switch to instrumental, and guide the result with every detail that matters.",
     imageSrc: "/landing/customize.webp",
     imageAlt: "Melodyc custom lyrics and styles interface",
   },
   {
-    title: "Find what the community is creating",
+    title: "Album artwork that looks the part",
     description:
-      "Explore published tracks by mood and genre, search the catalog, and save the ideas that inspire your next session.",
+      "Every song gets an original 1024 × 1024 cover, designed by an AI art director to look like a real release instead of generic AI art.",
+    imageSrc: "/landing/cover-art.webp",
+    imageAlt: "AI-generated album covers in Melodyc",
+  },
+  {
+    title: "Your whole catalog in My Music",
+    description:
+      "Find every song in one library, keep it private or publish it, rename it anytime, and download studio-quality WAV, MP3, or FLAC with its cover.",
+    imageSrc: "/landing/library.webp",
+    imageAlt: "Melodyc My Music library with download options",
+  },
+  {
+    title: "Discover music and follow creators",
+    description:
+      "Explore the community by mood and genre, like the tracks you love, and follow your favorite creators to see their new songs first.",
     imageSrc: "/landing/discover.webp",
     imageAlt: "Melodyc music discovery page",
   },
   {
-    title: "Every track stays ready to play",
+    title: "A public creator profile that is truly yours",
     description:
-      "Keep generations organized, preview them instantly, publish your favorites, and download finished audio from one workspace.",
-    imageSrc: "/landing/library.webp",
-    imageAlt: "Melodyc track library and audio player",
+      "Claim your username, add a profile picture, and showcase your published songs, followers, and likes on your public creator page.",
+    imageSrc: "/landing/profile.webp",
+    imageAlt: "Melodyc public creator profile",
+  },
+  {
+    title: "Never miss a beat, a like, or a new follower",
+    description:
+      "Get notified when your song is ready, when someone likes it or follows you, and when your tracks hit listen milestones, in the app or by email.",
+    imageSrc: "/landing/notifications.webp",
+    imageAlt: "Melodyc notifications panel",
   },
 ];
 
@@ -135,8 +156,8 @@ function FeatureShowcase() {
             From idea to finished track.
           </h2>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-            One focused workspace to create, refine, discover, and manage
-            original music.
+            One studio to create, refine, share, and grow your music, with a
+            community that listens.
           </p>
         </div>
 

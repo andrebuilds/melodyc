@@ -1,4 +1,6 @@
 import { betterAuth } from "better-auth";
+import { APIError } from "better-auth/api";
+import { TERMS_VERSION } from "~/lib/legal";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { db } from "~/server/db";
 import { Polar } from "@polar-sh/sdk";
@@ -30,16 +32,35 @@ export const auth = betterAuth({
   databaseHooks: {
     user: {
       create: {
-        before: async (user) => ({
-          data: {
-            ...user,
-            credits: 20,
-          },
-        }),
+        before: async (user) => {
+          const acceptance = user as typeof user & {
+            acceptedTerms?: boolean;
+            acceptedClauses?: boolean;
+          };
+          if (!acceptance.acceptedTerms || !acceptance.acceptedClauses) {
+            throw new APIError("BAD_REQUEST", {
+              message:
+                "You must accept the Terms, the Privacy Policy, and the specific clauses to create an account.",
+            });
+          }
+
+          return {
+            data: {
+              ...user,
+              credits: 20,
+              termsAcceptedAt: new Date(),
+              termsVersion: TERMS_VERSION,
+            },
+          };
+        },
       },
     },
   },
   user: {
+    additionalFields: {
+      acceptedTerms: { type: "boolean", required: true, input: true },
+      acceptedClauses: { type: "boolean", required: true, input: true },
+    },
     deleteUser: {
       enabled: true,
       // Database rows (songs, likes, sessions, preferences) are removed by cascade after this.
