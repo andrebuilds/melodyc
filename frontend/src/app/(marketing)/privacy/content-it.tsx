@@ -164,9 +164,13 @@ export function PrivacyContentIt() {
             per erogare il Servizio e proteggerlo.
           </li>
           <li>
-            <Strong>Analisi statistiche:</Strong> attualmente Melodyc non
-            utilizza strumenti di analisi o tracciamento. Qualora venissero
-            introdotti, saranno attivati soltanto previo vostro consenso.
+            <Strong>Analisi statistiche:</Strong> solo se prestate il
+            consenso alla categoria Analitici nel banner dei cookie,
+            utilizziamo Vercel Web Analytics e Vercel Speed Insights per
+            misurare in forma aggregata le visite e le prestazioni delle pagine
+            (pagine visitate, sito di provenienza, paese, tipo di dispositivo e
+            browser, tempi di caricamento). Questi strumenti non utilizzano
+            cookie e non vi tracciano su altri siti.
           </li>
         </LegalList>
 
@@ -281,7 +285,7 @@ export function PrivacyContentIt() {
               "Obbligo legale (art. 6, par. 1, lett. c) GDPR)",
             ],
             [
-              "Cookie di analisi e marketing, qualora introdotti",
+              "Analisi statistiche (Vercel Web Analytics e Speed Insights)",
               "Consenso (art. 6, par. 1, lett. a) GDPR)",
             ],
             [
@@ -323,7 +327,7 @@ export function PrivacyContentIt() {
           rows={[
             [
               "Vercel",
-              "Hosting dell’applicazione web, funzioni serverless e log tecnici",
+              "Hosting dell’applicazione web, funzioni serverless, log tecnici e analisi statistiche previo consenso (Web Analytics, Speed Insights)",
               "CDN globale, Stati Uniti (DPF)",
             ],
             [

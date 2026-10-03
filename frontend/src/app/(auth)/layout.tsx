@@ -3,6 +3,7 @@ import "~/styles/globals.css";
 import { type Metadata, type Viewport } from "next";
 import { Geist } from "next/font/google";
 import { CookieBanner } from "~/components/cookie-banner";
+import { ConsentedAnalytics } from "~/components/consented-analytics";
 import { Providers } from "~/components/providers";
 import { SiteHeader } from "~/components/layout/site-header";
 import { Toaster } from "~/components/ui/sonner";
@@ -36,6 +37,7 @@ export default function RootLayout({
           <CookieBanner />
           <Toaster />
         </Providers>
+        <ConsentedAnalytics />
       </body>
     </html>
   );

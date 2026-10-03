@@ -192,14 +192,17 @@ export function CookieContentEn() {
 
       <LegalSection title="6. Analytics Cookies" index={7}>
         <p>
-          Analytics cookies help us understand how visitors use the Service
-          so we can improve it. At the moment, Melodyc{" "}
-          <strong className={legalStrongClass}>
-            does not use any analytics cookies
-          </strong>
-          . If we introduce them, we will update this policy with the full
-          list of cookies and providers, and they will only be activated
-          after you give your consent.
+          Analytics tools help us understand how visitors use the Service so
+          we can improve it. With your consent to the{" "}
+          <strong className={legalStrongClass}>Analytics</strong> category,
+          we load <strong className={legalStrongClass}>Vercel Web Analytics</strong>{" "}
+          (pages visited, referrer, country, device and browser type) and{" "}
+          <strong className={legalStrongClass}>Vercel Speed Insights</strong>{" "}
+          (page loading performance). Both are provided by Vercel Inc. and work
+          without cookies: they do not store identifiers on your device and do
+          not track you across other websites. Data is aggregated and the
+          request-based identifier is discarded within 24 hours. If you do not
+          give consent, or withdraw it, these tools are not loaded.
         </p>
       </LegalSection>
 
@@ -229,6 +232,12 @@ export function CookieContentEn() {
               "Website hosting and content delivery",
               "Global CDN, United States (DPF)",
               "Legitimate interest",
+            ],
+            [
+              "Vercel Web Analytics and Speed Insights",
+              "Cookieless visit statistics and page performance",
+              "United States (DPF)",
+              "Consent",
             ],
             [
               "Neon (PostgreSQL)",

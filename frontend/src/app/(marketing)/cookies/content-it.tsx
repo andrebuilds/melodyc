@@ -195,14 +195,20 @@ export function CookieContentIt() {
 
       <LegalSection title="6. Cookie analitici" index={7}>
         <p>
-          I cookie analitici ci aiutano a capire come i visitatori utilizzano
-          il Servizio, per poterlo migliorare. Al momento Melodyc{" "}
-          <strong className={legalStrongClass}>
-            non utilizza cookie analitici
-          </strong>
-          . Se dovessimo introdurli, aggiorneremo questa informativa con
-          l’elenco completo dei cookie e dei fornitori; si attiveranno solo
-          dopo il tuo consenso.
+          Gli strumenti di analisi ci aiutano a capire come i visitatori
+          utilizzano il Servizio, per poterlo migliorare. Con il tuo consenso
+          alla categoria{" "}
+          <strong className={legalStrongClass}>Analitici</strong> carichiamo{" "}
+          <strong className={legalStrongClass}>Vercel Web Analytics</strong>{" "}
+          (pagine visitate, sito di provenienza, paese, tipo di dispositivo e
+          browser) e{" "}
+          <strong className={legalStrongClass}>Vercel Speed Insights</strong>{" "}
+          (prestazioni di caricamento delle pagine). Entrambi sono forniti da
+          Vercel Inc. e funzionano senza cookie: non memorizzano identificativi
+          sul tuo dispositivo e non ti tracciano su altri siti. I dati sono
+          aggregati e l’identificativo basato sulla richiesta viene eliminato
+          entro 24 ore. Senza il tuo consenso, o se lo revochi, questi
+          strumenti non vengono caricati.
         </p>
       </LegalSection>
 
@@ -234,6 +240,12 @@ export function CookieContentIt() {
               "Hosting del sito web e distribuzione dei contenuti",
               "CDN globale, Stati Uniti (DPF)",
               "Legittimo interesse",
+            ],
+            [
+              "Vercel Web Analytics e Speed Insights",
+              "Statistiche di visita senza cookie e prestazioni delle pagine",
+              "Stati Uniti (DPF)",
+              "Consenso",
             ],
             [
               "Neon (PostgreSQL)",

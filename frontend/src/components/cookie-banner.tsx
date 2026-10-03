@@ -28,7 +28,7 @@ const rejectAll: CookiePreferences = {
   marketing: false,
 };
 
-function isConsentValid(consent: StoredConsent) {
+export function isConsentValid(consent: StoredConsent) {
   if (consent.policyVersion !== COOKIE_POLICY_VERSION || !consent.updatedAt) {
     return false;
   }

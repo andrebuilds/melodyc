@@ -22,6 +22,7 @@ import {
 import BreadcrumbPageClient from "~/components/sidebar/breadcrumb-page-client";
 import SoundBar from "~/components/sound-bar";
 import { Credits } from "~/components/sidebar/credits";
+import { ConsentedAnalytics } from "~/components/consented-analytics";
 import { NotificationsBell } from "~/components/layout/notifications-bell";
 import { GitHubRepoButton } from "~/components/layout/github-repo-button";
 import { ModeToggle } from "~/components/theme/mode-toggle";
@@ -98,6 +99,7 @@ export default function RootLayout({
           </SidebarProvider>
           <Toaster />
         </Providers>
+        <ConsentedAnalytics />
       </body>
     </html>
   );

@@ -7,6 +7,7 @@ import { headers } from "next/headers";
 import Image from "next/image";
 import Link from "next/link";
 import { Providers } from "~/components/providers";
+import { ConsentedAnalytics } from "~/components/consented-analytics";
 import { Button } from "~/components/ui/button";
 import { auth } from "~/lib/auth";
 import { privatePageRobots, siteMetadata } from "~/lib/site-metadata";
@@ -94,6 +95,7 @@ export default async function GlobalNotFound() {
             </main>
           </div>
         </Providers>
+        <ConsentedAnalytics />
       </body>
     </html>
   );
