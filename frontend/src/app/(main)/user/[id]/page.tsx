@@ -18,11 +18,17 @@ export async function generateMetadata({
   const lookup = id.startsWith("@") ? id.slice(1) : id;
   const user = await db.user.findFirst({
     where: { OR: [{ id: lookup }, { username: lookup }] },
-    select: { name: true },
+    select: { name: true, username: true },
   });
 
+  if (!user) return { title: "User profile | Melodyc" };
+
+  const displayName = user.username
+    ? `${user.name} (@${user.username})`
+    : user.name;
+
   return {
-    title: user ? `${user.name} | Melodyc` : "User profile | Melodyc",
+    title: `${displayName} | Melodyc`,
   };
 }
 
