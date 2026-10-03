@@ -4,7 +4,7 @@ import { AlertCircle, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Button } from "~/components/ui/button";
-import { authClient } from "~/lib/auth-client";
+import { openCustomerPortal } from "~/actions/billing";
 
 export default function CustomerPortalRedirect() {
   const [failed, setFailed] = useState(false);
@@ -12,8 +12,7 @@ export default function CustomerPortalRedirect() {
   useEffect(() => {
     const portal = async () => {
       try {
-        const result = await authClient.customer.portal();
-        if (result?.error) setFailed(true);
+        window.location.href = await openCustomerPortal();
       } catch {
         setFailed(true);
       }
@@ -30,9 +29,8 @@ export default function CustomerPortalRedirect() {
             Customer portal unavailable
           </h1>
           <p className="text-muted-foreground mt-2 text-sm leading-6">
-            The customer portal is available once you have a paid plan. If you
-            already subscribed and still see this message, please contact
-            support.
+            We could not open the customer portal right now. Please try again
+            in a moment, or contact support if the problem continues.
           </p>
           <Button asChild className="mt-6">
             <Link href="/billing">Back to Billing</Link>

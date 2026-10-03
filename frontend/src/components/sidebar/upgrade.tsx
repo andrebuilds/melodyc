@@ -2,7 +2,8 @@
 
 import { CheckIcon } from "lucide-react";
 import { useState } from "react";
-import { authClient } from "~/lib/auth-client";
+import { toast } from "sonner";
+import { startCheckout } from "~/actions/billing";
 import { subscriptionPlans, type ProductSlug } from "~/lib/pricing";
 import { Button } from "../ui/button";
 import {
@@ -20,8 +21,9 @@ export default function Upgrade() {
     setPendingSlug(slug);
 
     try {
-      await authClient.checkout({ slug });
-    } finally {
+      window.location.href = await startCheckout(slug);
+    } catch {
+      toast.error("Unable to open the checkout. Please try again.");
       setPendingSlug(null);
     }
   };
@@ -81,7 +83,7 @@ export default function Upgrade() {
                 className="mt-8 w-full"
                 variant={pack.featured ? "default" : "outline"}
                 disabled={pendingSlug !== null}
-                onClick={() => upgrade(pack.slug)}
+                onClick={() => void upgrade(pack.slug)}
               >
                 {pendingSlug === pack.slug
                   ? "Opening checkout..."
