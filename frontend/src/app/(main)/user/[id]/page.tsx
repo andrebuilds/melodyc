@@ -51,7 +51,10 @@ export default async function UserProfilePage({
       mascot: true,
       _count: { select: { followers: true, following: true } },
       followers: session
-        ? { where: { followerId: session.user.id }, select: { followerId: true } }
+        ? {
+            where: { followerId: session.user.id },
+            select: { followerId: true },
+          }
         : false,
       songs: {
         where: { published: true },
@@ -89,45 +92,51 @@ export default async function UserProfilePage({
         icon={Music}
       />
 
-      <div className="flex flex-wrap items-center gap-4 border-y py-5">
-        <div className="bg-muted flex size-16 items-center justify-center overflow-hidden rounded-full text-2xl font-semibold">
-          {user.image ? (
-            <img src={user.image} alt="" className="size-full object-cover" />
-          ) : (
-            user.name.slice(0, 1).toUpperCase()
-          )}
-        </div>
-        <div className="space-y-2">
-          <div>
-            <p className="text-lg leading-tight font-semibold">{user.name}</p>
-            {user.username && (
-              <p className="text-muted-foreground text-sm">@{user.username}</p>
+      <div className="flex flex-col gap-5 border-y py-5 sm:flex-row sm:items-center sm:gap-4">
+        <div className="flex min-w-0 flex-col items-center gap-3 text-center sm:flex-row sm:gap-4 sm:text-left">
+          <div className="bg-muted flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-full text-2xl font-semibold">
+            {user.image ? (
+              <img src={user.image} alt="" className="size-full object-cover" />
+            ) : (
+              user.name.slice(0, 1).toUpperCase()
             )}
           </div>
-          <div className="text-muted-foreground flex items-center gap-4 text-sm">
-            <span>{songs.length} published songs</span>
-            <span className="inline-flex items-center gap-1">
-              <Heart className="size-4" />
-              {likesReceived} likes received
-            </span>
+          <div className="flex min-w-0 flex-col items-center space-y-2 sm:items-start">
+            <div>
+              <p className="truncate text-lg leading-tight font-semibold">
+                {user.name}
+              </p>
+              {user.username && (
+                <p className="text-muted-foreground truncate text-sm">
+                  @{user.username}
+                </p>
+              )}
+            </div>
+            <div className="text-muted-foreground flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-sm sm:justify-start">
+              <span>{songs.length} published songs</span>
+              <span className="inline-flex items-center gap-1">
+                <Heart className="size-4" />
+                {likesReceived} likes received
+              </span>
+            </div>
+            <FollowControls
+              userId={user.id}
+              isOwnProfile={session?.user.id === user.id}
+              initialIsFollowing={(user.followers ?? []).length > 0}
+              initialFollowersCount={user._count.followers}
+              followingCount={user._count.following}
+            />
           </div>
-          <FollowControls
-            userId={user.id}
-            isOwnProfile={session?.user.id === user.id}
-            initialIsFollowing={(user.followers ?? []).length > 0}
-            initialFollowersCount={user._count.followers}
-            followingCount={user._count.following}
-          />
         </div>
         {user.mascot && isMascotId(user.mascot) && (
-          <div className="ml-auto flex flex-col items-center gap-1.5">
+          <div className="bg-muted/40 flex flex-col items-center gap-1.5 self-center rounded-xl px-6 py-3 sm:ml-auto sm:bg-transparent sm:p-0">
             <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
               {session?.user.id === user.id ? "My mascot" : "Mascot"}
             </p>
             <img
               src={mascotSrc(user.mascot)}
               alt={mascotLabel(user.mascot)}
-              className="size-20 object-contain sm:size-24"
+              className="size-24 object-contain"
             />
           </div>
         )}

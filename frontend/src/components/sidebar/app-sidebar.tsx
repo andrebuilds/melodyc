@@ -26,7 +26,7 @@ export async function AppSidebar() {
   const profileUser = session
     ? await db.user.findUnique({
         where: { id: session.user.id },
-        select: { id: true, username: true, mascot: true },
+        select: { id: true, username: true },
       })
     : null;
   const profileHref = profileUser
@@ -41,7 +41,7 @@ export async function AppSidebar() {
           aria-label="Melodyc dashboard"
           className="overflow-hidden pl-1.5 group-data-[collapsible=icon]:pl-0 group-data-[collapsible=icon]:[&>span]:gap-0 group-data-[collapsible=icon]:[&>span>span]:hidden"
         >
-          <MelodycLogo mascot={profileUser?.mascot} />
+          <MelodycLogo />
         </Link>
       </SidebarHeader>
       <div className="px-3 pb-2" aria-hidden="true">

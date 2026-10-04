@@ -66,7 +66,7 @@ export function FollowControls({
 
   return (
     <>
-      <div className="flex flex-wrap items-center gap-4">
+      <div className="flex flex-wrap items-center justify-center gap-4 sm:justify-start">
         <button
           type="button"
           onClick={() => void openFollowList("followers")}
