@@ -6,8 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+### Removed
+
+- Polar payments: subscriptions, checkout, customer portal, payment webhook, payment confirmation emails, and the related notification preference. Melodyc is now free; `/billing` and `/customer-portal` redirect to the new `/credits` page.
+
+### Changed
+
+- New accounts receive 100 free credits instead of 20.
+- The homepage Pricing section and navbar link were replaced by a Gamification "Coming soon" section.
+- Terms, Privacy Policy, Cookie Policy, Help Center, FAQ, structured data, and `llms.txt` now describe the free model.
+
 ### Added
 
+- Credits page with the current balance, manual top-up contact, and a gamification preview.
 - My Music library with all of a user's songs, Public and Private badges, search, and infinite scrolling.
 - Publish or unpublish, rename, and delete songs from My Music.
 - Song downloads in WAV, MP3 (320 kbps), and FLAC, plus cover image download.

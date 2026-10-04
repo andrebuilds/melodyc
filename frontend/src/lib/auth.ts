@@ -3,27 +3,15 @@ import { APIError } from "better-auth/api";
 import { TERMS_VERSION } from "~/lib/legal";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { db } from "~/server/db";
-import { Polar } from "@polar-sh/sdk";
 import { env } from "~/env";
-import {
-  polar,
-  checkout,
-  portal,
-  webhooks,
-} from "@polar-sh/better-auth";
 import {
   sendResetPasswordEmail,
   sendVerificationEmail,
   sendWelcomeEmail,
 } from "~/lib/email";
-import { notifyPaymentConfirmed } from "~/lib/notifications";
+import { SIGN_UP_CREDITS } from "~/lib/credits";
 import { avatarKey, createS3Client, deleteSongFiles } from "~/lib/s3";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
-
-const polarClient = new Polar({
-  accessToken: env.POLAR_ACCESS_TOKEN,
-  server: env.POLAR_SERVER,
-});
 
 export const auth = betterAuth({
   database: prismaAdapter(db, {
@@ -47,7 +35,7 @@ export const auth = betterAuth({
           return {
             data: {
               ...user,
-              credits: 20,
+              credits: SIGN_UP_CREDITS,
               termsAcceptedAt: new Date(),
               termsVersion: TERMS_VERSION,
             },
@@ -80,13 +68,6 @@ export const auth = betterAuth({
         } catch (error) {
           console.error(`S3 cleanup failed for deleted user ${user.id}`, error);
         }
-
-        try {
-          // Also cancels active subscriptions on Polar.
-          await polarClient.customers.deleteExternal({ externalId: user.id });
-        } catch (error) {
-          console.error(`Polar customer deletion failed for user ${user.id}`, error);
-        }
       },
     },
   },
@@ -112,74 +93,4 @@ export const auth = betterAuth({
       }
     },
   },
-  plugins: [
-    polar({
-      client: polarClient,
-      createCustomerOnSignUp: true,
-      use: [
-        checkout({
-          products: [
-            {
-              productId: env.POLAR_TRACK_PRODUCT_ID,
-              slug: "track",
-            },
-            {
-              productId: env.POLAR_EP_PRODUCT_ID,
-              slug: "ep",
-            },
-            {
-              productId: env.POLAR_DISCOGRAPHY_PRODUCT_ID,
-              slug: "discography",
-            },
-          ],
-          successUrl: "/billing?payment=success",
-          authenticatedUsersOnly: true,
-        }),
-        portal(),
-        webhooks({
-          secret: env.POLAR_WEBHOOK_SECRET,
-          onOrderPaid: async (order) => {
-            const externalCustomerId = order.data.customer.externalId;
-
-            if (!externalCustomerId) {
-              console.error("No external customer ID found.");
-              throw new Error("No external customer id found.");
-            }
-
-            const productId = order.data.productId;
-
-            let creditsToAdd = 0;
-
-            switch (productId) {
-              case env.POLAR_TRACK_PRODUCT_ID:
-                creditsToAdd = 30;
-                break;
-              case env.POLAR_EP_PRODUCT_ID:
-                creditsToAdd = 70;
-                break;
-              case env.POLAR_DISCOGRAPHY_PRODUCT_ID:
-                creditsToAdd = 150;
-                break;
-            }
-
-            await db.user.update({
-              where: { id: externalCustomerId },
-              data: {
-                credits: {
-                  increment: creditsToAdd,
-                },
-              },
-            });
-
-            try {
-              await notifyPaymentConfirmed(externalCustomerId, creditsToAdd);
-            } catch (error) {
-              // Credits are already added; an email failure must not make Polar retry the webhook.
-              console.error("Payment confirmation email failed", error);
-            }
-          },
-        }),
-      ],
-    }),
-  ],
 });

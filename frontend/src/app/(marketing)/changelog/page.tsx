@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ElementType } from "react";
 import {
   CircleHelpIcon,
+  CoinsIcon,
   CompassIcon,
   CreditCardIcon,
   DatabaseIcon,
@@ -63,6 +64,37 @@ const typeMeta: Record<ChangeType, { label: string; className: string }> = {
 };
 
 const releases: Release[] = [
+  {
+    version: "Free for everyone",
+    date: "October 4, 2026",
+    dateTime: "2026-10-04",
+    title: "Melodyc is now completely free",
+    description:
+      "No more subscriptions or paid plans: Melodyc becomes a free, community-driven platform, with gamification coming soon.",
+    icon: CoinsIcon,
+    changes: [
+      {
+        type: "new",
+        text: "New accounts now start with 100 free credits instead of 20.",
+      },
+      {
+        type: "new",
+        text: "A new Credits page in the account menu shows your balance and how to ask the team for a top-up.",
+      },
+      {
+        type: "new",
+        text: "The homepage previews the upcoming gamification: daily missions, weekly challenges, streaks, and badges that reward you with credits.",
+      },
+      {
+        type: "improved",
+        text: "Subscriptions, checkout, the customer portal, and payment emails were removed. Old Billing links now open the Credits page.",
+      },
+      {
+        type: "improved",
+        text: "Terms, Privacy Policy, Cookie Policy, Help Center, and FAQ were updated to reflect the free model.",
+      },
+    ],
+  },
   {
     version: "Privacy and security update",
     date: "October 3, 2026",

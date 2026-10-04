@@ -6,9 +6,8 @@ const disallow = [
   "/api/",
   "/auth/",
   "/account/",
-  "/billing",
   "/create",
-  "/customer-portal",
+  "/credits",
   "/discover",
   "/my-music",
 ];

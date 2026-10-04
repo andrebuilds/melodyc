@@ -27,7 +27,7 @@ function SiteFooter() {
           <h2 className="mb-4 text-base font-semibold">Product</h2>
           <ul className="space-y-3 text-sm text-muted-foreground">
             <li><Link href="/#features" className="transition-colors hover:text-foreground">Features</Link></li>
-            <li><Link href="/#pricing" className="transition-colors hover:text-foreground">Pricing</Link></li>
+            <li><Link href="/#gamification" className="transition-colors hover:text-foreground">Gamification</Link></li>
             <li><Link href="/discover" className="transition-colors hover:text-foreground">Discover</Link></li>
             <li><Link href="/create" className="transition-colors hover:text-foreground">Create music</Link></li>
           </ul>

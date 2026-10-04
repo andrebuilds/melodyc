@@ -1,6 +1,6 @@
+import { SIGN_UP_CREDITS } from "~/lib/credits";
 import { faqs } from "~/lib/faqs";
 import { legalEntity } from "~/lib/legal";
-import { subscriptionPlans } from "~/lib/pricing";
 import { repositoryUrl } from "~/lib/site-config";
 import { siteUrl } from "~/lib/site-metadata";
 
@@ -9,13 +9,6 @@ export const dynamic = "force-static";
 // Follows the llms.txt proposal: https://llmstxt.org
 export function GET() {
   const url = (path: string) => new URL(path, siteUrl).toString();
-
-  const plans = subscriptionPlans
-    .map(
-      (plan) =>
-        `- **${plan.name}**: ${plan.price} per month, ${plan.credits} credits (${plan.credits} songs). ${plan.description}`,
-    )
-    .join("\n");
 
   const faq = faqs
     .map((item) => `### ${item.question}\n\n${item.answer}`)
@@ -34,7 +27,7 @@ Melodyc is built for creators, songwriters, content makers, and people with no m
 - **Outputs**: complete songs with vocals or instrumentals, AI-generated lyrics, titles, and style tags, automatic categories, and an AI-generated cover image. Songs can be downloaded in WAV, MP3, or FLAC.
 - **AI models**: open-source models running on dedicated GPU infrastructure: ACE-Step for music, Qwen2 for lyrics and tags, FLUX.1-schnell for cover images.
 - **Privacy**: user prompts, lyrics, and songs are not sent to third-party AI providers and are not used to train AI models.
-- **Free tier**: 20 free credits on sign-up, no credit card required. One credit generates one complete song, and credits are only used when a generation succeeds.
+- **Free tier**: Melodyc is free. ${SIGN_UP_CREDITS} free credits on sign-up, no credit card required. One credit generates one complete song, and credits are only used when a generation succeeds.
 - **Free demo**: a short song can be generated from the homepage without an account, once per day.
 - **Ownership**: Melodyc claims no ownership of generated songs; users may use them for any lawful purpose, including commercial use, subject to the Terms.
 - **Community**: users can publish songs to Discover, browse music by genre and mood, search, like tracks, follow creators, and get notified about likes, new followers, and listen milestones. Each creator has a public profile with username and profile picture.
@@ -44,16 +37,14 @@ Melodyc is built for creators, songwriters, content makers, and people with no m
 
 ## Pricing
 
-Monthly subscriptions billed through Polar (Merchant of Record, taxes calculated at checkout). Unused credits roll over every month, and subscriptions can be cancelled anytime from the Billing page.
-
-${plans}
+Melodyc is free to use: there are no subscriptions or paid plans. Credits cannot be purchased; users who run out can contact the team for a manual top-up. A gamification system (daily missions, weekly challenges, streaks, and badges) that rewards community activity with new credits is coming soon.
 
 ## Main pages
 
-- [Home](${url("/")}): product overview, free demo, features, pricing, FAQ, and open-source information.
-- [Help Center](${url("/help")}): documentation for creating music, lyrics and instrumentals, the track library, My Music, Discover, profiles and following, credits and billing, notifications, account security, the public demo, and self-hosting.
+- [Home](${url("/")}): product overview, free demo, features, upcoming gamification, FAQ, and open-source information.
+- [Help Center](${url("/help")}): documentation for creating music, lyrics and instrumentals, the track library, My Music, Discover, profiles and following, credits, notifications, account security, the public demo, and self-hosting.
 - [Changelog](${url("/changelog")}): new features, improvements, and fixes shipped to Melodyc.
-- [Sign up](${url("/auth/sign-up")}): create a free account with 20 credits.
+- [Sign up](${url("/auth/sign-up")}): create a free account with ${SIGN_UP_CREDITS} credits.
 
 ## Open source
 
@@ -68,7 +59,7 @@ ${faq}
 ## Optional
 
 - [Privacy Policy](${url("/privacy")}): how personal data is collected, used, and protected under the GDPR.
-- [Terms and Conditions](${url("/terms")}): rules for using the service, credits, subscriptions, refunds, and rights on AI-generated music.
+- [Terms and Conditions](${url("/terms")}): rules for using the service, credits, and rights on AI-generated music.
 - [Cookie Policy](${url("/cookies")}): cookies and similar technologies used by Melodyc.
 - Contact: ${legalEntity.email}
 `;

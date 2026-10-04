@@ -7,12 +7,11 @@ import {
   LegalMail as Mail,
   LegalSection,
   LegalSubheading,
-  LegalTable,
   legalLinkClass,
   legalStrongClass,
 } from "~/components/legal/legal-layout";
+import { CREDITS_SUPPORT_EMAIL, SIGN_UP_CREDITS } from "~/lib/credits";
 import { legalEntity } from "~/lib/legal";
-import { subscriptionPlans } from "~/lib/pricing";
 import { repositoryUrl } from "~/lib/site-config";
 
 function Strong({ children }: { children: ReactNode }) {
@@ -125,13 +124,12 @@ export function TermsContentEn() {
           </li>
           <li>
             You must be at least <Strong>16 years of age</Strong> to use the
-            Service. Purchases are reserved to Users who are of legal age
-            under the law of their country, or who have the authorization of
-            a parent or legal guardian.
+            Service.
           </li>
           <li>
-            Upon registration you receive <Strong>20 free credits</Strong>,
-            with no payment information required.
+            Upon registration you receive{" "}
+            <Strong>{SIGN_UP_CREDITS} free credits</Strong>, with no payment
+            information required.
           </li>
           <li>
             You are responsible for keeping your login credentials
@@ -145,7 +143,7 @@ export function TermsContentEn() {
         </LegalList>
       </LegalSection>
 
-      <LegalSection title="4. Credits, Plans, and Payments" index={5}>
+      <LegalSection title="4. Credits" index={5}>
         <LegalSubheading>4.1 Credit System</LegalSubheading>
         <LegalList>
           <li>
@@ -157,101 +155,28 @@ export function TermsContentEn() {
             and cannot be transferred to other accounts.
           </li>
           <li>
-            Unused credits roll over from one billing period to the next and
-            remain available as long as your account is active.
+            Unused credits do not expire and remain available as long as your
+            account is active.
           </li>
         </LegalList>
 
-        <LegalSubheading>4.2 Available Plans</LegalSubheading>
-        <LegalTable
-          headers={["Plan", "Price", "Credits per month"]}
-          rows={subscriptionPlans.map((plan) => [
-            plan.name,
-            `${plan.price} / month`,
-            String(plan.credits),
-          ])}
-        />
-        <p>
-          Plans are monthly subscriptions that renew automatically until
-          cancelled. Credits are added after the first successful payment
-          and after each successful renewal. The prices and conditions in
-          force are always those shown on the{" "}
-          <Link href="/#pricing" className={legalLinkClass}>
-            pricing page
-          </Link>{" "}
-          and at checkout at the time of purchase.
-        </p>
-
-        <LegalSubheading>4.3 Payments and Billing</LegalSubheading>
+        <LegalSubheading>4.2 Free Service</LegalSubheading>
         <LegalList>
           <li>
-            Purchases are processed by <Strong>Polar</Strong>, which acts as
-            Merchant of Record: Polar sells the subscription to you, collects
-            the payment, calculates and remits applicable taxes (such as VAT)
-            based on your country, and issues the related invoice or
-            receipt. Polar&apos;s{" "}
-            <ExternalLink href="https://polar.sh/legal/terms">
-              terms
-            </ExternalLink>{" "}
-            also apply to the purchase.
+            The Service is <Strong>free of charge</Strong>. There are no
+            subscriptions or paid plans, and credits cannot be purchased.
           </li>
           <li>
-            Any taxes due are shown at checkout before you confirm the
-            payment. We never receive or store your card details.
+            If you run out of credits, you can ask for a top-up by writing to{" "}
+            <Mail address={CREDITS_SUPPORT_EMAIL} />. Top-ups are granted at
+            our discretion.
           </li>
           <li>
-            You can review your payments and{" "}
-            <Strong>cancel your subscription at any time</Strong> from the
-            Billing page, through the Polar customer portal. Cancellation
-            stops future renewals; credits already added remain available.
-          </li>
-          <li>
-            If a renewal payment fails, no new credits are added until the
-            payment is completed.
-          </li>
-        </LegalList>
-
-        <LegalSubheading>4.4 Right of Withdrawal and Refunds</LegalSubheading>
-        <p>
-          If you are a Consumer, you have the right to withdraw from each
-          purchase within <Strong>14 days</Strong> of the payment, without
-          giving any reason and without penalty (Articles 52 to 59 of the
-          Italian Consumer Code).
-        </p>
-        <LegalList>
-          <li>
-            At checkout you request that the Service start immediately, so
-            that the purchased credits are available right away.
-          </li>
-          <li>
-            If you withdraw and <Strong>have not used any credit</Strong> from
-            that purchase, you receive a full refund.
-          </li>
-          <li>
-            If you have already used part of those credits, you receive a
-            refund proportional to the unused credits, because the Service
-            has been partially performed at your request (Art. 57(3) of the
-            Italian Consumer Code).
-          </li>
-          <li>
-            The right of withdrawal does not apply once all the credits of
-            that purchase have been used, because the Service has been fully
-            performed with your prior express consent and acknowledgment
-            (Art. 59(1)(a) of the Italian Consumer Code).
-          </li>
-          <li>
-            To withdraw, send an unequivocal statement to{" "}
-            <Mail address={legalEntity.email} /> or by PEC to{" "}
-            <Mail address={legalEntity.pec} />, indicating your account email
-            and the purchase concerned. You may also use the model
-            withdrawal form in Annex I(B) of the Consumer Code, but it is not
-            mandatory.
-          </li>
-          <li>
-            Refunds are issued through Polar within <Strong>14 days</Strong>{" "}
-            of receiving your request, using the same payment method used for
-            the purchase, at no cost to you. The related credits are removed
-            from your account.
+            We may introduce features that reward activity on the Service
+            with credits, such as missions, challenges, streaks, or badges.
+            Credits obtained in this way are subject to these Terms, and we
+            may remove credits obtained through abuse, automation, or
+            multiple accounts.
           </li>
         </LegalList>
       </LegalSection>
@@ -413,9 +338,8 @@ export function TermsContentEn() {
             day and may be changed or discontinued at any time.
           </li>
           <li>
-            We may modify, update, or remove features of the Service. If a
-            change significantly reduces the features of a paid plan, we
-            will inform you in advance and you may cancel your subscription.
+            We may modify, update, or remove features of the Service. In case
+            of significant changes, we will inform you in advance.
           </li>
         </LegalList>
       </LegalSection>
@@ -432,9 +356,8 @@ export function TermsContentEn() {
           </li>
           <li>
             Our total liability towards business Users for any claim relating
-            to the Service shall not exceed the amount paid by the User in
-            the <Strong>12 months</Strong> preceding the event that gave rise
-            to the claim.
+            to the Service, which is provided free of charge, is limited to
+            the extent permitted by law.
           </li>
           <li>
             We recommend downloading and keeping a copy of the songs that
@@ -443,7 +366,7 @@ export function TermsContentEn() {
           </li>
           <li>
             We are not liable for malfunctions or interruptions of
-            third-party services (such as Polar, AWS, or Modal) that are
+            third-party services (such as AWS or Modal) that are
             beyond our reasonable control.
           </li>
           <li>
@@ -477,13 +400,9 @@ export function TermsContentEn() {
           </li>
           <li>
             Deleting your account permanently removes your songs, cover
-            images, and any remaining credits, and cancels any active
-            subscription. Before deleting, you can download your songs and
-            request a copy of your data (Art. 20 GDPR).
-          </li>
-          <li>
-            Remember to cancel any active subscription to stop future
-            renewals.
+            images, and any remaining credits. Before deleting, you can
+            download your songs and request a copy of your data (Art. 20
+            GDPR).
           </li>
         </LegalList>
 
@@ -498,11 +417,6 @@ export function TermsContentEn() {
             In case of serious violations (illegal activity, fraud, abuse of
             the systems, or infringement of third-party rights), suspension
             may be immediate.
-          </li>
-          <li>
-            If we close your account without any violation on your part, we
-            will refund the unused credits purchased in the previous 12
-            months.
           </li>
         </LegalList>
       </LegalSection>
@@ -547,8 +461,8 @@ export function TermsContentEn() {
             take effect.
           </li>
           <li>
-            If you do not accept the changes, you may cancel your
-            subscription and close your account before they take effect.
+            If you do not accept the changes, you may close your account
+            before they take effect.
             Continuing to use the Service after that date means you accept
             the updated Terms.
           </li>
@@ -631,7 +545,6 @@ export function TermsContentEn() {
           following clauses:
         </p>
         <LegalList>
-          <li>Art. 4.4: right of withdrawal and partial refunds</li>
           <li>Art. 5.3: license on Published Content and its removal</li>
           <li>Art. 7: service availability and changes to features</li>
           <li>Art. 8: limitation of liability</li>

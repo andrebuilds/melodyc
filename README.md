@@ -22,7 +22,9 @@
 
 Melodyc is an open-source SaaS platform that lets users generate original music through artificial intelligence. Describe a mood, paste your lyrics, or define a style — Melodyc takes care of the rest, producing a complete track with audio and AI-generated cover art.
 
-Built with a modern full-stack architecture, Melodyc is designed to be a real-world reference for anyone who wants to learn how to build a production-ready SaaS: authentication, payments, background job queues, and serverless GPU inference — all working together.
+Built with a modern full-stack architecture, Melodyc is designed to be a real-world reference for anyone who wants to learn how to build a production-ready SaaS: authentication, background job queues, and serverless GPU inference — all working together.
+
+The hosted platform is **completely free**: every new account gets 100 credits, and a gamification system (missions, challenges, streaks, and badges) that rewards community activity with new credits is coming soon.
 
 **All platforms used offer a free tier** — you won't need to spend anything to start developing.
 
@@ -37,8 +39,8 @@ Built with a modern full-stack architecture, Melodyc is designed to be a real-wo
 - 🎸 Instrumental track option (no vocals)
 - ⚡ Serverless GPU processing with Modal (GPU L40S)
 - 📊 Background job queue system with Inngest
-- 💳 Credit-based usage system
-- 💰 Polar.sh integration for purchasing credit packages
+- 💳 Free credit-based usage system (100 credits on sign-up)
+- 🏆 Gamification to earn credits (coming soon)
 - 👤 User authentication with BetterAuth, email verification, and password reset
 - 📧 Transactional and notification emails with Resend
 - 🎧 Community feed to discover, listen to, and like generated tracks
@@ -59,7 +61,6 @@ Built with a modern full-stack architecture, Melodyc is designed to be a real-wo
 | Frontend | Next.js 15, React 19, TypeScript, Tailwind CSS 4, ShadCN |
 | Authentication | BetterAuth |
 | Email | Resend |
-| Payments | Polar.sh |
 | Analytics | Vercel Web Analytics, Vercel Speed Insights (consent-based) |
 | Database | PostgreSQL (Neon) + Prisma ORM |
 | Queue / Workflow | Inngest |
@@ -79,7 +80,6 @@ Built with a modern full-stack architecture, Melodyc is designed to be a real-wo
 - Python 3.12
 - A [Modal](https://modal.com) account
 - A [Neon](https://neon.tech) account (PostgreSQL)
-- A [Polar.sh](https://polar.sh) account
 - An [AWS](https://aws.amazon.com) account (S3)
 - An [Inngest](https://inngest.com) account
 - A [Resend](https://resend.com) account
@@ -182,7 +182,7 @@ npm install
 
 # Configure environment variables
 cp .env.example .env
-# Fill in your values (database, AWS, Modal, BetterAuth, Polar)
+# Fill in your values (database, AWS, Modal, BetterAuth, Resend)
 
 # Apply database migrations
 npx prisma migrate dev
@@ -201,7 +201,7 @@ npx inngest-cli@latest dev
 | Section | File |
 |---|---|
 | Backend guide (Modal, AWS, Python) | [backend/getting-started.md](backend/getting-started.md) |
-| Frontend guide (Auth, DB, Inngest, Payments, Deploy) | [frontend/getting-started.md](frontend/getting-started.md) |
+| Frontend guide (Auth, DB, Inngest, Deploy) | [frontend/getting-started.md](frontend/getting-started.md) |
 
 ---
 

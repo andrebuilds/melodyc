@@ -1,6 +1,6 @@
+import { SIGN_UP_CREDITS } from "~/lib/credits";
 import { faqs } from "~/lib/faqs";
 import { legalEntity } from "~/lib/legal";
-import { subscriptionPlans } from "~/lib/pricing";
 import { repositoryUrl } from "~/lib/site-config";
 import { siteDescription, siteName, siteUrl } from "~/lib/site-metadata";
 
@@ -88,26 +88,11 @@ export function homeStructuredData() {
           {
             "@type": "Offer",
             name: "Free",
-            description: "20 free credits on sign-up, no credit card required.",
+            description: `${SIGN_UP_CREDITS} free credits on sign-up, no credit card required.`,
             price: 0,
             priceCurrency: "USD",
             url: url("/auth/sign-up"),
           },
-          ...subscriptionPlans.map((plan) => ({
-            "@type": "Offer",
-            name: plan.name,
-            description: `${plan.credits} credits per month. ${plan.description}`,
-            price: Number(plan.price.replace(/[^0-9.]/g, "")),
-            priceCurrency: "USD",
-            url: url("/#pricing"),
-            priceSpecification: {
-              "@type": "UnitPriceSpecification",
-              price: Number(plan.price.replace(/[^0-9.]/g, "")),
-              priceCurrency: "USD",
-              billingDuration: "P1M",
-              unitCode: "MON",
-            },
-          })),
         ],
       },
       {

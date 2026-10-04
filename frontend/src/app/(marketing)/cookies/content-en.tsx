@@ -264,12 +264,6 @@ export function CookieContentEn() {
               "Contract performance",
             ],
             [
-              "Polar",
-              "Checkout, subscriptions, and billing as Merchant of Record",
-              "United States / EU (SCC)",
-              "Contract performance",
-            ],
-            [
               "GitHub",
               "Profile pictures of the project contributors shown in the footer",
               "United States (DPF)",
@@ -291,15 +285,6 @@ export function CookieContentEn() {
           their services to us. GitHub serves the contributor images as an
           independent controller and may receive your IP address when your
           browser loads them.
-        </p>
-        <p>
-          When you complete a purchase, you are redirected to Polar&apos;s
-          checkout, which acts as an independent controller and applies its
-          own{" "}
-          <ExternalLink href="https://polar.sh/legal/privacy">
-            Privacy Policy
-          </ExternalLink>
-          .
         </p>
       </LegalSection>
 

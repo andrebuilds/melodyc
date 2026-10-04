@@ -10,19 +10,19 @@ export const faqs = [
       "That is exactly where Melodyc shines. You bring the idea; the studio handles the composition and production. Start with a prompt, listen to the result, and refine your sound as you go.",
   },
   {
-    question: "What can I create with my 20 free credits?",
+    question: "What can I create with my 100 free credits?",
     answer:
-      "Twenty original songs. One credit creates one complete track, so you have plenty of room to test ideas, explore genres, and find your sound before choosing a plan.",
+      "One hundred original songs. One credit creates one complete track, so you have plenty of room to test ideas, explore genres, and find your sound.",
   },
   {
-    question: "Will I lose the credits I do not use this month?",
+    question: "Is Melodyc really free?",
     answer:
-      "No. Every unused credit rolls over and stays in your balance. Your next monthly allowance is added on top, so inspiration never has to follow a billing calendar.",
+      "Yes. There are no subscriptions and no paid plans: Melodyc is an open-source, community-driven project. If you run out of credits, contact the team and we will top up your account.",
   },
   {
-    question: "Can I change my mind about a subscription?",
+    question: "How will I earn more credits?",
     answer:
-      "Of course. Manage or cancel your subscription anytime from the customer portal in Billing. No support ticket, no hidden steps, and no long-term commitment.",
+      "Gamification is coming soon. Daily missions, weekly challenges, streaks, and badges will reward you with new credits just for being part of the community.",
   },
   {
     question: "Why is the entire platform open source?",

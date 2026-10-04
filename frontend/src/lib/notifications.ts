@@ -3,7 +3,6 @@ import { db } from "~/server/db";
 import { createInAppNotification } from "~/lib/in-app-notifications";
 import {
   sendNewFollowerEmail,
-  sendPaymentConfirmedEmail,
   sendSongFailedEmail,
   sendSongReadyEmail,
   type NotificationType,
@@ -17,7 +16,6 @@ export type NotificationSettings = Pick<
 export const DEFAULT_NOTIFICATION_SETTINGS: NotificationSettings = {
   songReady: true,
   songFailed: true,
-  paymentConfirmed: true,
   newFollower: true,
   productUpdates: false,
 };
@@ -34,7 +32,6 @@ export async function getNotificationSettings(
   return {
     songReady: preference.songReady,
     songFailed: preference.songFailed,
-    paymentConfirmed: preference.paymentConfirmed,
     newFollower: preference.newFollower,
     productUpdates: preference.productUpdates,
   };
@@ -87,26 +84,4 @@ export async function notifyNewFollower(followerId: string, followingId: string)
     follower.name,
     `/user/${follower.username ?? follower.id}`,
   );
-}
-
-export async function notifyPaymentConfirmed(
-  userId: string,
-  creditsAdded: number,
-) {
-  const user = await db.user.findUnique({
-    where: { id: userId },
-    select: { email: true, credits: true },
-  });
-  if (!user) return;
-
-  await createInAppNotification({
-    type: "credits_added",
-    userId,
-    value: creditsAdded,
-  });
-
-  const settings = await getNotificationSettings(userId);
-  if (!settings.paymentConfirmed) return;
-
-  await sendPaymentConfirmedEmail(user.email, userId, creditsAdded, user.credits);
 }

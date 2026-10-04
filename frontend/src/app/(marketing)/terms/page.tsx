@@ -11,7 +11,7 @@ import { TermsContentIt } from "./content-it";
 export const metadata: Metadata = pageMetadata({
   title: "Terms and Conditions",
   description:
-    "The terms that govern your use of Melodyc, including credits, subscriptions, AI-generated music, and your rights as a user.",
+    "The terms that govern your use of Melodyc, including credits, AI-generated music, and your rights as a user.",
   path: "/terms",
 });
 

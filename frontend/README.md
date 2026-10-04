@@ -19,7 +19,6 @@ This folder contains the **Melodyc** frontend, built with the T3 Stack on Next.j
 | [Neon](https://neon.tech) | Serverless PostgreSQL database |
 | [Better Auth](https://www.better-auth.com) | Authentication |
 | [Inngest](https://inngest.com) | Queue and background jobs |
-| [Polar.sh](https://polar.sh) | Payments and credits |
 | [AWS S3](https://aws.amazon.com/s3/) | Audio and cover storage |
 | [Zustand](https://zustand-demo.pmnd.rs) | State management (audio player) |
 | [Vercel](https://vercel.com) | Deployment |
@@ -41,9 +40,8 @@ You will find instructions on:
 6. Music generation page
 7. Sound bar and audio player
 8. Home page and community feed
-9. Payments with Polar.sh
-10. Deployment on Vercel
-11. 10 advanced optimization exercises
+9. Deployment on Vercel
+10. 10 advanced optimization exercises
 
 ---
 

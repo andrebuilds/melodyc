@@ -72,7 +72,7 @@ function describe(notification: NotificationItem) {
     case "credits_added":
       return {
         text: `${notification.value ?? ""} credits were added to your account`,
-        href: "/billing",
+        href: "/credits",
         icon: CoinsIcon,
       };
     default:

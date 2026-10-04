@@ -28,6 +28,13 @@ const config = {
   async headers() {
     return [{ source: "/:path*", headers: securityHeaders }];
   },
+  // Paid plans were removed: old billing links now land on the free credits page.
+  async redirects() {
+    return [
+      { source: "/billing", destination: "/credits", permanent: true },
+      { source: "/customer-portal", destination: "/credits", permanent: true },
+    ];
+  },
 };
 
 export default config;

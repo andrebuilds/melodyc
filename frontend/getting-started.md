@@ -17,7 +17,7 @@ Thomas Fortuna — [github.com/fortunathomas](https://github.com/fortunathomas)
 6. [Generate Songs Page](#6-generate-songs-page)
 7. [Sound Bar](#7-sound-bar)
 8. [Home Page](#8-home-page)
-9. [Payments — Polar.sh](#9-payments--polarsh)
+9. [Credits — Free Model](#9-credits--free-model)
 10. [Deployment on Vercel](#10-deployment-on-vercel)
 11. [Exercises](#11-exercises)
 
@@ -134,13 +134,6 @@ AWS_BUCKET_NAME="melodyc-bucket"
 MODAL_ENDPOINT_DESCRIPTION="https://..."
 MODAL_ENDPOINT_LYRICS="https://..."
 MODAL_ENDPOINT_DESCRIBED_LYRICS="https://..."
-
-# Polar.sh
-POLAR_ACCESS_TOKEN="..."
-POLAR_WEBHOOK_SECRET="..."
-POLAR_SMALL_PRODUCT_ID="..."
-POLAR_MEDIUM_PRODUCT_ID="..."
-POLAR_LARGE_PRODUCT_ID="..."
 ```
 
 ---
@@ -149,7 +142,7 @@ POLAR_LARGE_PRODUCT_ID="..."
 
 ### What is Better Auth
 
-**Better Auth** is a modern, type-safe and highly extensible authentication library for Next.js. It is the modern alternative to NextAuth.js, with native support for Prisma, plugins like Polar.sh, and an excellent DX.
+**Better Auth** is a modern, type-safe and highly extensible authentication library for Next.js. It is the modern alternative to NextAuth.js, with native support for Prisma, a rich plugin ecosystem, and an excellent DX.
 
 - Documentation: [better-auth.com/docs](https://www.better-auth.com/docs)
 - Repository: [github.com/better-auth/better-auth](https://github.com/better-auth/better-auth)
@@ -167,17 +160,11 @@ This file configures Better Auth on the server side. It defines providers, plugi
 ```typescript
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
-import { polar } from "@polar-sh/better-auth";
 import { db } from "~/server/db";
 
 export const auth = betterAuth({
   database: prismaAdapter(db, { provider: "postgresql" }),
   emailAndPassword: { enabled: true },
-  plugins: [
-    polar({
-      // configurazione Polar.sh — vedi sezione Pagamenti
-    }),
-  ],
 });
 ```
 
@@ -469,8 +456,7 @@ The sidebar is built with ShadCN `Sidebar` components. It contains:
 - Link to Home (`/`)
 - Link to the Create page (`/create`)
 - User credits indicator
-- Buy credits button (Polar.sh)
-- Avatar and user menu (logout)
+- Avatar and user menu (profile, credits, logout)
 
 ### Dynamic Breadcrumb
 
@@ -624,86 +610,27 @@ Each card shows:
 
 ---
 
-## 9. Payments — Polar.sh
+## 9. Credits — Free Model
 
-### What is Polar.sh
+Melodyc is **free**: there are no subscriptions, paid plans, or payment providers. Credits cannot be purchased.
 
-**Polar** is a monetization platform for developers. In Melodyc it is used to sell credit packages to users. It integrates directly with Better Auth via the official `@polar-sh/better-auth` plugin.
+### How credits work
 
-- Polar documentation: [docs.polar.sh](https://docs.polar.sh)
-- Better Auth plugin documentation: [docs.polar.sh/integrate/sdk/better-auth](https://docs.polar.sh/integrate/sdk/better-auth)
-- SDK repository: [github.com/polarsource/polar-js](https://github.com/polarsource/polar-js)
+- Every new account receives **100 credits** at sign-up. The value lives in `src/lib/credits.ts` (`SIGN_UP_CREDITS`) and must stay in sync with the `credits` default in `prisma/schema.prisma`.
+- One successfully generated song uses **one credit**. The credit is decremented in the Inngest function in `src/inngest/functions.ts`; failed generations are never charged.
+- The `/credits` page shows the balance and explains how to ask the team for more.
 
-### Installation
+### Manual top-ups
+
+Until gamification is available, users who run out of credits contact the team, and an admin adds credits directly in the database, for example with Prisma Studio:
 
 ```bash
-npm install @polar-sh/better-auth @polar-sh/sdk
+npx prisma studio
 ```
 
-### Configuration
+### Gamification (coming soon)
 
-**1. Create an account on Polar** ([polar.sh](https://polar.sh)) and create an organization.
-
-**2. Create the products** in the Polar dashboard:
-- Small Pack — 10 credits
-- Medium Pack — 25 credits
-- Large Pack — 50 credits
-
-Copy the ID of each product and put them in the `.env`.
-
-**3. Configure the plugin in `auth.ts`:**
-
-```typescript
-import { polar } from "@polar-sh/better-auth";
-import { Polar } from "@polar-sh/sdk";
-
-const polarClient = new Polar({ accessToken: process.env.POLAR_ACCESS_TOKEN });
-
-export const auth = betterAuth({
-  // ...
-  plugins: [
-    polar({
-      client: polarClient,
-      checkout: {
-        enabled: true,
-        products: [
-          { productId: process.env.POLAR_SMALL_PRODUCT_ID!, credits: 10 },
-          { productId: process.env.POLAR_MEDIUM_PRODUCT_ID!, credits: 25 },
-          { productId: process.env.POLAR_LARGE_PRODUCT_ID!, credits: 50 },
-        ],
-        successUrl: "/create?checkout=success",
-      },
-      webhooks: {
-        secret: process.env.POLAR_WEBHOOK_SECRET!,
-        onOrderPaid: async ({ event }) => {
-          // add credits to the user after payment
-          const userId = event.data.customer.externalId;
-          const creditsToAdd = /* determine based on product */ 10;
-          await db.user.update({
-            where: { id: userId },
-            data: { credits: { increment: creditsToAdd } },
-          });
-        },
-      },
-    }),
-  ],
-});
-```
-
-**4. Expose the Polar webhook:** Better Auth automatically manages the `/api/auth/polar/webhooks` endpoint.
-
-**5. Configure the webhook in Polar:** go to Dashboard → Webhooks → add `https://yourdomain.com/api/auth/polar/webhooks`.
-
-### Redirect to checkout
-
-The Better Auth plugin exposes an `authClient.checkout()` method to open the Polar checkout:
-
-```typescript
-import { authClient } from "~/lib/auth-client";
-
-// In the component (e.g. sidebar with "Buy Credits" button)
-await authClient.checkout({ productId: "..." });
-```
+Credits will be earned through daily missions, weekly challenges, streaks, badges, and referrals. See `implementazioni-future.md` in the repository root for the full roadmap.
 
 ---
 
@@ -721,7 +648,6 @@ await authClient.checkout({ productId: "..." });
 1. Create an account on [vercel.com](https://vercel.com) (use GitHub)
 2. The Modal backend must already be deployed (see `backend/getting-started.md`)
 3. The Neon database must already be configured
-4. Polar products must be in **production** (not sandbox)
 
 ### Deploy
 
@@ -748,7 +674,6 @@ Follow the interactive wizard. On the first deploy Vercel will ask for environme
 In the Vercel dashboard (Settings → Environment Variables) add all variables from the `.env` file. Pay attention to:
 
 - `BETTER_AUTH_URL` → use the final production URL (e.g. `https://melodyc.vercel.app`)
-- `POLAR_WEBHOOK_SECRET` → use the **production** webhook secret (not sandbox)
 - Modal endpoint URLs → make sure they are from the final deploy
 
 ### Inngest in production
