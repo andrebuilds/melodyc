@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { Resend } from "resend";
 import { env } from "~/env";
+import { CREDITS_SUPPORT_EMAIL, SIGN_UP_CREDITS } from "~/lib/credits";
 import { siteUrl } from "~/lib/site-metadata";
 
 const resend = new Resend(env.RESEND_API_KEY);
@@ -10,7 +11,6 @@ const BRAND_COLOR = "#d04f99";
 export const NOTIFICATION_TYPES = [
   "songReady",
   "songFailed",
-  "paymentConfirmed",
   "newFollower",
   "productUpdates",
 ] as const;
@@ -192,7 +192,7 @@ export function sendWelcomeEmail(to: string, name: string) {
     preheader: "Your email is verified. Here is everything you can do with Melodyc.",
     heading: `You're all set, ${name}`,
     paragraphs: [
-      "Your email is verified and your Melodyc account is ready. You have 20 free credits to start creating right away.",
+      `Your email is verified and your Melodyc account is ready. You have ${SIGN_UP_CREDITS} free credits to start creating right away.`,
       "Here is what you can do:",
     ],
     list: [
@@ -217,8 +217,8 @@ export function sendWelcomeEmail(to: string, name: string) {
         text: "Listen to and like songs published by other creators in Discover.",
       },
       {
-        title: "Get more credits",
-        text: "Choose a monthly plan from Billing in your account menu. Unused credits roll over.",
+        title: "Need more credits?",
+        text: `Melodyc is free. If you run out of credits, write to ${CREDITS_SUPPORT_EMAIL} and we will top up your account.`,
       },
     ],
     cta: { label: "Create your first song", url: absoluteUrl("/create") },
@@ -299,29 +299,5 @@ export function sendNewFollowerEmail(
       cta: { label: "View profile", url: absoluteUrl(followerProfilePath) },
     },
     { userId, type: "newFollower" },
-  );
-}
-
-export function sendPaymentConfirmedEmail(
-  to: string,
-  userId: string,
-  creditsAdded: number,
-  totalCredits: number,
-) {
-  return sendEmail(
-    to,
-    {
-      subject: "Payment confirmed: your credits are ready",
-      preheader: `${creditsAdded} credits were added to your account.`,
-      heading: "Payment confirmed",
-      paragraphs: [
-        `Thank you! ${creditsAdded} credits were added to your Melodyc account.`,
-        `You now have ${totalCredits} credits available.`,
-      ],
-      cta: { label: "Create music", url: absoluteUrl("/create") },
-      footnote:
-        "Invoices and subscription details are available in the customer portal.",
-    },
-    { userId, type: "paymentConfirmed" },
   );
 }

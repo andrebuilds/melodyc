@@ -32,4 +32,4 @@ After a fix is available, we will coordinate disclosure with the reporter where 
 
 ## Scope
 
-This policy covers the Melodyc source code and the official project configuration. Third-party services and dependencies, including AWS, Modal, Neon, Inngest, Polar, and Vercel, should also be reported through their respective security channels when the issue originates in those services.
+This policy covers the Melodyc source code and the official project configuration. Third-party services and dependencies, including AWS, Modal, Neon, Inngest, and Vercel, should also be reported through their respective security channels when the issue originates in those services.

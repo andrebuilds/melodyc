@@ -22,7 +22,7 @@ model User {
   updatedAt     DateTime
   sessions      Session[]
   accounts      Account[]
-  credits       Int @default(20)
+  credits       Int @default(100)
   acceptedTerms   Boolean   @default(false)
   acceptedClauses Boolean   @default(false)
   termsAcceptedAt DateTime?
@@ -45,7 +45,6 @@ model NotificationPreference {
   user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   songReady        Boolean  @default(true)
   songFailed       Boolean  @default(true)
-  paymentConfirmed Boolean  @default(true)
   newFollower      Boolean  @default(true)
   productUpdates   Boolean  @default(false)
   updatedAt        DateTime @updatedAt

@@ -14,7 +14,7 @@ import {
   SidebarSeparator,
 } from "../ui/sidebar";
 import SidebarMenuItems from "./sidebar-menu-items";
-import { CircleUserRoundIcon, CreditCardIcon, UserIcon } from "lucide-react";
+import { CircleUserRoundIcon, CoinsIcon } from "lucide-react";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { MelodycLogo } from "~/components/brand/melodyc-logo";
@@ -79,14 +79,9 @@ export async function AppSidebar() {
                 ]
               : []),
             {
-              label: "Billing",
-              href: "/billing",
-              icon: <CreditCardIcon />,
-            },
-            {
-              label: "Customer Portal",
-              href: "/customer-portal",
-              icon: <UserIcon />,
+              label: "Credits",
+              href: "/credits",
+              icon: <CoinsIcon />,
             },
           ]}
         />

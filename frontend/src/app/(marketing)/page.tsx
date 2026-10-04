@@ -5,27 +5,75 @@ import {
   ChevronDownIcon,
   CircleHelpIcon,
   Code2Icon,
-  CreditCardIcon,
   GithubIcon,
+  HourglassIcon,
   LifeBuoyIcon,
   MusicIcon,
   ScrollTextIcon,
+  TrophyIcon,
 } from "lucide-react";
 import { Button } from "~/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardHeader,
   CardTitle,
 } from "~/components/ui/card";
 import { FeatureShowcase } from "~/components/marketing/feature-showcase";
 import { FreeStudioDemo } from "~/components/marketing/free-studio-demo";
 import { JsonLd } from "~/components/seo/json-ld";
+import { SIGN_UP_CREDITS } from "~/lib/credits";
 import { faqs } from "~/lib/faqs";
-import { subscriptionPlans } from "~/lib/pricing";
 import { repositoryUrl } from "~/lib/site-config";
 import { homeStructuredData } from "~/lib/structured-data";
+
+// Reward values mirror the gamification spec in implementazioni-future.md (section 8.1).
+const gamificationModes = [
+  {
+    title: "Daily missions",
+    reward: "+10",
+    period: "credits / day",
+    description:
+      "Small goals that reset every 24 hours. Be part of the community and get rewarded for it.",
+    rewards: [
+      "Listen to 3 songs: +2 credits",
+      "Like 2 songs: +1 credit",
+      "Leave a comment: +2 credits",
+      "Follow a new artist: +1 credit",
+      "Publish a song: +3 credits",
+      "First song of the day: +1 credit",
+    ],
+    featured: false,
+  },
+  {
+    title: "Weekly challenges",
+    reward: "+55",
+    period: "credits / week",
+    description:
+      "Bigger goals that reset every Monday, with bigger rewards for the most active creators.",
+    rewards: [
+      "Generate 5 songs: +10 credits",
+      "Receive 20 likes: +15 credits",
+      "Gain 3 new followers: +10 credits",
+      "Publish 3 days in a row: +20 credits",
+    ],
+    featured: true,
+  },
+  {
+    title: "Streaks and badges",
+    reward: "+50",
+    period: "credits / streak",
+    description:
+      "Come back every day and unlock badges for your milestones, shown on your public profile.",
+    rewards: [
+      "3-day streak: +5 credits",
+      "7-day streak: +15 credits",
+      "30-day streak: +50 credits",
+      "One-time badges: up to +50 credits",
+    ],
+    featured: false,
+  },
+] as const;
 
 export default function MarketingHomePage() {
   return (
@@ -70,7 +118,7 @@ export default function MarketingHomePage() {
               </Button>
             </div>
             <p className="mt-4 text-sm text-muted-foreground">
-              Hosted for convenience. Free to self-host under the MIT license.
+              Free to use, with {SIGN_UP_CREDITS} credits on sign-up. Free to self-host under the MIT license.
             </p>
           </div>
 
@@ -80,68 +128,51 @@ export default function MarketingHomePage() {
 
       <FeatureShowcase />
 
-      <section id="pricing" className="scroll-mt-24 border-b bg-muted/35 py-20 sm:py-24">
+      <section id="gamification" className="scroll-mt-24 border-b bg-muted/35 py-20 sm:py-24">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="mx-auto max-w-2xl text-center">
             <p className="inline-flex items-center gap-2 text-sm font-bold text-primary uppercase">
-              <CreditCardIcon className="size-4" aria-hidden="true" />
-              Pricing
+              <TrophyIcon className="size-4" aria-hidden="true" />
+              Gamification
             </p>
             <h2 className="mt-3 text-3xl font-bold sm:text-4xl">
-              Start free, then create at your pace.
+              Free to create. Play to earn more.
             </h2>
             <p className="mt-5 leading-7 text-muted-foreground">
-              Get 20 free credits when you join. Upgrade for monthly credits with rollover, or run the complete studio on your own infrastructure.
+              Melodyc is free for everyone. Get {SIGN_UP_CREDITS} free credits when you join, then earn new credits by completing missions, keeping streaks, and unlocking badges.
             </p>
           </div>
 
           <div className="mt-12 grid gap-5 lg:grid-cols-3">
-            {subscriptionPlans.map((plan) => (
+            {gamificationModes.map((mode) => (
               <Card
-                key={plan.slug}
-                className={`relative flex rounded-md ${plan.featured ? "border-2 border-primary shadow-md" : ""}`}
+                key={mode.title}
+                className={`relative flex rounded-md ${mode.featured ? "border-2 border-primary shadow-md" : ""}`}
               >
-                {plan.featured && (
+                {mode.featured && (
                   <span className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-md bg-primary px-3 py-1 text-xs font-bold text-primary-foreground">
-                    Most popular
+                    Most rewarding
                   </span>
                 )}
                 <CardContent className="flex w-full flex-col p-6">
                   <div>
-                    <CardTitle>{plan.name}</CardTitle>
+                    <CardTitle>{mode.title}</CardTitle>
                     <p>
-                      <span className="text-4xl font-black">{plan.price}</span>
-                      <span className="ml-1 text-sm font-medium text-muted-foreground">/month</span>
+                      <span className="text-4xl font-black">{mode.reward}</span>
+                      <span className="ml-1 text-sm font-medium text-muted-foreground">{mode.period}</span>
                     </p>
                     <CardDescription className="mt-3 max-w-md leading-6">
-                      {plan.description}
+                      {mode.description}
                     </CardDescription>
                   </div>
                   <ul className="mt-7 space-y-3 text-sm">
-                    <li className="flex items-start gap-2">
-                      <CheckIcon className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
-                      {plan.credits} song generations monthly
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckIcon className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
-                      Unused credits roll over
-                    </li>
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-start gap-2">
+                    {mode.rewards.map((reward) => (
+                      <li key={reward} className="flex items-start gap-2">
                         <CheckIcon className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
-                        {feature}
+                        {reward}
                       </li>
                     ))}
                   </ul>
-                  <div className="mt-auto pt-8">
-                    <Button
-                      className={`w-full ${plan.featured ? "" : "border-primary/70 hover:border-primary"}`}
-                      variant={plan.featured ? "default" : "outline"}
-                      asChild
-                    >
-                      <Link href="/auth/sign-up">Start free - get 20 credits</Link>
-                    </Button>
-                  </div>
                 </CardContent>
               </Card>
             ))}
@@ -170,6 +201,14 @@ export default function MarketingHomePage() {
                 </Button>
               </CardContent>
             </Card>
+          </div>
+
+          <div className="mt-10 flex justify-center">
+            {/* Status label, intentionally not interactive. */}
+            <span className="inline-flex h-10 cursor-default items-center gap-2 rounded-md border border-dashed border-primary/60 bg-primary/10 px-6 text-sm font-bold tracking-wide text-primary uppercase select-none">
+              <HourglassIcon className="size-4" aria-hidden="true" />
+              Coming soon
+            </span>
           </div>
         </div>
       </section>

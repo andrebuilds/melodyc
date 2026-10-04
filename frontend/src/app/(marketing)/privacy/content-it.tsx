@@ -112,14 +112,6 @@ export function PrivacyContentIt() {
             opzioni che inviate utilizzando la demo pubblica senza un account.
           </li>
           <li>
-            <Strong>Dati di pagamento:</Strong> gli acquisti e gli abbonamenti
-            sono gestiti da Polar, che opera come rivenditore ufficiale. Noi{" "}
-              <Strong>non riceviamo né conserviamo i dati della vostra carta</Strong>.
-            Riceviamo esclusivamente le informazioni necessarie per accreditare
-            i crediti sul vostro account, come il prodotto acquistato e il
-            relativo identificativo cliente.
-          </li>
-          <li>
             <Strong>Comunicazioni:</Strong> contenuto delle email che ci
             inviate, ad esempio per chiedere assistenza o esercitare i vostri
             diritti.
@@ -213,15 +205,15 @@ export function PrivacyContentIt() {
             account e prevenire abusi della quota gratuita.
           </li>
           <li>
-            <Strong>Pagamenti e crediti:</Strong> vendere abbonamenti tramite
-            Polar e accreditare sul vostro account i crediti acquistati.
+            <Strong>Crediti:</Strong> gestire il saldo dei vostri crediti
+            gratuiti e le eventuali ricariche manuali da voi richieste.
           </li>
           <li>
             <Strong>Email relative all’account:</Strong> verificare il vostro
             indirizzo email, inviarvi un messaggio di benvenuto dopo la
             conferma dell’account, reimpostare la password e inviare
             notifiche di servizio (brano pronto, generazione non riuscita,
-            pagamento confermato). Potete attivare o disattivare le email di
+            nuovo follower). Potete attivare o disattivare le email di
             notifica dalle relative impostazioni oppure tramite il link di
             disiscrizione presente in ogni notifica. Le email di verifica e
             reimpostazione della password non possono essere disattivate,
@@ -261,7 +253,7 @@ export function PrivacyContentIt() {
               "Esecuzione del contratto (art. 6, par. 1, lett. b) GDPR)",
             ],
             [
-              "Pagamenti, abbonamenti e crediti tramite Polar",
+              "Saldo crediti e ricariche manuali",
               "Esecuzione del contratto (art. 6, par. 1, lett. b) GDPR)",
             ],
             [
@@ -357,23 +349,6 @@ export function PrivacyContentIt() {
             ],
           ]}
         />
-
-        <LegalSubheading>Pagamenti</LegalSubheading>
-        <LegalList>
-          <li>
-            <Strong>Polar:</Strong> opera come rivenditore ufficiale e come{" "}
-            <Strong>titolare autonomo del trattamento</Strong> per la procedura di pagamento,
-            abbonamenti, fatturazione e adempimenti fiscali. Al momento della
-            registrazione creiamo un profilo cliente Polar con nome, indirizzo
-            email e identificativo dell’account Melodyc per consentirvi di
-            acquistare i piani. I dati di pagamento vengono inseriti
-            direttamente nella procedura di pagamento di Polar. Consultate l’
-            <ExternalLink href="https://polar.sh/legal/privacy">
-              Informativa sulla privacy di Polar
-            </ExternalLink>
-            .
-          </li>
-        </LegalList>
 
         <LegalSubheading>Altri destinatari</LegalSubheading>
         <LegalList>
@@ -552,9 +527,7 @@ export function PrivacyContentIt() {
             cancellazione dei vostri dati. Potete cancellare autonomamente
             l’account in qualsiasi momento da Account &gt; Security: questa
             operazione rimuove definitivamente il profilo, i brani, i file
-            audio, le copertine e le preferenze, e cancella il vostro profilo
-            cliente su Polar, fatta eccezione per i documenti che Polar è
-            tenuta a conservare per finalità fiscali e contabili.
+            audio, le copertine e le preferenze.
           </li>
           <li>
             <Strong>Diritto di limitazione del trattamento</Strong> (art. 18):

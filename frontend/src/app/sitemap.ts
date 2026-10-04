@@ -8,9 +8,9 @@ import { siteUrl } from "~/lib/site-metadata";
 
 // Update when the page content changes, so crawlers get a reliable freshness signal.
 const CONTENT_UPDATED_AT = {
-  home: "2026-10-01",
-  help: "2026-09-14",
-  changelog: "2026-09-14",
+  home: "2026-10-04",
+  help: "2026-10-04",
+  changelog: "2026-10-04",
 };
 
 export default function sitemap(): MetadataRoute.Sitemap {

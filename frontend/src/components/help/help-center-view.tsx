@@ -8,8 +8,8 @@ import {
   ChevronRightIcon,
   CircleHelpIcon,
   Code2Icon,
+  CoinsIcon,
   CompassIcon,
-  CreditCardIcon,
   DiscIcon,
   InfoIcon,
   LibraryIcon,
@@ -20,7 +20,7 @@ import {
   UsersIcon,
   WandSparklesIcon,
 } from "lucide-react";
-import { subscriptionPlans } from "~/lib/pricing";
+import { CREDITS_SUPPORT_EMAIL, SIGN_UP_CREDITS } from "~/lib/credits";
 import { repositoryUrl } from "~/lib/site-config";
 import { cn } from "~/lib/utils";
 
@@ -38,7 +38,7 @@ const sections: HelpSection[] = [
   { id: "my-music", label: "My Music", icon: LibraryIcon },
   { id: "discover", label: "Discover", icon: CompassIcon },
   { id: "profile-community", label: "Profile and community", icon: UsersIcon },
-  { id: "credits-billing", label: "Credits and billing", icon: CreditCardIcon },
+  { id: "credits", label: "Credits", icon: CoinsIcon },
   { id: "notifications", label: "Notifications", icon: BellIcon },
   { id: "account-security", label: "Account and security", icon: ShieldCheckIcon },
   { id: "public-demo", label: "Public demo", icon: PlayCircleIcon },
@@ -87,7 +87,7 @@ function GettingStarted() {
         <Link href="/auth/sign-up" className="font-medium text-primary hover:underline">
           Create a Melodyc account
         </Link>{" "}
-        with your email and password, then confirm your email address with the link we send you. You need to verify your email before you can sign in. Once your account is confirmed, you receive a welcome email and 20 free credits, with no credit card required.
+        with your email and password, then confirm your email address with the link we send you. You need to verify your email before you can sign in. Once your account is confirmed, you receive a welcome email and {SIGN_UP_CREDITS} free credits, with no credit card required.
       </Paragraph>
       <Heading>Find your way around</Heading>
       <Paragraph>After signing in, the sidebar gives you three main destinations:</Paragraph>
@@ -97,7 +97,7 @@ function GettingStarted() {
         <li><strong className="text-foreground">My Music</strong> for your complete library, downloads, and publishing.</li>
       </List>
       <Paragraph>
-        The account menu at the bottom of the sidebar opens My profile, Billing, the customer portal, and your account settings.
+        The account menu at the bottom of the sidebar opens My profile, Credits, and your account settings.
       </Paragraph>
       <Callout title="Start with an idea">
         You do not need production experience. A mood, genre, scene, or short story is enough to create your first track.
@@ -250,31 +250,22 @@ function ProfileCommunity() {
   );
 }
 
-function CreditsAndBilling() {
+function Credits() {
   return (
     <>
       <Heading>How credits work</Heading>
       <Paragraph>
-        One completed song uses one credit. Your current balance appears in the dashboard header and on the Billing page. Unused credits roll over and remain available after renewal.
+        Melodyc is free. One completed song uses one credit, and failed generations are never charged. Your current balance appears in the dashboard header and on the <Link href="/credits" className="font-medium text-primary hover:underline">Credits</Link> page, which you can open from the account menu at the bottom of the sidebar.
       </Paragraph>
-      <Heading>Subscription plans</Heading>
-      <List>
-        {subscriptionPlans.map((plan) => (
-          <li key={plan.slug}>
-            <strong className="text-foreground">{plan.name}</strong>: {plan.credits} credits for {plan.price} per month.
-          </li>
-        ))}
-      </List>
+      <Heading>Getting more credits</Heading>
       <Paragraph>
-        Credits are added after the first successful payment and after each successful monthly renewal. If a payment does not complete, no renewal credits are added.
+        Every new account starts with {SIGN_UP_CREDITS} free credits. Credits cannot be purchased: if you run out, write to{" "}
+        <a href={`mailto:${CREDITS_SUPPORT_EMAIL}`} className="font-medium text-primary hover:underline">{CREDITS_SUPPORT_EMAIL}</a>{" "}
+        and the team will top up your account.
       </Paragraph>
-      <Heading>Manage payments</Heading>
-      <Paragraph>
-        Open <Link href="/billing" className="font-medium text-primary hover:underline">Billing</Link> from the account menu at the bottom of the sidebar to view your balance, choose a plan, or enter the Polar customer portal. The portal lets you review payments and manage or cancel your subscription.
-      </Paragraph>
-      <Paragraph>
-        After a payment, your credits appear automatically within a few seconds and you receive a payment confirmation email.
-      </Paragraph>
+      <Callout title="Gamification is coming soon">
+        Daily missions, weekly challenges, streaks, and badges will soon let you earn new credits just by being active in the community.
+      </Callout>
     </>
   );
 }
@@ -290,7 +281,7 @@ function Notifications() {
         <li>Someone likes one of your songs or starts following you.</li>
         <li>A song reaches a listen milestone, such as 10, 50, 100, or 1,000 listens.</li>
         <li>A song is ready or could not be generated.</li>
-        <li>Credits are added after a payment.</li>
+        <li>Credits are added to your account by the team.</li>
       </List>
       <Paragraph>
         Opening the panel marks everything as read. Select a notification to open the related song, profile, or page. Notifications from the last 90 days are shown.
@@ -298,7 +289,6 @@ function Notifications() {
       <Heading>Emails we send</Heading>
       <List>
         <li><strong className="text-foreground">Song ready</strong> and <strong className="text-foreground">Generation failed</strong> when a generation finishes.</li>
-        <li><strong className="text-foreground">Payment confirmed</strong> when credits are added to your account.</li>
         <li><strong className="text-foreground">New follower</strong> when someone starts following you.</li>
         <li><strong className="text-foreground">Product updates</strong> about new features, off by default.</li>
       </List>
@@ -330,7 +320,7 @@ function AccountSecurity() {
       </Paragraph>
       <Heading>Delete your account</Heading>
       <Paragraph>
-        At the bottom of the Security page you can permanently delete your account after confirming your password. This removes your profile, songs, audio files, covers, profile picture, followers, and preferences, and cancels any active subscription. Download the songs you want to keep first.
+        At the bottom of the Security page you can permanently delete your account after confirming your password. This removes your profile, songs, audio files, covers, profile picture, followers, and preferences. Download the songs you want to keep first.
       </Paragraph>
       <Heading>Cookies and analytics</Heading>
       <Paragraph>
@@ -368,14 +358,14 @@ function SelfHosting() {
     <>
       <Heading>Run Melodyc on your infrastructure</Heading>
       <Paragraph>
-        Melodyc is open source under the MIT license. The repository includes the Next.js application, Python AI backend, database schema, queue workflows, authentication, storage integration, and payment setup.
+        Melodyc is open source under the MIT license. The repository includes the Next.js application, Python AI backend, database schema, queue workflows, authentication, and storage integration.
       </Paragraph>
       <Heading>What you need</Heading>
       <List>
         <li>Node.js and Python 3.12 for the frontend and backend.</li>
         <li>PostgreSQL through Neon and private object storage through AWS S3.</li>
         <li>Modal for GPU inference and Inngest for background workflows.</li>
-        <li>Better Auth and Polar configuration for accounts and subscriptions.</li>
+        <li>Better Auth for accounts and Resend for emails.</li>
       </List>
       <Heading>Setup guides</Heading>
       <List>
@@ -395,7 +385,7 @@ const sectionContent: Record<string, () => ReactNode> = {
   "my-music": MyMusic,
   discover: Discover,
   "profile-community": ProfileCommunity,
-  "credits-billing": CreditsAndBilling,
+  credits: Credits,
   notifications: Notifications,
   "account-security": AccountSecurity,
   "public-demo": PublicDemo,

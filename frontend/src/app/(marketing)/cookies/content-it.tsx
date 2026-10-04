@@ -272,12 +272,6 @@ export function CookieContentIt() {
               "Esecuzione del contratto",
             ],
             [
-              "Polar",
-              "Pagamento, abbonamenti e fatturazione in qualità di Merchant of Record",
-              "Stati Uniti / UE (SCC)",
-              "Esecuzione del contratto",
-            ],
-            [
               "GitHub",
               "Immagini del profilo dei collaboratori del progetto mostrate nel footer",
               "Stati Uniti (DPF)",
@@ -300,15 +294,6 @@ export function CookieContentIt() {
           dati solo per prestarci i loro servizi. GitHub fornisce le immagini
           dei collaboratori in qualità di titolare autonomo e può ricevere il
           tuo indirizzo IP quando il browser le carica.
-        </p>
-        <p>
-          Quando concludi un acquisto, vieni reindirizzato alla pagina di
-          pagamento di Polar, che agisce come titolare autonomo e applica la
-          propria{" "}
-          <ExternalLink href="https://polar.sh/legal/privacy">
-            Informativa sulla privacy
-          </ExternalLink>
-          .
         </p>
       </LegalSection>
 

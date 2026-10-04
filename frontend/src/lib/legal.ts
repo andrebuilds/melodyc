@@ -23,12 +23,12 @@ export const legalEntity = {
 };
 
 export const COOKIE_POLICY_VERSION = "2026-10-03";
-export const COOKIE_POLICY_UPDATED_AT = "October 3, 2026";
+export const COOKIE_POLICY_UPDATED_AT = "October 4, 2026";
 export const COOKIE_CONSENT_MAX_AGE_DAYS = 365;
-export const PRIVACY_POLICY_UPDATED_AT = "October 3, 2026";
-export const TERMS_UPDATED_AT = "October 2, 2026";
-export const COOKIE_POLICY_UPDATED_AT_IT = "3 ottobre 2026";
-export const PRIVACY_POLICY_UPDATED_AT_IT = "3 ottobre 2026";
-export const TERMS_UPDATED_AT_IT = "2 ottobre 2026";
+export const PRIVACY_POLICY_UPDATED_AT = "October 4, 2026";
+export const TERMS_UPDATED_AT = "October 4, 2026";
+export const COOKIE_POLICY_UPDATED_AT_IT = "4 ottobre 2026";
+export const PRIVACY_POLICY_UPDATED_AT_IT = "4 ottobre 2026";
+export const TERMS_UPDATED_AT_IT = "4 ottobre 2026";
 // Stored with each sign-up as proof of which Terms version was accepted.
-export const TERMS_VERSION = "2026-10-02";
+export const TERMS_VERSION = "2026-10-04";

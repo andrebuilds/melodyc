@@ -30,11 +30,6 @@ const OPTIONS: { type: NotificationType; label: string; description: string }[] 
       description: "When a song could not be generated.",
     },
     {
-      type: "paymentConfirmed",
-      label: "Payment confirmed",
-      description: "When a payment is completed and credits are added.",
-    },
-    {
       type: "newFollower",
       label: "New follower",
       description: "When someone starts following you.",

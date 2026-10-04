@@ -1,11 +1,11 @@
 import {
   BookOpenIcon,
   CircleHelpIcon,
-  CreditCardIcon,
   GithubIcon,
   HeadphonesIcon,
   HistoryIcon,
   LifeBuoyIcon,
+  TrophyIcon,
   type LucideIcon,
 } from "lucide-react";
 
@@ -25,7 +25,7 @@ export type SiteNavItem = SiteNavLink | SiteNavGroup;
 
 export const mainNav: SiteNavItem[] = [
   { href: "/#features", label: "Features", icon: HeadphonesIcon },
-  { href: "/#pricing", label: "Pricing", icon: CreditCardIcon },
+  { href: "/#gamification", label: "Gamification", icon: TrophyIcon },
   { href: "/#faq", label: "FAQ", icon: CircleHelpIcon },
   { href: "/#open-source", label: "Open source", icon: GithubIcon },
   {

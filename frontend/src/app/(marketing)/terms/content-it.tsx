@@ -7,12 +7,11 @@ import {
   LegalMail as Mail,
   LegalSection,
   LegalSubheading,
-  LegalTable,
   legalLinkClass,
   legalStrongClass,
 } from "~/components/legal/legal-layout";
+import { CREDITS_SUPPORT_EMAIL, SIGN_UP_CREDITS } from "~/lib/credits";
 import { legalEntity } from "~/lib/legal";
-import { subscriptionPlans } from "~/lib/pricing";
 import { repositoryUrl } from "~/lib/site-config";
 
 function Strong({ children }: { children: ReactNode }) {
@@ -64,55 +63,26 @@ export function TermsContentIt() {
         <LegalList>
           <li>La registrazione è gratuita e richiede nome, indirizzo email valido e password. Prima di accedere è necessario verificare l’indirizzo email.</li>
           <li>È possibile scegliere un nome utente pubblico e caricare un’immagine del profilo. L’Utente deve esserne titolare o avere il diritto di utilizzarla; entrambi devono rispettare la sezione 6.</li>
-          <li>Per utilizzare il Servizio occorre avere almeno <Strong>16 anni</Strong>. Gli acquisti sono riservati agli Utenti maggiorenni secondo la legge del proprio Paese oppure autorizzati da un genitore o tutore legale.</li>
-          <li>Al momento della registrazione vengono assegnati <Strong>20 crediti gratuiti</Strong>, senza necessità di fornire dati di pagamento.</li>
+          <li>Per utilizzare il Servizio occorre avere almeno <Strong>16 anni</Strong>.</li>
+          <li>Al momento della registrazione vengono assegnati <Strong>{SIGN_UP_CREDITS} crediti gratuiti</Strong>, senza necessità di fornire dati di pagamento.</li>
           <li>L’Utente è responsabile della riservatezza delle credenziali e di ogni attività svolta tramite il proprio account. Qualsiasi uso non autorizzato deve essere comunicato tempestivamente.</li>
           <li>L’Utente si impegna a fornire informazioni veritiere, accurate e aggiornate e a mantenere un solo account personale.</li>
         </LegalList>
       </LegalSection>
 
-      <LegalSection title="4. Crediti, piani e pagamenti" index={5}>
+      <LegalSection title="4. Crediti" index={5}>
         <LegalSubheading>4.1 Sistema dei crediti</LegalSubheading>
         <LegalList>
           <li><Strong>Un credito equivale a un brano generato con successo.</Strong> Se la generazione non riesce, il credito non viene scalato.</li>
           <li>I crediti non hanno valore monetario, non possono essere convertiti in denaro né trasferiti ad altri account.</li>
-          <li>I crediti non utilizzati si trasferiscono al periodo di fatturazione successivo e restano disponibili finché l’account è attivo.</li>
+          <li>I crediti non utilizzati non scadono e restano disponibili finché l’account è attivo.</li>
         </LegalList>
 
-        <LegalSubheading>4.2 Piani disponibili</LegalSubheading>
-        <LegalTable
-          headers={["Piano", "Prezzo", "Crediti al mese"]}
-          rows={subscriptionPlans.map((plan) => [
-            plan.name,
-            `${plan.price} / mese`,
-            String(plan.credits),
-          ])}
-        />
-        <p>
-          I piani sono abbonamenti mensili con rinnovo automatico fino alla disdetta. I crediti vengono accreditati dopo il primo pagamento andato a buon fine e dopo ogni rinnovo completato. Prezzi e condizioni applicabili sono sempre quelli indicati nella{" "}
-          <Link href="/#pricing" className={legalLinkClass}>pagina dei prezzi</Link>{" "}
-          e nella procedura di acquisto al momento dell’acquisto.
-        </p>
-
-        <LegalSubheading>4.3 Pagamenti e fatturazione</LegalSubheading>
+        <LegalSubheading>4.2 Servizio gratuito</LegalSubheading>
         <LegalList>
-          <li>Gli acquisti sono elaborati da <Strong>Polar</Strong>, che opera come Merchant of Record: Polar vende l’abbonamento all’Utente, incassa il pagamento, calcola e versa le imposte applicabili (come l’IVA) in base al Paese dell’Utente ed emette la relativa fattura o ricevuta. All’acquisto si applicano anche le <ExternalLink href="https://polar.sh/legal/terms">condizioni contrattuali</ExternalLink> di Polar.</li>
-          <li>Le eventuali imposte dovute sono indicate prima della conferma del pagamento. Non riceviamo né conserviamo i dati della carta.</li>
-          <li>L’Utente può consultare i pagamenti e <Strong>disdire l’abbonamento in qualsiasi momento</Strong> dalla pagina Fatturazione, tramite il portale clienti Polar. La disdetta interrompe i rinnovi futuri; i crediti già accreditati restano disponibili.</li>
-          <li>Se il pagamento di un rinnovo non va a buon fine, non vengono accreditati nuovi crediti fino al completamento del pagamento.</li>
-        </LegalList>
-
-        <LegalSubheading>4.4 Diritto di recesso e rimborsi</LegalSubheading>
-        <p>
-          Se l’Utente è un Consumatore, può esercitare il diritto di recesso da ciascun acquisto entro <Strong>14 giorni</Strong> dal pagamento, senza indicarne il motivo e senza penali (artt. 52-59 del Codice del Consumo).
-        </p>
-        <LegalList>
-          <li>Durante la procedura di acquisto, l’Utente chiede che il Servizio inizi immediatamente, così da rendere subito disponibili i crediti acquistati.</li>
-          <li>Se esercita il recesso e <Strong>non ha utilizzato alcun credito</Strong> relativo all’acquisto, ha diritto al rimborso integrale.</li>
-          <li>Se ha già utilizzato una parte dei crediti, riceve un rimborso proporzionale ai crediti non utilizzati, poiché il Servizio è stato eseguito parzialmente su sua richiesta (art. 57, comma 3, Codice del Consumo).</li>
-          <li>Il diritto di recesso non si applica dopo l’utilizzo di tutti i crediti dell’acquisto, poiché il Servizio è stato interamente eseguito previo consenso espresso e riconoscimento dell’Utente (art. 59, comma 1, lett. a, Codice del Consumo).</li>
-          <li>Per recedere, l’Utente deve inviare una dichiarazione esplicita a <Mail address={legalEntity.email} /> oppure via PEC a <Mail address={legalEntity.pec} />, indicando l’email associata all’account e l’acquisto interessato. È possibile utilizzare anche il modulo tipo di recesso dell’allegato I, parte B, del Codice del Consumo, ma non è obbligatorio.</li>
-          <li>I rimborsi sono effettuati tramite Polar entro <Strong>14 giorni</Strong> dal ricevimento della richiesta, utilizzando lo stesso metodo di pagamento impiegato per l’acquisto e senza costi per l’Utente. I relativi crediti sono rimossi dall’account.</li>
+          <li>Il Servizio è <Strong>gratuito</Strong>. Non sono previsti abbonamenti né piani a pagamento e i crediti non possono essere acquistati.</li>
+          <li>Se l’Utente esaurisce i crediti, può richiederne una ricarica scrivendo a <Mail address={CREDITS_SUPPORT_EMAIL} />. Le ricariche sono concesse a nostra discrezione.</li>
+          <li>Potremo introdurre funzionalità che premiano l’attività sul Servizio con crediti, come missioni, sfide, serie di accessi consecutivi o badge. I crediti così ottenuti sono soggetti ai presenti Termini e possiamo rimuovere quelli ottenuti tramite abusi, strumenti automatizzati o account multipli.</li>
         </LegalList>
       </LegalSection>
 
@@ -168,7 +138,7 @@ export function TermsContentIt() {
           <li>Il Servizio può essere temporaneamente sospeso per manutenzione, aggiornamenti o cause al di fuori del nostro controllo.</li>
           <li>I tempi di generazione dipendono dal carico del sistema e dalle impostazioni selezionate. I brani vengono elaborati in coda.</li>
           <li>La demo gratuita è limitata a una breve generazione al giorno per visitatore e può essere modificata o interrotta in qualsiasi momento.</li>
-          <li>Possiamo modificare, aggiornare o rimuovere funzionalità del Servizio. Se una modifica riduce in misura significativa le funzionalità di un piano a pagamento, ne daremo comunicazione preventiva e l’Utente potrà disdire l’abbonamento.</li>
+          <li>Possiamo modificare, aggiornare o rimuovere funzionalità del Servizio. In caso di modifiche significative, ne daremo comunicazione preventiva.</li>
         </LegalList>
       </LegalSection>
 
@@ -176,9 +146,9 @@ export function TermsContentIt() {
         <p>Nella misura massima consentita dalla legge (artt. 1218 e 1229 c.c.):</p>
         <LegalList>
           <li>Non rispondiamo di danni indiretti o consequenziali, come perdita di profitti, perdita di opportunità o interruzione dell’attività.</li>
-          <li>La nostra responsabilità complessiva nei confronti degli Utenti che agiscono per finalità professionali o imprenditoriali, per qualsiasi pretesa relativa al Servizio, non supera l’importo pagato dall’Utente nei <Strong>12 mesi</Strong> precedenti l’evento che ha dato origine alla pretesa.</li>
+          <li>La nostra responsabilità complessiva nei confronti degli Utenti che agiscono per finalità professionali o imprenditoriali, per qualsiasi pretesa relativa al Servizio, fornito gratuitamente, è limitata nella misura consentita dalla legge.</li>
           <li>Consigliamo di scaricare e conservare una copia dei brani importanti. Non rispondiamo della perdita di Output dovuta a eventi al di fuori del nostro ragionevole controllo.</li>
-          <li>Non rispondiamo di malfunzionamenti o interruzioni di servizi di terzi (come Polar, AWS o Modal) che siano al di fuori del nostro ragionevole controllo.</li>
+          <li>Non rispondiamo di malfunzionamenti o interruzioni di servizi di terzi (come AWS o Modal) che siano al di fuori del nostro ragionevole controllo.</li>
           <li>Nessuna disposizione dei presenti Termini esclude o limita la responsabilità per dolo o colpa grave (art. 1229 c.c.), per morte o lesioni personali, né i diritti inderogabili riconosciuti ai Consumatori, compresi quelli previsti dal Codice del Consumo.</li>
         </LegalList>
       </LegalSection>
@@ -193,16 +163,14 @@ export function TermsContentIt() {
         <LegalSubheading>10.1 Da parte dell’Utente</LegalSubheading>
         <LegalList>
           <li>L’Utente può interrompere l’utilizzo del Servizio ed eliminare l’account in qualsiasi momento da Account &gt; Sicurezza oppure scrivendo a <Mail address={legalEntity.email} />.</li>
-          <li>L’eliminazione dell’account rimuove definitivamente i brani, le copertine e gli eventuali crediti residui e annulla ogni abbonamento attivo. Prima dell’eliminazione è possibile scaricare i brani e richiedere una copia dei propri dati (art. 20 GDPR).</li>
-          <li>Per interrompere i rinnovi futuri, ricordarsi di disdire ogni abbonamento attivo.</li>
+          <li>L’eliminazione dell’account rimuove definitivamente i brani, le copertine e gli eventuali crediti residui. Prima dell’eliminazione è possibile scaricare i brani e richiedere una copia dei propri dati (art. 20 GDPR).</li>
         </LegalList>
 
         <LegalSubheading>10.2 Da parte nostra</LegalSubheading>
         <LegalList>
           <li>Possiamo sospendere o chiudere l’account in caso di violazione dei presenti Termini, previa comunicazione scritta dei motivi e, ove possibile, concessione di un termine per porvi rimedio.</li>
-          <li>In caso di violazioni gravi (attività illecite, frode, abuso dei sistemi o lesione di diritti di terzi), la sospensione può essere immediata.</li>
-          <li>Se chiudiamo l’account in assenza di violazioni imputabili all’Utente, rimborseremo i crediti acquistati e non utilizzati negli ultimi 12 mesi.</li>
-        </LegalList>
+          <li>In caso di violazioni gravi (attività illecite, frode, abuso dei sistemi o lesione di diritti di terzi),           la sospensione può essere immediata.</li>
+                  </LegalList>
       </LegalSection>
 
       <LegalSection title="11. Manleva" index={12}>
@@ -224,7 +192,7 @@ export function TermsContentIt() {
         <LegalList>
           <li>Possiamo aggiornare i presenti Termini per riflettere modifiche al Servizio, alla legge o alla nostra attività. La versione aggiornata viene pubblicata su questa pagina con una nuova data di «Ultimo aggiornamento».</li>
           <li>In caso di modifiche sostanziali, ne daremo comunicazione tramite il Servizio o via email almeno <Strong>15 giorni</Strong> prima della loro entrata in vigore.</li>
-          <li>Se l’Utente non accetta le modifiche, può disdire l’abbonamento e chiudere l’account prima della loro entrata in vigore. L’uso del Servizio successivo a tale data implica l’accettazione dei Termini aggiornati.</li>
+          <li>Se l’Utente non accetta le modifiche, può chiudere l’account prima della loro entrata in vigore. L’uso del Servizio successivo a tale data implica l’accettazione dei Termini aggiornati.</li>
         </LegalList>
       </LegalSection>
 
@@ -253,7 +221,6 @@ export function TermsContentIt() {
           Ai sensi degli artt. 1341 e 1342 c.c., l’Utente dichiara di aver letto e di approvare specificamente le seguenti clausole:
         </p>
         <LegalList>
-          <li>Art. 4.4: diritto di recesso e rimborsi parziali</li>
           <li>Art. 5.3: licenza sui Contenuti pubblicati e relativa rimozione</li>
           <li>Art. 7: disponibilità del Servizio e modifiche alle funzionalità</li>
           <li>Art. 8: limitazione di responsabilità</li>

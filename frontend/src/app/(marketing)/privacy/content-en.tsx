@@ -106,14 +106,6 @@ export function PrivacyContentEn() {
             you submit when using the public demo without an account.
           </li>
           <li>
-            <Strong>Payment data:</Strong> purchases and subscriptions are
-            handled by Polar, which acts as Merchant of Record. We{" "}
-            <Strong>never receive or store your card details</Strong>. We
-            only receive the information needed to add credits to your
-            account, such as the purchased product and the related customer
-            identifier.
-          </li>
-          <li>
             <Strong>Communications:</Strong> the content of the emails you
             send us, for example to request support or exercise your rights.
           </li>
@@ -201,14 +193,14 @@ export function PrivacyContentEn() {
             account and prevent abuse of the free quota.
           </li>
           <li>
-            <Strong>Payments and credits:</Strong> to sell subscriptions
-            through Polar and add the purchased credits to your account.
+            <Strong>Credits:</Strong> to manage your free credit balance
+            and any manual top-ups you request.
           </li>
           <li>
             <Strong>Account emails:</Strong> to verify your email address,
             welcome you once your account is confirmed, reset your password,
             and send service notifications (song ready,
-            generation failed, payment confirmed). You can turn notification
+            generation failed, new follower). You can turn notification
             emails on or off in your notification settings or with the unsubscribe
             link in every notification. Verification and password reset
             emails cannot be disabled because they are required for account
@@ -247,7 +239,7 @@ export function PrivacyContentEn() {
               "Contract performance (Art. 6(1)(b))",
             ],
             [
-              "Payments, subscriptions, and credits via Polar",
+              "Credit balance and manual top-ups",
               "Contract performance (Art. 6(1)(b))",
             ],
             [
@@ -341,22 +333,6 @@ export function PrivacyContentEn() {
             ],
           ]}
         />
-
-        <LegalSubheading>Payments</LegalSubheading>
-        <LegalList>
-          <li>
-            <Strong>Polar:</Strong> acts as Merchant of Record and{" "}
-            <Strong>independent data controller</Strong> for checkout,
-            subscriptions, invoicing, and tax compliance. When you register,
-            we create a Polar customer profile with your name, email address,
-            and Melodyc account identifier so you can purchase plans. Payment
-            details are entered directly on Polar&apos;s checkout. See{" "}
-            <ExternalLink href="https://polar.sh/legal/privacy">
-              Polar&apos;s Privacy Policy
-            </ExternalLink>
-            .
-          </li>
-        </LegalList>
 
         <LegalSubheading>Other Recipients</LegalSubheading>
         <LegalList>
@@ -530,9 +506,7 @@ export function PrivacyContentEn() {
             <Strong>Right to erasure</Strong> (Art. 17): request the deletion
             of your data. You can delete your account yourself at any time
             from Account &gt; Security: this permanently removes your
-            profile, songs, audio files, cover images, and preferences, and
-            deletes your customer profile on Polar, except for the records
-            Polar must keep for tax and accounting purposes.
+            profile, songs, audio files, cover images, and preferences.
           </li>
           <li>
             <Strong>Right to restriction of processing</Strong> (Art. 18):
