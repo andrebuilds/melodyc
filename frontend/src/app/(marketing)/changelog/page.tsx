@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ElementType } from "react";
 import {
+  BarChart3Icon,
   CircleHelpIcon,
   CoinsIcon,
   CompassIcon,
@@ -64,6 +65,37 @@ const typeMeta: Record<ChangeType, { label: string; className: string }> = {
 };
 
 const releases: Release[] = [
+  {
+    version: "Analytics update",
+    date: "October 9, 2026",
+    dateTime: "2026-10-09",
+    title: "A new Analytics dashboard for your music",
+    description:
+      "Track how your songs and your audience grow over time, with interactive charts and period comparisons.",
+    icon: BarChart3Icon,
+    changes: [
+      {
+        type: "new",
+        text: "Analytics page in the account menu, right below My profile.",
+      },
+      {
+        type: "new",
+        text: "Switch between the last 7, 28, or 90 days and compare likes, new followers, total followers, and songs created with the previous period.",
+      },
+      {
+        type: "new",
+        text: "Interactive chart: select a metric and hover or tap any day to see its exact value.",
+      },
+      {
+        type: "new",
+        text: "Top songs ranked by listens, with likes and engagement rate for each track.",
+      },
+      {
+        type: "new",
+        text: "Lifetime listens, likes, engagement rate, and published songs, plus your audience, top categories, best day, and listen milestones.",
+      },
+    ],
+  },
   {
     version: "Free for everyone",
     date: "October 4, 2026",

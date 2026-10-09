@@ -14,7 +14,7 @@ import {
   SidebarSeparator,
 } from "../ui/sidebar";
 import SidebarMenuItems from "./sidebar-menu-items";
-import { CircleUserRoundIcon, CoinsIcon } from "lucide-react";
+import { BarChart3Icon, CircleUserRoundIcon, CoinsIcon } from "lucide-react";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { MelodycLogo } from "~/components/brand/melodyc-logo";
@@ -78,6 +78,11 @@ export async function AppSidebar() {
                   },
                 ]
               : []),
+            {
+              label: "Analytics",
+              href: "/analytics",
+              icon: <BarChart3Icon />,
+            },
             {
               label: "Credits",
               href: "/credits",

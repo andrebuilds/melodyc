@@ -4,6 +4,7 @@ import type { ElementType, ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import {
+  BarChart3Icon,
   BellIcon,
   ChevronRightIcon,
   CircleHelpIcon,
@@ -38,6 +39,7 @@ const sections: HelpSection[] = [
   { id: "my-music", label: "My Music", icon: LibraryIcon },
   { id: "discover", label: "Discover", icon: CompassIcon },
   { id: "profile-community", label: "Profile and community", icon: UsersIcon },
+  { id: "analytics", label: "Analytics", icon: BarChart3Icon },
   { id: "credits", label: "Credits", icon: CoinsIcon },
   { id: "notifications", label: "Notifications", icon: BellIcon },
   { id: "account-security", label: "Account and security", icon: ShieldCheckIcon },
@@ -97,7 +99,7 @@ function GettingStarted() {
         <li><strong className="text-foreground">My Music</strong> for your complete library, downloads, and publishing.</li>
       </List>
       <Paragraph>
-        The account menu at the bottom of the sidebar opens My profile, Credits, and your account settings.
+        The account menu at the bottom of the sidebar opens My profile, Analytics, Credits, and your account settings.
       </Paragraph>
       <Callout title="Start with an idea">
         You do not need production experience. A mood, genre, scene, or short story is enough to create your first track.
@@ -220,6 +222,32 @@ function Discover() {
         <li>Select a creator name to open their profile.</li>
         <li>Keep scrolling to load more published music automatically.</li>
       </List>
+    </>
+  );
+}
+
+function Analytics() {
+  return (
+    <>
+      <Heading>Your music in numbers</Heading>
+      <Paragraph>
+        Open <Link href="/analytics" className="font-medium text-primary hover:underline">Analytics</Link> from the account menu, right below My profile. It shows how your songs and your audience are growing. Only you can see it.
+      </Paragraph>
+      <Heading>Choose a period and a metric</Heading>
+      <List>
+        <li>Switch between the last <strong className="text-foreground">7, 28, or 90 days</strong>.</li>
+        <li>Each card shows likes received, new followers, total followers, or songs created, with the change compared with the previous period of the same length.</li>
+        <li>Select a card to show that metric in the chart, then hover or tap any day to see its exact value.</li>
+      </List>
+      <Heading>What else you will find</Heading>
+      <List>
+        <li><strong className="text-foreground">Lifetime stats</strong>: total listens, total likes, engagement rate (likes divided by listens), and published songs.</li>
+        <li><strong className="text-foreground">Top songs</strong>: your five most listened songs, with likes and engagement for each.</li>
+        <li><strong className="text-foreground">Audience</strong>, <strong className="text-foreground">Top categories</strong>, and <strong className="text-foreground">Highlights</strong> such as your best day and listen milestones.</li>
+      </List>
+      <Callout title="How the numbers are counted">
+        Daily likes include likes from other creators only. Listens are shown as totals because Melodyc does not keep a daily listen history yet.
+      </Callout>
     </>
   );
 }
@@ -385,6 +413,7 @@ const sectionContent: Record<string, () => ReactNode> = {
   "my-music": MyMusic,
   discover: Discover,
   "profile-community": ProfileCommunity,
+  analytics: Analytics,
   credits: Credits,
   notifications: Notifications,
   "account-security": AccountSecurity,

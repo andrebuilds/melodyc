@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart3Icon, CompassIcon, LibraryIcon, Music } from "lucide-react";
+import { CompassIcon, LibraryIcon, Music } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
 
@@ -24,12 +24,6 @@ export default function SidebarMenuItems() {
       title: "My Music",
       url: "/my-music",
       icon: LibraryIcon,
-      active: false,
-    },
-    {
-      title: "Analytics",
-      url: "/analytics",
-      icon: BarChart3Icon,
       active: false,
     },
   ];

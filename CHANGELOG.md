@@ -12,12 +12,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
+- Analytics link moved from the main sidebar to the account menu, below My profile.
 - New accounts receive 100 free credits instead of 20.
 - The homepage Pricing section and navbar link were replaced by a Gamification "Coming soon" section.
 - Terms, Privacy Policy, Cookie Policy, Help Center, FAQ, structured data, and `llms.txt` now describe the free model.
 
 ### Added
 
+- Analytics dashboard (`/analytics`) in the account menu: 7, 28, and 90 day ranges, metric cards with change versus the previous period, an interactive area chart, lifetime stats, top songs, audience, top categories, best day, and listen milestones.
 - Credits page with the current balance, manual top-up contact, and a gamification preview.
 - My Music library with all of a user's songs, Public and Private badges, search, and infinite scrolling.
 - Publish or unpublish, rename, and delete songs from My Music.

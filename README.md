@@ -47,6 +47,7 @@ The hosted platform is **completely free**: every new account gets 100 credits, 
 - 🎛️ Personal library (My Music) to manage, publish, and download your music in WAV, MP3, and FLAC
 - 🧑‍🎤 Public creator profiles with username, profile picture, mascot, followers, and following
 - 🔔 In-app notifications for likes, followers, listen milestones, and generation results
+- 📊 Creator analytics dashboard with 7, 28, and 90 day ranges, period comparisons, interactive charts, and top songs
 - ⚖️ GDPR-oriented legal pages in English and Italian, consent records, and a granular cookie banner
 - 📈 Cookieless Vercel Web Analytics and Speed Insights, loaded only with consent
 - 🛡️ Security headers and server-side input validation
